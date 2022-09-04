@@ -9,8 +9,6 @@ on:
   push:
     branches:
       - "main"
-    paths:
-      - rest/engine/**
   workflow_dispatch:
 
 permissions:
