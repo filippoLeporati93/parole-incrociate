@@ -7,6 +7,8 @@ import json
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Compute Grid POST call started')
 
+    svg = req.params.get("svg")
+
     req_body = req.get_json()
     grid = json.loads(req_body.get('grid'))
     letter = req_body.get('letter')
@@ -16,7 +18,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     logging.info('Compute Grid POST call ended')
     
-    return func.HttpResponse(json.dumps({
-        "letter": next_letter,
-        "grid": next_grid
-    }))
+    if svg is not None and svg == "1":
+        return func.HttpResponse(eng.grid_as_svg(next_grid,next_letter['value']))
+    else:
+        return func.HttpResponse(json.dumps({
+            "letter": next_letter,
+            "grid": next_grid
+        }))

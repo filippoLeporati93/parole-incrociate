@@ -30,6 +30,66 @@ class Engine:
                     return False
             return True
 
+    def grid_as_svg(self, delta_grid, delta_letter):
+        width, height = 1000, 1414
+        """Output the SVG preamble, with styles"""
+
+        svg =  """<?xml version="1.0" encoding="utf-8"?>
+        <svg xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink" width="{}" height="{}" >
+        <defs>
+        <style type="text/css"><![CDATA[
+        line, path {{
+        stroke: black;
+        stroke-width: 4;
+        stroke-linecap: square;
+        }}fs
+        path {{
+        fill: none;
+        }}
+
+        text {{
+        font: bold 24px Verdana, Helvetica, Arial, sans-serif;
+        }}
+
+        ]]>
+        </style>
+        </defs>
+        """.format(width, height)
+
+        """Return the wordsearch grid as a sequence of SVG <text> elements."""
+
+        # A bit of padding at the top.
+        YPAD = 20
+        # There is some (not much) wiggle room to squeeze in wider grids by
+        # reducing the letter spacing.
+        letter_width = min(32, width / ncols)
+        grid_width = letter_width * ncols
+        # The grid is centred; this is the padding either side of it.
+        XPAD = (width - grid_width) / 2
+        letter_height = letter_width
+        grid_height = letter_height * nrows
+        s = []
+
+        # Output the grid, one letter at a time, keeping track of the y-coord.
+        y = YPAD + letter_height / 2
+        for irow in range(nrows):
+            x = XPAD + letter_width / 2
+            for icol in range(ncols):
+                letter = delta_grid[irow][icol]
+                if letter != ' ':
+                    s.append('<text x="{}" y="{}" text-anchor="middle">{}</text>'
+                                    .format(x, y, letter))
+                x += letter_width
+            y += letter_height
+
+        # We return the last y-coord uzed, to decide where to put the word list.
+        svg = svg + '\n'.join(s) \
+            + '<text x="{}" y="{}" text-anchor="middle" class="wordlist">{}</text>'.format(width * 0.25, 25, delta_letter) \
+            + '</svg>'
+
+        return svg
+
     def get_delta_matrix(self, original_grid, grid):
         delta_char = {
             "value": "",
