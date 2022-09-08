@@ -16,6 +16,10 @@ export class MainController {
   ) {
     console.log("New Socket connected: ", socket.id);
 
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+
     socket.on("custom_event", (data: any) => {
       console.log("Data: ", data);
     });
