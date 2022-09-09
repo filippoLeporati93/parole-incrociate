@@ -36,7 +36,7 @@ const MainTabScreen = () => (
       options={{
         tabBarLabel: <Text>Statistiche</Text>,
         tabBarIcon: ({color}) => (
-          <Icon name="stats" color={color} size={20} />
+          <Icon name="stats-chart" color={color} size={20} />
         ),
       }}
     />
