@@ -62,7 +62,7 @@ const HomeStackScreen = ({}: any) => {
       }}
     >
       <HomeStack.Screen
-        name="HomeStack"
+        name="HomeScreen"
         component={HomeScreen}
         options={{
           headerLeft: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Spots</Text>),
@@ -70,7 +70,7 @@ const HomeStackScreen = ({}: any) => {
         }}
       />
       <HomeStack.Screen
-        name="BoardStack"
+        name="BoardScreen"
         component={BoardScreen}
         options={{
           headerLeft: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Spots</Text>),

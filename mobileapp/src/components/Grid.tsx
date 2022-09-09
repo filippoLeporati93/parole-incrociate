@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   View,
+  Text
 } from 'react-native';
 
 import {
@@ -25,6 +26,7 @@ const Grid = ({matrix, onCellPress} : IGrid) => {
             return (
             <View key={'grid' + i} style={styles.grid} >
             {
+            
                 item.map((item: string, j: number) => (
                         <Cell 
                             key={i + j} 
@@ -46,17 +48,13 @@ const Grid = ({matrix, onCellPress} : IGrid) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: CellSize * 9 + BorderWidth * 6,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    backgroundColor: 'orange',
+    width: CellSize * 5 + StyleSheet.hairlineWidth * 2 + 4,
+    height: CellSize * 5 +  StyleSheet.hairlineWidth * 2 + 4,
+    flexDirection: 'column',
+    borderWidth: 2,
   },
   grid: {
-    margin: BorderWidth,
-    width: CellSize * 3,
-    height: CellSize * 3,
     flexDirection: 'row',
-    flexWrap: 'wrap',
   },
 });
 

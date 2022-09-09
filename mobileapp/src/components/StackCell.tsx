@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import {
-  LayoutAnimation,
   StyleSheet,
   View,
   Text,
@@ -9,14 +8,13 @@ import {
 } from 'react-native';
 
 import {
-  Size,
-  CellSize,
   BoardWidth,
   BorderWidth,
+  CellStackSize,
 } from './GlobalStyle';
 
 
-const Offset = (BoardWidth - CellSize * 9 - BorderWidth * 8) / 2;
+const Offset = (BoardWidth - CellStackSize * 10 - BorderWidth * 12) / 13;
 
 interface IStackCell {
   letter: string,
@@ -30,34 +28,31 @@ const StackCell = ({letter, onStackCellPress}: IStackCell) => {
   }
 
     return (
-      <Pressable onPress={onPress} style={[styles.container]} >
         <View style={styles.cell} >
-          <Text style={styles.text}>{letter}</Text>
+          <Pressable onPress={onPress}>
+            <Text style={styles.text}>{letter}</Text>
+          </Pressable>
         </View>
-      </Pressable>
+    
     );
 
 }
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    width: CellSize,
-    height: CellSize,
-  },
   cell: {
-    width: CellSize,
-    height: CellSize,
+    width: CellStackSize,
+    height: CellStackSize,
     backgroundColor: 'moccasin',
     borderColor: 'orange',
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: BorderWidth,
     borderRadius: BorderWidth,
     alignItems: 'center',
     justifyContent: 'center',
+    margin: Offset,
   },
   text: {
     color: '#666',
-    fontSize: CellSize * 2 / 3,
+    fontSize: CellStackSize * 2 / 3,
     fontFamily: 'HelveticaNeue',
   }
 });

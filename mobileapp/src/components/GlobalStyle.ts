@@ -5,10 +5,12 @@ import {
   export const Size = Dimensions.get('window');
   
   export const BoardWidth = Size.width;
+  export const BorderWidth = 2;
   
-  export const CellSize = Math.floor(BoardWidth / 10);
+  export const CellSize = Math.floor(BoardWidth / 6);
+  export const CellStackSize = Math.floor(BoardWidth / 12);
   
-  export const BorderWidth = 3;
+ 
   
   export const Color = {
   

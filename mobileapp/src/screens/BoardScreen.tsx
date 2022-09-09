@@ -117,11 +117,11 @@ const BoardScreen = () => {
     return (
       <View style={styles.container} >
         <View style={styles.boardContainer} >
-          <View style={styles.board} >
             <Grid matrix={matrix} onCellPress={onCellPress}  />
-          </View>
         </View>
-        <Stack onStackCellPress={onStackCellPress}  />
+        <View style={styles.stackContainer}>
+          <Stack onStackCellPress={onStackCellPress}  />
+        </View>
       </View>
     );
 }
@@ -130,41 +130,16 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-  boardContainer: {
-    marginTop: 20,
-    alignItems: 'center',
-    width: BoardWidth,
-  },
-  board: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    backgroundColor: 'orange',
-    padding: BorderWidth,
-  },
-  row: {
-    position: 'absolute',
-    backgroundColor: 'transparent',
-    margin: BorderWidth * 2,
-    top: 0,
-    left: 0,
-    width: CellSize * 9 + BorderWidth * 4,
-    height: CellSize,
-    borderColor: 'peru',
-    borderWidth: 2,
-    borderRadius: BorderWidth,
-  },
-  column: {
-    position: 'absolute',
-    backgroundColor: 'transparent',
-    margin: BorderWidth * 2,
-    top: 0,
-    left: 0,
-    width: CellSize,
-    height: CellSize * 9 + BorderWidth * 4,
-    borderColor: 'peru',
-    borderWidth: 2,
-    borderRadius: BorderWidth,
-  },
+    stackContainer: {
+      justifyContent: 'flex-end',
+      marginBottom: 50,
+    },
+    boardContainer: {
+      flex:1,
+      marginTop: 20,
+      alignItems: 'center',
+      width: BoardWidth,
+    },
 });
 
 

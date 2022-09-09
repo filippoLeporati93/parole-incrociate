@@ -29,7 +29,10 @@ const Stack = ({onStackCellPress} : IStack) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    width: '100%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
 });
 

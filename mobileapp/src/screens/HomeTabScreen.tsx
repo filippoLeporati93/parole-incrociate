@@ -1,20 +1,15 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
   View,
-  Dimensions,
   Pressable,
-  Button,
 } from 'react-native';
 import Text from '../components/AppText';
 import {useTheme} from '@react-navigation/native';
 
-import Modal from "react-native-modal";
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import NewGameContentModal from '../components/modal/NewGameContentModal';
 
 const HomeScreen = ({navigation}: any) => {
   const theme = useTheme();
@@ -22,28 +17,24 @@ const HomeScreen = ({navigation}: any) => {
   
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
 
   return (
-    <View>
+    <View style={{flex:1,}}>
       <Text>
         Parole Incrociate
       </Text>
-      <Pressable>
+      <Pressable onPress={() => setModalVisible(true)}>
         <Text>
           Nuova partita
         </Text>
       </Pressable>
 
-      <Modal isVisible={isModalVisible}>
-        <View style={{ flex: 1 }}>
-          <Text>Hello!</Text>
-
-          <Button title="Hide modal" onPress={toggleModal} />
-        </View>
-      </Modal>
+      <NewGameContentModal 
+      isVisible={isModalVisible} 
+      onPress={() => setModalVisible(false)}
+      onLevelPress={(level) => {
+        navigation.navigate("BoardScreen");
+      }}/>
     </View>
   );
 };
