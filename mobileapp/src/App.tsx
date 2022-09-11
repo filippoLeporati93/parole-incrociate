@@ -24,10 +24,10 @@ const App = () => {
       background: '#ffffff',
       text: '#333333',
       textLight: '#444',
-      primary: '#00bcd4',
-      primaryLight: '#62efff',
-      primaryDark: '#008ba3',
-      backgroundGray: '#f5f5f5'
+      primary: '#bbdefb',
+      primaryLight: '#eeffff',
+      primaryDark: '#036595',
+      backgroundGray: '#8aacc8'
     },
   };
 

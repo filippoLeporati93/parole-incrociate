@@ -12,13 +12,18 @@ import {
 } from './GlobalStyle';
 
 import Cell from './Cell';
+import { useTheme } from 'react-native-paper';
 
 interface IGrid {
   matrix: Array<Array<string>>,
-  onCellPress: (xIndex: number, yIndex: number) => void,
+  cellIndexPressed: {dx: number, dy: number},
+  onCellPress: (location: {dx: number, dy: number}) => void
 }
 
-const Grid = ({matrix, onCellPress} : IGrid) => {
+const Grid = ({matrix, cellIndexPressed, onCellPress} : IGrid) => {
+    const theme = useTheme();
+    const styles = makeStyles(theme.colors);
+
     return (
         <View style={styles.container} >
         {
@@ -30,8 +35,8 @@ const Grid = ({matrix, onCellPress} : IGrid) => {
                 item.map((item: string, j: number) => (
                         <Cell 
                             key={i + j} 
-                            xIndex={j} 
-                            yIndex={i}
+                            location={{dx:i, dy:j}} 
+                            pressed={ i === cellIndexPressed.dx && j === cellIndexPressed.dy ? true : false}
                             letter={item} 
                             onCellPress={onCellPress} 
                         />
@@ -46,12 +51,13 @@ const Grid = ({matrix, onCellPress} : IGrid) => {
   
 }
 
-const styles = StyleSheet.create({
+const makeStyles = (color) => StyleSheet.create({
   container: {
     width: CellSize * 5 + StyleSheet.hairlineWidth * 2 + 4,
     height: CellSize * 5 +  StyleSheet.hairlineWidth * 2 + 4,
     flexDirection: 'column',
     borderWidth: 2,
+    borderColor: color.primaryDark,
   },
   grid: {
     flexDirection: 'row',

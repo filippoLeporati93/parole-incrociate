@@ -18,8 +18,9 @@ import {
 import Grid from '../components/Grid';
 import Stack from '../components/Stack';
 import SocketService from '../services/SocketService';
+import Timer from '../components/Timer';
 
-const BoardScreen = () => {
+const BoardScreen = ({navigation}) => {
   
   const [inited, setInitiated] = useState(false);
   const [solved, setIsSolved] = useState(false);
@@ -45,18 +46,16 @@ const BoardScreen = () => {
   ]);
 
 
-  const onCellPress = (xIndex: number, yIndex: number) => {
+  const onCellPress = ({dx, dy} : {dx: number, dy: number}) => {
     if (inited || solved) return;
-    if (xIndex !== cellIndexPressed.dx || yIndex !== cellIndexPressed.dy) {
+    if (dx !== cellIndexPressed.dx || dy !== cellIndexPressed.dy) {
       LayoutAnimation.easeInEaseOut();
-      setCellIndexPressed({dx: xIndex, dy: yIndex});
+      setCellIndexPressed({dx: dx, dy: dy});
     }
   }
 
   const onStackCellPress = (letter: string) => {
-    if (!inited) return;
-
-    if (cellIndexPressed.dx == -1) {
+    if (cellIndexPressed.dx !== -1) {
         setMatrix(matrix => {
             matrix[cellIndexPressed.dx][cellIndexPressed.dy] = letter;
             return matrix;
@@ -116,8 +115,14 @@ const BoardScreen = () => {
 
     return (
       <View style={styles.container} >
+        <View style={styles.infoContainer}>
+          <Timer />
+        </View>
         <View style={styles.boardContainer} >
-            <Grid matrix={matrix} onCellPress={onCellPress}  />
+            <Grid 
+            matrix={matrix} 
+            cellIndexPressed={cellIndexPressed} 
+            onCellPress={onCellPress}  />
         </View>
         <View style={styles.stackContainer}>
           <Stack onStackCellPress={onStackCellPress}  />
@@ -136,10 +141,16 @@ const styles = StyleSheet.create({
     },
     boardContainer: {
       flex:1,
-      marginTop: 20,
+      marginTop: 10,
       alignItems: 'center',
       width: BoardWidth,
     },
+    infoContainer: {
+      marginTop: 20,
+      width: BoardWidth,
+      marginHorizontal: 10,
+      alignItems: 'center',
+    }
 });
 
 

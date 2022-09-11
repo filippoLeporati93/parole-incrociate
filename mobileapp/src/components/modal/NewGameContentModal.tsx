@@ -13,14 +13,16 @@ const NewGameContentModal: React.FC<Props> = props => (
     isVisible={props.isVisible}
     onBackdropPress={props.onPress}
     onSwipeComplete={props.onPress}
-    swipeDirection={['left', 'down', 'right']}
+    swipeDirection={['down']}
     useNativeDriverForBackdrop
     style={styles.view}>
     <View style={styles.content}>
-      <Text style={styles.contentTitle} onPress={props.onLevelPress(1)}>Facile</Text>
-      <Text style={styles.contentTitle} onPress={props.onLevelPress(1)}>Medio</Text>
-      <Text style={styles.contentTitle} onPress={props.onLevelPress(1)} >Difficile</Text>
-      <Button testID={'close-button'} onPress={props.onPress} title="Chiudi" />
+      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1)}>Facile</Text>
+      <View style={styles.line} />
+      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1)}>Medio</Text>
+      <View style={styles.line} />
+      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1)} >Difficile</Text>
+      <View style={styles.line} />
     </View>
   </Modal>
 );
@@ -28,20 +30,32 @@ const NewGameContentModal: React.FC<Props> = props => (
 const styles = StyleSheet.create({
   view: {
     justifyContent: 'flex-end',
-    margin: 0,
+    margin: 20,
+    marginBottom: 30,
   },
   content: {
     backgroundColor: 'white',
-    padding: 22,
+    padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 4,
+    borderRadius: 20,
     borderColor: 'rgba(0, 0, 0, 0.1)',
   },
   contentTitle: {
+    width: '100%',
+    textAlign: 'center',
     fontSize: 20,
-    marginBottom: 12,
+    marginTop: 20,
+    marginBottom: 20,
   },
+  line: {
+    width: '100%',
+    height: StyleSheet.hairlineWidth,
+    marginStart: 5,
+    marginEnd: 5,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: 'gray',
+  }
 });
 
 export default NewGameContentModal;

@@ -65,7 +65,6 @@ const HomeStackScreen = ({}: any) => {
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          headerLeft: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Spots</Text>),
           headerTitle: "",
         }}
       />
@@ -73,8 +72,8 @@ const HomeStackScreen = ({}: any) => {
         name="BoardScreen"
         component={BoardScreen}
         options={{
-          headerLeft: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Spots</Text>),
-          headerTitle: "",
+          headerBackTitleVisible: false,
+          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
         }}
       />
     </HomeStack.Navigator>

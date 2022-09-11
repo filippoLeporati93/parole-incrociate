@@ -33,6 +33,7 @@ const HomeScreen = ({navigation}: any) => {
       isVisible={isModalVisible} 
       onPress={() => setModalVisible(false)}
       onLevelPress={(level) => {
+        setModalVisible(false);
         navigation.navigate("BoardScreen");
       }}/>
     </View>
