@@ -1,24 +1,22 @@
-import React, { Component, useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
-  InteractionManager,
   LayoutAnimation,
   StyleSheet,
-  Platform,
   View,
 } from 'react-native';
 import GameService, { IPlayMatrix } from '../services/GameService';
 
+
 import {
-  CellSize,
   BoardWidth,
-  BorderWidth,
 } from '../components/GlobalStyle';
 
 import Grid from '../components/Grid';
 import Stack from '../components/Stack';
 import SocketService from '../services/SocketService';
 import Timer from '../components/Timer';
+import AcceptAction from '../components/AcceptAction';
 
 const BoardScreen = ({navigation}) => {
   
@@ -28,6 +26,7 @@ const BoardScreen = ({navigation}) => {
   const [isMyTurn, setIsMyTurn] = useState(true);
   const [gameStarted, setGameStarted] = useState(true);
   const [opponentLetter, setOpponentLetter] = useState("");
+  const [showAcceptActionContainer, setShowActionContainer] = useState(false);
   
   const [matrix, setMatrix] = useState<IPlayMatrix>([
     [" ", " ", " ", " ", " "],
@@ -48,20 +47,33 @@ const BoardScreen = ({navigation}) => {
 
   const onCellPress = ({dx, dy} : {dx: number, dy: number}) => {
     if (inited || solved) return;
-    if (dx !== cellIndexPressed.dx || dy !== cellIndexPressed.dy) {
+    if( matrix[dx][dy] === " ") {
       LayoutAnimation.easeInEaseOut();
       setCellIndexPressed({dx: dx, dy: dy});
     }
   }
 
   const onStackCellPress = (letter: string) => {
+    setShowActionContainer(true);
     if (cellIndexPressed.dx !== -1) {
-        setMatrix(matrix => {
-            matrix[cellIndexPressed.dx][cellIndexPressed.dy] = letter;
-            return matrix;
-        });
-        nextTurn(letter);
+      setMatrix(matrix => {
+          matrix[cellIndexPressed.dx][cellIndexPressed.dy] = letter;
+          return matrix;
+      });  
     }
+  }
+
+  const onAcceptPress = () => {
+    setShowActionContainer(false);
+    nextTurn(matrix[cellIndexPressed.dx][cellIndexPressed.dy])
+  }
+
+  const onCancelPress = () => {
+    setShowActionContainer(false);
+    setMatrix(matrix => {
+      matrix[cellIndexPressed.dx][cellIndexPressed.dy] = " ";
+      return matrix;
+  });  
   }
 
   const nextTurn = (letter: string) => {
@@ -124,6 +136,12 @@ const BoardScreen = ({navigation}) => {
             cellIndexPressed={cellIndexPressed} 
             onCellPress={onCellPress}  />
         </View>
+        <View style={styles.acceptActionContainer}>
+          <AcceptAction
+          show={showAcceptActionContainer}
+          onAcceptPress={() => onAcceptPress()}
+          onCancelPress={() => onCancelPress()}/>
+        </View>
         <View style={styles.stackContainer}>
           <Stack onStackCellPress={onStackCellPress}  />
         </View>
@@ -132,24 +150,29 @@ const BoardScreen = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
+  container: {
+      flex: 1,
+  },
+  stackContainer: {
+    marginBottom: 40,
+    flex: 5,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  boardContainer: {
+    flex: 10,
+    paddingTop: 10,
+    alignItems: 'center',
+    width: BoardWidth,
+  },
+  infoContainer: {
+    flex: 1,
+    width: BoardWidth,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
     },
-    stackContainer: {
-      justifyContent: 'flex-end',
-      marginBottom: 50,
-    },
-    boardContainer: {
-      flex:1,
-      marginTop: 10,
-      alignItems: 'center',
-      width: BoardWidth,
-    },
-    infoContainer: {
-      marginTop: 20,
-      width: BoardWidth,
-      marginHorizontal: 10,
-      alignItems: 'center',
+  acceptActionContainer: {
+      flex: 1,
     }
 });
 

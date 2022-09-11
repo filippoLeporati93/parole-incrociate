@@ -1,19 +1,16 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
 import {
-  LayoutAnimation,
   StyleSheet,
   Animated,
-  Platform,
-  View,
   Pressable,
 } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useTheme } from 'react-native-paper';
 import Text from './AppText'
 
 import {
   CellSize,
-  BorderWidth,
 } from './GlobalStyle';
 
 interface ICell {
@@ -31,6 +28,7 @@ const Cell = ({location, pressed, letter, onCellPress} : ICell) => {
     const styles = makeStyles(theme.colors);
 
     let anim = useRef(new Animated.Value(0)).current;
+    const AnimatedTouchable = Animated.createAnimatedComponent(Pressable);
 
     const rotate = anim.interpolate({
       inputRange: [0, 1],
@@ -48,27 +46,23 @@ const Cell = ({location, pressed, letter, onCellPress} : ICell) => {
     const filled = letter !== " ";
 
     const onPress = () => {
-      if (letter === " ")
-        onCellPress({dx: location.dx, dy: location.dy});
+      onCellPress({dx: location.dx, dy: location.dy});
     }
 
     return (
-      <Animated.View style={[styles.cell, pressed && styles.clickedCell]} >
-          <Pressable style={styles.handle} onPress={onPress} disabled={pressed}>
-              <Text style={[styles.text]}>{letter}</Text>
-          </Pressable>
-      </Animated.View>
+      <AnimatedTouchable 
+        style={[styles.cell, pressed && styles.clickedCell]}
+        disabled={pressed}
+        onPress={onPress}> 
+        <Text 
+          style={[styles.text, pressed && styles.clickedText]}>
+            {letter}
+        </Text>
+      </AnimatedTouchable>
     );
 }
 
 const makeStyles = (colors) => StyleSheet.create({
-  handle: {
-    width: CellSize,
-    height: CellSize,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-  },
   cell: {
     width: CellSize,
     height: CellSize,
@@ -82,10 +76,12 @@ const makeStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.primaryDark
   },
   text: {
-    color: '#333',
+    color: colors.text,
     fontSize: CellSize * 2 / 3,
-    fontFamily: 'HelveticaNeue',
   },
+  clickedText: {
+    color: 'white'
+  }
 });
 
 
