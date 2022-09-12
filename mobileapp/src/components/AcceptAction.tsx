@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 import {
   StyleSheet,
@@ -6,9 +6,7 @@ import {
   Pressable,
   View,
 } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useTheme } from 'react-native-paper';
-import Text from './AppText'
 import Icon from 'react-native-vector-icons/Ionicons';
 
 

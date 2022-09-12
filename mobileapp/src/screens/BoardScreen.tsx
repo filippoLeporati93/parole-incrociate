@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  ActivityIndicator,
   LayoutAnimation,
   StyleSheet,
   View,
@@ -17,9 +18,11 @@ import Stack from '../components/Stack';
 import SocketService from '../services/SocketService';
 import Timer from '../components/Timer';
 import AcceptAction from '../components/AcceptAction';
+import { useTheme } from 'react-native-paper';
+import Text from '../components/AppText';
 
 const BoardScreen = ({navigation}) => {
-  
+  const theme = useTheme();
   const [inited, setInitiated] = useState(false);
   const [solved, setIsSolved] = useState(false);
   const [cellIndexPressed, setCellIndexPressed] = useState({dx: -1, dy: -1});
@@ -54,8 +57,8 @@ const BoardScreen = ({navigation}) => {
   }
 
   const onStackCellPress = (letter: string) => {
-    setShowActionContainer(true);
     if (cellIndexPressed.dx !== -1) {
+      setShowActionContainer(true);
       setMatrix(matrix => {
           matrix[cellIndexPressed.dx][cellIndexPressed.dy] = letter;
           return matrix;
@@ -79,14 +82,14 @@ const BoardScreen = ({navigation}) => {
   const nextTurn = (letter: string) => {
     setIsMyTurn(isMyTurn => !isMyTurn);
     if (SocketService.socket) {
-      GameService.updateGame(SocketService.socket, cellIndexPressed, letter, opponentMatrix);
+        GameService.updateGame(SocketService.socket, cellIndexPressed, letter, opponentMatrix);
     }
   };
 
   const handleGameUpdate = () => {
     if (SocketService.socket) {
-      setIsMyTurn(isMyTurn => !isMyTurn);
       GameService.onGameUpdate(SocketService.socket, async (opponentLetter, newOpponentMatrix) => {
+        setIsMyTurn(isMyTurn => !isMyTurn);
         setMatrix(newOpponentMatrix);
         setOpponentLetter(opponentLetter);
         const [currentPlayerWon, otherPlayerWon] = await GameService.checkGame(matrix, newOpponentMatrix);
@@ -105,7 +108,7 @@ const BoardScreen = ({navigation}) => {
 
   const handleGameStart = () => {
     if (SocketService.socket)
-      GameService.onStartGame(SocketService.socket, (options) => {
+      GameService.onStartGame(SocketService.socket, () => {
         setGameStarted(true);
       });
   };
@@ -126,25 +129,36 @@ const BoardScreen = ({navigation}) => {
 
 
     return (
-      <View style={styles.container} >
-        <View style={styles.infoContainer}>
-          <Timer />
-        </View>
-        <View style={styles.boardContainer} >
-            <Grid 
-            matrix={matrix} 
-            cellIndexPressed={cellIndexPressed} 
-            onCellPress={onCellPress}  />
-        </View>
-        <View style={styles.acceptActionContainer}>
-          <AcceptAction
-          show={showAcceptActionContainer}
-          onAcceptPress={() => onAcceptPress()}
-          onCancelPress={() => onCancelPress()}/>
-        </View>
-        <View style={styles.stackContainer}>
-          <Stack onStackCellPress={onStackCellPress}  />
-        </View>
+      <View style={styles.container}>
+            <View style={styles.infoContainer}>
+              <Timer />
+            </View>
+            <View style={styles.boardContainer} >
+                <Grid 
+                matrix={matrix} 
+                cellIndexPressed={cellIndexPressed} 
+                onCellPress={onCellPress}  />
+            </View>
+            { isMyTurn ? (
+              <>
+            <View style={styles.acceptActionContainer}>
+              <AcceptAction
+              show={showAcceptActionContainer}
+              onAcceptPress={() => onAcceptPress()}
+              onCancelPress={() => onCancelPress()}/>
+            </View>
+            <View style={styles.stackContainer}>
+              <Stack onStackCellPress={onStackCellPress}  />
+            </View></>) : (
+          <View style={{flex:6, justifyContent: 'center', marginBottom: 40}}>
+              <Text style={{fontSize: 20,textAlign: 'center', marginBottom: 10}}>
+                Attendi il tuo prossimo turno...
+              </Text>
+              <ActivityIndicator 
+              color={theme.colors.primaryDark} 
+              size="large" />
+          </View>
+        )}
       </View>
     );
 }
@@ -173,7 +187,8 @@ const styles = StyleSheet.create({
     },
   acceptActionContainer: {
       flex: 1,
-    }
+    },
+
 });
 
 

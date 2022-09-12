@@ -6,6 +6,7 @@ import {
   SocketIO,
 } from "socket-controllers";
 import { Server, Socket } from "socket.io";
+import { Engine } from "../../engine/Engine";
 
 @SocketController()
 export class GameController {
@@ -25,8 +26,19 @@ export class GameController {
     @ConnectedSocket() socket: Socket,
     @MessageBody() message: any
   ) {
+    console.log(message);
+    let grid = message.grid;
+    let letter = message.letter;
+
+    let eng = new Engine(grid, letter)
+    const [next_grid, next_letter] = eng.computeNextGrid();
+    console.log(next_grid);
+    const responseData = {
+      letter: next_letter,
+      grid: next_grid,
+    }
     const gameRoom = this.getSocketGameRoom(socket);
-    socket.to(gameRoom).emit("on_game_update", message);
+    socket.to(gameRoom).emit("on_game_update", responseData);
   }
 
   @OnMessage("game_win")
