@@ -19,15 +19,28 @@ const HomeScreen = ({navigation}: any) => {
 
 
   return (
-    <View style={{flex:1,}}>
-      <Text>
+    <View style={styles.container}>
+      <Text style={{flex: 1, fontSize: 50,}}>
         Parole Incrociate
       </Text>
-      <Pressable onPress={() => setModalVisible(true)}>
-        <Text>
-          Nuova partita
+    <View style={{
+      flex: 1, 
+      width: '100%',
+      alignItems: 'center', 
+      justifyContent: 'flex-end', 
+      paddingBottom: 50,
+      }}>
+      <Pressable style={styles.commandButton} onPress={() => setModalVisible(true)}>
+        <Text style={styles.panelButtonTitle}>
+          Gioca contro il computer
         </Text>
       </Pressable>
+      <Pressable style={styles.commandButton} onPress={() => navigation.navigate("JoinRoomScreen")}>
+        <Text style={styles.panelButtonTitle}>
+          Gioca contro altri giocatori
+        </Text>
+      </Pressable>
+    </View>
 
       <NewGameContentModal 
       isVisible={isModalVisible} 
@@ -45,39 +58,31 @@ export default HomeScreen;
 const makeStyles = colors =>
   StyleSheet.create({
     container: {
-      flexDirection: 'column',
-    },
-    locationBtn: {
       flex: 1,
-      width: '30%',
-      marginHorizontal: 0,
-      alignSelf: 'center',
-    },
-    locationIcon: {
-      borderWidth: 0,
-      marginTop: 10,
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      alignSelf: 'center',
+    },
+    commandButton: {
+      padding: 15,
+      borderRadius: 10,
+      backgroundColor: colors.primaryDark,
+      alignItems: 'center',
+      marginVertical: 10,
       width: '90%',
-      height: 50,
-      backgroundColor: '#fdeae7' /* '#FF6347' */,
-      flexDirection: 'row',
-      borderRadius: 8,
     },
-    locationBtnTxt: {
-      alignSelf: 'center',
-      fontSize: 15,
-      color: '#de4f35',
+    commandButtonDisabled: {
+      padding: 15,
+      borderRadius: 10,
+      backgroundColor: '#D3D3D3',
+      alignItems: 'center',
+      marginTop: 10,
+      width: '90%',
     },
-    sectionText: {
-      alignSelf: 'center',
-      fontSize: 20,
-      color: colors.text,
+    panelButtonTitle: {
+      fontSize: 17,
+      color: 'white',
+      fontFamily: 'AirbnbCereal_W_Md',
     },
-    exploreCityScroll: {
-      minHeight: 240,
-      alignSelf: 'center',
-      marginBottom: 20,
-    },
+    
   });
