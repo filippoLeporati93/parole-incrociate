@@ -35,8 +35,8 @@ const Grid = ({matrix, cellIndexPressed, onCellPress} : IGrid) => {
                 item.map((item: string, j: number) => (
                         <Cell 
                             key={i + j} 
-                            location={{dx:i, dy:j}} 
-                            pressed={ i === cellIndexPressed.dx && j === cellIndexPressed.dy ? true : false}
+                            location={{dx:j, dy:i}} 
+                            pressed={ j === cellIndexPressed.dx && i === cellIndexPressed.dy ? true : false}
                             letter={item} 
                             onCellPress={onCellPress} 
                         />

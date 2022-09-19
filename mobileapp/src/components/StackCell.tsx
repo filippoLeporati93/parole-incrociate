@@ -18,12 +18,12 @@ import {
 const Offset = (BoardWidth - CellStackSize * 10 - BorderWidth * 12) / 13;
 
 interface IStackCell {
+  isDisabled: boolean,
   letter: string,
-  pressed: boolean,
   onStackCellPress: (letter: string) => void,
 }
 
-const StackCell = ({letter, onStackCellPress}: IStackCell) => {
+const StackCell = ({isDisabled, letter, onStackCellPress}: IStackCell) => {
 
   const theme = useTheme();
   const styles = makeStyles(theme.colors);
@@ -36,7 +36,8 @@ const StackCell = ({letter, onStackCellPress}: IStackCell) => {
   return (
     <View>
       <TouchableHighlight 
-      style= {[styles.cell, isPressed && styles.cellPressed]}
+      style= {[styles.cell, isPressed && styles.cellPressed, isDisabled && styles.cellDisabled]}
+      disabled={isDisabled}
       onPress={onPress}
       onHideUnderlay={()=> setIsPressed(false)} 
       onShowUnderlay={()=> setIsPressed(true)}>
@@ -63,13 +64,16 @@ const makeStyles = (colors) => StyleSheet.create({
     backgroundColor: colors.primary,
     borderColor: colors.primaryLight
   },
+  cellDisabled:{
+    backgroundColor: colors.backgroundGray,
+  },
   text: {
     color: colors.text,
     fontSize: CellStackSize * 2 / 3,
   },
   textPressed: {
     color: 'white',
-  }
+  },
 });
 
 

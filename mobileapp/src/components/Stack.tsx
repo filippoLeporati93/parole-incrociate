@@ -10,16 +10,22 @@ import StackCell from './StackCell';
 const stack = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
 interface IStack {
+  opponentLetter? : string,
   onStackCellPress: (letter: string) => void,
 }
 
-const Stack = ({onStackCellPress} : IStack) => {
+const Stack = ({opponentLetter, onStackCellPress} : IStack) => {
 
   return (
       <View style={styles.container} >
       {
         stack.map((item, i) => (
-              <StackCell key={item} letter={item} onStackCellPress={onStackCellPress} />
+              <StackCell 
+              key={item} 
+              letter={item} 
+              onStackCellPress={onStackCellPress} 
+              isDisabled={opponentLetter !== "" && opponentLetter !== item ? true : false}
+              />
             )
         )
       }

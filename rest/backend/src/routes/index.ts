@@ -9,24 +9,45 @@ router.get("/", function (req, res, next) {
 });
 
 router.post("/computegrid", (req, res, next) => {
-  let grid = req.body.grid;
-  let letter = req.body.letter;
 
-  let eng = new Engine(grid, letter)
-  const [next_grid, next_letter] = eng.computeNextGrid();
+  let letter = req.body.letter;
+  if (!req.session.opponentGrid) {
+    const matrix = new Array(5);
+    for (let i = 0; i < matrix.length; i++) {
+      matrix[i] = new Array(5).fill(" ");
+    }
+    req.session.opponentGrid = matrix;
+  }
+
+  let eng = new Engine(req.session.opponentGrid, letter)
+  const [next_grid, next_letter, next_grid_completed] = eng.computeNextGrid();
+  req.session.opponentGrid = next_grid;
+
   const responseData = {
     letter: next_letter,
     grid: next_grid,
+    isGridCompleted: next_grid_completed,
   }
   res.status(200).json(responseData);
 });
 
-router.post("/results", (req, res, next) => {
-    let grid = req.body.grid;
-    let eng = new Engine(grid);
-    const results = eng.calculateResults();
+router.post("/resetgame", (req, res, next) => {
+  if(req.session.opponentGrid)
+    req.session.opponentGrid = null
+  
+  res.status(200).json();
+});
 
-    res.status(200).json(results);
+router.post("/results", (req, res, next) => {
+  let grid = req.body.grid;
+  const opponent = req.query.opponent ?? "false";
+  let eng = new Engine(opponent === 'true' ? req.session.opponentGrid: grid);
+  const results = {
+    ...eng.calculateResults(),
+    isOpponent: opponent === 'true' ? true: false
+  }
+  
+  res.status(200).json(results);
 });
 
 module.exports = router;

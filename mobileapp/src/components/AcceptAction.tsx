@@ -34,17 +34,17 @@ const AcceptAction = ({show, onAcceptPress, onCancelPress} : IAcceptAction) => {
           onPress={onCancelPress}>
             <Icon 
               name='close-circle-outline' 
-              size={35} 
+              size={30} 
               color='red'
-              style={{marginHorizontal: 30, padding: 5,}}/>
+              style={{marginHorizontal: 30,}}/>
           </AnimatedTouchable>
           <AnimatedTouchable
           onPress={onAcceptPress}>
             <Icon 
               name='checkmark-circle-outline'
-              size={35} 
+              size={30} 
               color='green'
-              style={{marginHorizontal: 30, padding: 5}}/>
+              style={{marginHorizontal: 30,}}/>
           </AnimatedTouchable>
         </View>
       );
@@ -53,8 +53,7 @@ const AcceptAction = ({show, onAcceptPress, onCancelPress} : IAcceptAction) => {
 const makeStyles = (colors) => StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   }
 });
 

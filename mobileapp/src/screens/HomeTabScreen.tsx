@@ -47,7 +47,7 @@ const HomeScreen = ({navigation}: any) => {
       onPress={() => setModalVisible(false)}
       onLevelPress={(level) => {
         setModalVisible(false);
-        navigation.navigate("BoardScreen");
+        navigation.navigate("BoardScreen", {isOnlineGame: false});
       }}/>
     </View>
   );

@@ -25,12 +25,19 @@ export class Engine {
         this.grid.forEach((row) => console.log(row.join(' | ')));
     }
 
-    private fillGridRandomly(grid: Matrix) {
+    private fillGridRandomly(grid: Matrix, letter: string) {
+        let firstCharPlaced = false
         for(let i = 0; i < grid.length; i++){
             for(let j = 0; j < grid[i].length; j++){
                 if (grid[i][j] === " ") {
-                    grid[i][j] = ALPHABET.charAt(Math.floor(ALPHABET.length * Math.random()));
-                    return;
+                    if(firstCharPlaced) {
+                        grid[i][j] = ALPHABET.charAt(Math.floor(ALPHABET.length * Math.random()));
+                        return;
+                    }
+                    else {
+                        grid[i][j] = letter;
+                        firstCharPlaced = true;
+                    }
                 }
             }
         }
@@ -47,15 +54,22 @@ export class Engine {
         return true;
     }
 
-    private getDeltaMatrix(originalGrid: Matrix, grid: Matrix) {
+    private getDeltaMatrix(originalGrid: Matrix, grid: Matrix, letter: string) {
         const deltaChar = {
             value: "",
             location: [],
         }
         const deltaGrid = JSON.parse(JSON.stringify(originalGrid));
+        let letterAdded = false;
         for(let r = 0; r < grid.length; r++){
-            for(let c = 0; c < grid[r].length; c++){
-                if (deltaGrid[r][c] != grid[r][c] && deltaChar['value'] == '') {
+            for(let c = 0; c < grid[r].length; c++){  
+                // add opponent letter selected
+                if (deltaGrid[r][c] !== grid[r][c] && grid[r][c] === letter && !letterAdded) {
+                    deltaGrid[r][c] = grid[r][c]
+                    letterAdded = true
+                }
+                // add new letter selected
+                if (deltaGrid[r][c] !== grid[r][c] && deltaChar['value'] === '') {
                     deltaGrid[r][c] = grid[r][c]
                     deltaChar['value'] = grid[r][c]
                     const loc = new Array<number>(2);
@@ -63,6 +77,7 @@ export class Engine {
                     loc[1] = c;
                     deltaChar['location'] = loc;
                 }
+
             }
         }
         return [deltaGrid, deltaChar]
@@ -99,7 +114,7 @@ export class Engine {
         let grid_word = "";
         let mask_word = word;
         for (let j=0; j < word.length; j++) {
-            if (this.grid[irow][icol] !== " " || this.grid[irow][icol] !== word.charAt(j))
+            if (this.grid[irow][icol] !== " " && this.grid[irow][icol] !== word.charAt(j))
                 return false
             grid_word = grid_word + this.grid[irow][icol]
             if (this.grid[irow][icol] === word.charAt(j))
@@ -163,7 +178,7 @@ export class Engine {
                 return this.grid;
         }
 
-        this.fillGridRandomly(this.grid);
+        this.fillGridRandomly(this.grid, this.letter.value);
         return this.grid;
 
     }
@@ -230,8 +245,9 @@ export class Engine {
     computeNextGrid() {
         const originalGrid = JSON.parse(JSON.stringify(this.grid));
         const newGrid = this.makeWordSearch(nrows, ncols, this.wordlist);
-        const [deltaGrid, deltaLetter] = this.getDeltaMatrix(originalGrid,newGrid)
-        return [deltaGrid, deltaLetter]
+        const [deltaGrid, deltaLetter] = this.getDeltaMatrix(originalGrid,newGrid, this.letter.value)
+        const gridCompleted = this.isGridComplete(deltaGrid);
+        return [deltaGrid, deltaLetter, gridCompleted]
     }
 
 }
