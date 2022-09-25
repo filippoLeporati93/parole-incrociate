@@ -5,7 +5,6 @@ import {
   Animated,
   Pressable,
 } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useTheme } from 'react-native-paper';
 import Text from './AppText'
 
@@ -18,7 +17,7 @@ interface ICell {
   location: { dx: number, dy: number },
   pressed: boolean
   letter: string,
-  onCellPress: (location: {dx: number, dy: number}) => void
+  onCellPress?: (location: {dx: number, dy: number}) => void
 
 }
 
@@ -46,7 +45,8 @@ const Cell = ({location, pressed, letter, onCellPress} : ICell) => {
     const filled = letter !== " ";
 
     const onPress = () => {
-      onCellPress({dx: location.dx, dy: location.dy});
+      if(onCellPress)
+        onCellPress({dx: location.dx, dy: location.dy});
     }
 
     return (

@@ -31,7 +31,7 @@ const GameServiceOnline = () => {
     const socket = SocketService.socket;
     if(socket) {
       socket.emit("update_game", { grid: opponentMatrix, letter: {value: letter, location: cellIndexPressed} });
-      socket.on("on_game_update", ({ opponentLetter, isGridCompleted }) => onGameUpdate(opponentLetter, isGridCompleted));
+      socket.on("on_game_update", ({ opponentLetter, isOpponentGridCompleted }) => onGameUpdate(opponentLetter, isOpponentGridCompleted));
     }
   }
 

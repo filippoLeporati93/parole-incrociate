@@ -19,11 +19,15 @@ import Timer from '../components/Timer';
 import AcceptAction from '../components/AcceptAction';
 import { useTheme } from 'react-native-paper';
 import Text from '../components/AppText';
+import EndGameModal from '../components/modal/EndGameModal';
 
 const BoardScreen = ({ route, navigation }) => {
   const theme = useTheme();
   const [initiated, setInitiated] = useState(false);
-  const [gameEnded, setGameEnded] = useState(false);
+  const [endGameModalVisible, setEndGameModalVisible] = useState(false);
+  const [endGameStatus, setEndGameStatus] = useState(-1);
+  const [points, setPoints] = useState(-1);
+  const [gameResults, setGameResults] = useState({});
   const [textHelp, setTextHelp] = useState("Posiziona una lettera sulla griglia");
   const [opponentLetter, setOpponentLetter] = useState("");
   const [cellIndexPressed, setCellIndexPressed] = useState({ dx: -1, dy: -1 });
@@ -46,11 +50,22 @@ const BoardScreen = ({ route, navigation }) => {
     });
   }, []);
 
+  const isGridComplete = (matrix: IPlayMatrix): boolean => {
+    for(let i = 0; i < matrix.length; i++) {
+      for(let j = 0; j < matrix[i].length; j++){
+          if (matrix[i][j] === " ") {
+              return false
+          }
+      }
+    }
+    return true;
+  }
+
 
   const onCellPress = ({ dx, dy }: { dx: number, dy: number }) => {
     if (showAcceptActionContainer)
       return;
-    if (matrix[dy][dx] === " ") {
+    if (matrix[dx][dy] === " ") {
       LayoutAnimation.easeInEaseOut();
       setCellIndexPressed({ dx: dx, dy: dy });
     }
@@ -60,7 +75,7 @@ const BoardScreen = ({ route, navigation }) => {
     if (cellIndexPressed.dx !== -1) {
       setShowActionContainer(true);
       setMatrix(matrix => {
-        matrix[cellIndexPressed.dy][cellIndexPressed.dx] = letter;
+        matrix[cellIndexPressed.dx][cellIndexPressed.dy] = letter;
         return matrix;
       });
     }
@@ -74,25 +89,24 @@ const BoardScreen = ({ route, navigation }) => {
       setCellIndexPressed({dx: -1, dy: -1})
       return;
     }
-    nextTurn(matrix[cellIndexPressed.dy][cellIndexPressed.dx])
+    nextTurn(matrix[cellIndexPressed.dx][cellIndexPressed.dy])
   }
 
   const onCancelPress = () => {
     setShowActionContainer(false);
     setMatrix(matrix => {
-      matrix[cellIndexPressed.dy][cellIndexPressed.dx] = " ";
+      matrix[cellIndexPressed.dx][cellIndexPressed.dy] = " ";
       return matrix;
     });
   }
 
   const nextTurn = (letter: string) => {
     setIsMyTurn(isMyTurn => !isMyTurn);
-    gameService.updateGame(cellIndexPressed, letter, (opponentLetter, isGridCompleted) => {
-      if(isGridCompleted) {
+    gameService.updateGame(cellIndexPressed, letter, (opponentLetter, isOpponentGridCompleted) => {
+      if(isOpponentGridCompleted) {
         gameService.gameFinish(matrix, onGameFinish);
         return;
       }
-      console.log(opponentLetter)
       setCellIndexPressed({ dx: -1, dy: -1 });
       setIsMyTurn(isMyTurn => !isMyTurn);
       setTextHelp("Posiziona la lettera " + opponentLetter + ", scelta dall'avversario")
@@ -101,7 +115,22 @@ const BoardScreen = ({ route, navigation }) => {
   };
 
   const onGameFinish = (results: any[]) => {
-    console.log(results);
+    setShowActionContainer(true);
+    const resultsValue = results.map((v) => {
+      if (v.status === 'fulfilled') return v.value
+    });
+    setGameResults(resultsValue);
+    const personalPoints = resultsValue.filter(e => e.isOpponent === false)[0].points
+    setPoints(personalPoints);
+    const opponentPoints = resultsValue.filter(e => e.isOpponent === true)[0].points
+    if (personalPoints > opponentPoints)
+     setEndGameStatus(1);
+    else if (personalPoints === opponentPoints)
+     setEndGameStatus(0);
+    else
+     setEndGameStatus(-1);
+    
+     setEndGameModalVisible(true);
   }
 
   if (!initiated) {
@@ -153,6 +182,22 @@ const BoardScreen = ({ route, navigation }) => {
               size="large" />
           </View>
         )}
+      
+      <EndGameModal 
+        endGameStatus={endGameStatus}
+        points={points}
+        isVisible={endGameModalVisible} 
+        onPress={() => {
+            setEndGameModalVisible(false);
+            navigation.popToTop();
+          }
+        }
+        onGameDetailPress={() => {
+          setEndGameModalVisible(false);
+          navigation.replace("ScoreScreen", {results: gameResults} );
+        }}
+      />
+
       </View>
     );
   }

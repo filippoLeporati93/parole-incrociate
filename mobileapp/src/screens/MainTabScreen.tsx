@@ -10,6 +10,7 @@ import HomeScreen from './HomeTabScreen';
 import {useTheme} from 'react-native-paper';
 import StatisticsTabScreen from './StatisticsTabScreen';
 import BoardScreen from './BoardScreen';
+import ScoreScreen from './ScoreScreen';
 
 const HomeStack = createStackNavigator();
 
@@ -71,6 +72,14 @@ const HomeStackScreen = ({}: any) => {
       <HomeStack.Screen
         name="BoardScreen"
         component={BoardScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Dettaglio partita</Text>),
+        }}
+      />
+      <HomeStack.Screen
+        name="ScoreScreen"
+        component={ScoreScreen}
         options={{
           headerBackTitleVisible: false,
           headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),

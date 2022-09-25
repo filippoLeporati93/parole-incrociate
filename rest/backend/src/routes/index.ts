@@ -44,6 +44,7 @@ router.post("/results", (req, res, next) => {
   let eng = new Engine(opponent === 'true' ? req.session.opponentGrid: grid);
   const results = {
     ...eng.calculateResults(),
+    matrix: opponent === 'true' ? req.session.opponentGrid: grid,
     isOpponent: opponent === 'true' ? true: false
   }
   

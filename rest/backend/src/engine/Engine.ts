@@ -184,8 +184,8 @@ export class Engine {
     }
 
     private computePointsByDirection(results: any, search_array: string[], direction: string) {
-        for (let word of search_array){
-            let input = word
+        for (let wordIdx = 0; wordIdx < search_array.length; wordIdx++) {
+            let input = search_array[wordIdx];
             let stop_search = false
             while (!stop_search) {
                 let count_mask_char = (input.match(/\*/g) || []).length;
@@ -199,7 +199,7 @@ export class Engine {
                         results['words'].push({
                             "word": word_to_search,
                             "direction": direction,
-                            "location": direction == 'dx' ? [i, first_index] : [first_index, i]
+                            "location": direction == 'dx' ? [wordIdx, first_index] : [first_index, wordIdx]
                         })
                         let len_word_to_search = word_to_search.length;
                         results['points'] = results['points'] + len_word_to_search
