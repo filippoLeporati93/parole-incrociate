@@ -19,9 +19,9 @@ const NewGameContentModal: React.FC<Props> = props => (
     <View style={styles.content}>
       <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1)}>Facile</Text>
       <View style={styles.line} />
-      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1)}>Medio</Text>
+      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(2)}>Medio</Text>
       <View style={styles.line} />
-      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1)} >Difficile</Text>
+      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(3)} >Difficile</Text>
       <View style={styles.line} />
     </View>
   </Modal>

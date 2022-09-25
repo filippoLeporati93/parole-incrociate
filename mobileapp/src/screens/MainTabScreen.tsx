@@ -13,6 +13,7 @@ import BoardScreen from './BoardScreen';
 import ScoreScreen from './ScoreScreen';
 
 const HomeStack = createStackNavigator();
+const StatisticsStack = createStackNavigator();
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -33,7 +34,7 @@ const MainTabScreen = () => (
     />
     <Tab.Screen
       name="StatisticsTab"
-      component={StatisticsTabScreen}
+      component={StatisticsStackScreen}
       options={{
         tabBarLabel: <Text>Statistiche</Text>,
         tabBarIcon: ({color}) => (
@@ -86,5 +87,32 @@ const HomeStackScreen = ({}: any) => {
         }}
       />
     </HomeStack.Navigator>
+  );
+};
+
+const StatisticsStackScreen = ({}: any) => {
+  const {colors} = useTheme();
+  return (
+    <StatisticsStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.background,
+          shadowColor: colors.background, // iOS
+          elevation: 0, // Android
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          fontFamily: 'AirbnbCereal_W_Md',
+        },
+      }}
+    >
+      <StatisticsStack.Screen
+        name="StatisticsTabScreen"
+        component={StatisticsTabScreen}
+        options={{
+          headerTitle: "Statistiche",
+        }}
+      />
+    </StatisticsStack.Navigator>
   );
 };
