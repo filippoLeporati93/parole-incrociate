@@ -1,9 +1,11 @@
 import * as express from "express";
 import { Engine } from "../engine/Engine";
+var passport = require('passport');
 
 const router = express.Router();
 
-/* GET home page. */
+router.use(passport.authenticate('bearer', { session: false }));
+
 router.get("/", function (req, res, next) {
   res.sendFile(__dirname + '/index.html');
 });

@@ -4,14 +4,14 @@ var session = require('express-session');
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+var passport = require('passport');
+var passportBearerStrategy = require('passport-http-bearer').Strategy;
 const { CosmosDbTableStore } = require('nodejs-cosmosdbtable-session');
 import { TableClient } from "@azure/data-tables";
 import * as cors from "cors";
 import "reflect-metadata";
 
 require('dotenv').config();
-
-var indexRouter = require("./routes/index");
 
 var app = express();
 
@@ -39,6 +39,16 @@ app.use(
   })
 );
 
+passport.use(new passportBearerStrategy(
+  function(token, cb) {
+    if(token === process.env.API_TOKEN)
+  	  return cb(null, {id:-1, name: 'api-token'});
+    else 
+      return cb(new Error("Unauthorized"));
+  }
+));
+
+var indexRouter = require("./routes/index");
 app.use("/", indexRouter);
 
 // catch 404 and forward to error handler

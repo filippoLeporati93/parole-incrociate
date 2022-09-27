@@ -12,18 +12,18 @@ const FetchWrapper = {
 
 const headers = {
   'Content-Type': 'application/json',
-  'x-functions-key': ApiToken,
+  'Authorization': 'Bearer ' + ApiToken,
   'x-ms-continuation': '',
 };
 
 const headersStream = {
   'Content-Type': 'application/octet-stream',
-  'x-functions-key': ApiToken,
+  'Authorization': 'Bearer ' + ApiToken,
 };
 
 const headersPatch = {
   'Content-Type': 'application/json-patch+json',
-  'x-functions-key': ApiToken,
+  'Authorization': 'Bearer ' + ApiToken,
 };
 
 function get(url: String, continuationToken?: string) {

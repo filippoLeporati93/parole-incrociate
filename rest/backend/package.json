@@ -19,6 +19,8 @@
     "jade": "~1.11.0",
     "morgan": "~1.9.1",
     "nodejs-cosmosdbtable-session": "^1.0.0",
+    "passport": "^0.6.0",
+    "passport-http-bearer": "^1.0.1",
     "reflect-metadata": "^0.1.13",
     "socket-controllers": "^0.0.5",
     "socket.io": "^4.5.2"
