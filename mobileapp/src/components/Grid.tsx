@@ -33,7 +33,6 @@ const Grid = ({matrix, cellIndexPressed, wordPressed, onCellPress} : IGrid) => {
             && dy < wordPressed.location[1] + wordPressed.word.length 
             && dy >= wordPressed.location[1]
         else {
-          console.log(wordPressed)
           return dy === wordPressed.location[1] 
             && dx < wordPressed.location[0] + wordPressed.word.length 
             && dx >= wordPressed.location[0]

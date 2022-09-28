@@ -14,7 +14,7 @@ const GameServiceComputer = () => {
       } 
     };
     return FetchWrapper.post("computegrid", body)
-      .then(value => {console.log(value); onGameUpdate(value.letter.value, value.isGridCompleted)});
+      .then(value => {onGameUpdate(value.letter.value, value.isGridCompleted)});
   }
 
   const joinGameRoom = (roomId: string) => {}

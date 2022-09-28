@@ -75,7 +75,7 @@ const HomeStackScreen = ({}: any) => {
         component={BoardScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Dettaglio partita</Text>),
+          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
         }}
       />
       <HomeStack.Screen
@@ -83,7 +83,7 @@ const HomeStackScreen = ({}: any) => {
         component={ScoreScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
+          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Dettagli</Text>),
         }}
       />
     </HomeStack.Navigator>
@@ -111,6 +111,7 @@ const StatisticsStackScreen = ({}: any) => {
         component={StatisticsTabScreen}
         options={{
           headerTitle: "Statistiche",
+          headerBackTitleVisible: false,
         }}
       />
     </StatisticsStack.Navigator>

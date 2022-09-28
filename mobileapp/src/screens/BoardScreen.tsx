@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   ActivityIndicator,
@@ -20,6 +20,7 @@ import AcceptAction from '../components/AcceptAction';
 import { useTheme } from 'react-native-paper';
 import Text from '../components/AppText';
 import EndGameModal from '../components/modal/EndGameModal';
+import StatisticsUtils from '../utils/StatisticsUtils';
 
 const BoardScreen = ({ route, navigation }) => {
   const theme = useTheme();
@@ -33,6 +34,9 @@ const BoardScreen = ({ route, navigation }) => {
   const [cellIndexPressed, setCellIndexPressed] = useState({ dx: -1, dy: -1 });
   const [isMyTurn, setIsMyTurn] = useState(true);
   const [showAcceptActionContainer, setShowActionContainer] = useState(false);
+  
+  const timerRef = useRef<any>(null);
+  const elapsedTimer = useRef<number>(0);
 
   const gameService = gameServiceFactory().build(route.params.isOnlineGame);
 
@@ -104,6 +108,7 @@ const BoardScreen = ({ route, navigation }) => {
     setIsMyTurn(isMyTurn => !isMyTurn);
     gameService.updateGame(cellIndexPressed, letter, (opponentLetter, isOpponentGridCompleted) => {
       if(isOpponentGridCompleted) {
+        timerRef.current.stop();
         gameService.gameFinish(matrix, onGameFinish);
         return;
       }
@@ -115,7 +120,7 @@ const BoardScreen = ({ route, navigation }) => {
   };
 
   const onGameFinish = (results: any[]) => {
-    setShowActionContainer(true);
+    setIsMyTurn(isMyTurn => !isMyTurn);
     const resultsValue = results.map((v) => {
       if (v.status === 'fulfilled') return v.value
     });
@@ -131,6 +136,14 @@ const BoardScreen = ({ route, navigation }) => {
      setEndGameStatus(-1);
     
      setEndGameModalVisible(true);
+          
+     StatisticsUtils.addGame({
+        youWon: personalPoints > opponentPoints,
+        score: personalPoints,
+        gameDatetime: new Date(),
+        level: route.params.level,
+        gameElapsedTime: elapsedTimer.current,
+     });
   }
 
   if (!initiated) {
@@ -149,7 +162,7 @@ const BoardScreen = ({ route, navigation }) => {
     return (
       <View style={styles.container}>
         <View style={styles.infoContainer}>
-          <Timer />
+          <Timer ref={timerRef} onStop={_seconds => elapsedTimer.current = _seconds} />
         </View>
         <View style={styles.boardContainer} >
           <Grid
