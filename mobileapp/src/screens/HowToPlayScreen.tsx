@@ -47,10 +47,7 @@ const HowToPlayScreen = ({navigation}: any) => {
   return (
     <ScrollView style={styles.container}
     contentContainerStyle={{ marginHorizontal: 20, }}>
-      <Text style={{fontSize: 20, textAlign: 'justify',}}>
-      Se vi piacciono i giochi del passato ed anche i più divertenti, le "parole incrociate" fanno per voi. 
-      </Text>
-      <Text style={{fontSize: 32, marginTop: 30}}>
+      <Text style={{fontSize: 32}}>
       Come si gioca
       </Text>
 
