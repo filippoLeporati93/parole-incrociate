@@ -29,9 +29,10 @@ export class GameController {
     console.log(message);
     let grid = message.grid;
     let letter = message.letter;
+    let level = message.level;
 
-    let eng = new Engine(grid, letter)
-    const [next_grid, next_letter] = eng.computeNextGrid();
+    let eng = new Engine(grid)
+    const [next_grid, next_letter] = eng.computeNextGrid(level, letter.value);
     console.log(next_grid);
     const responseData = {
       letter: next_letter,

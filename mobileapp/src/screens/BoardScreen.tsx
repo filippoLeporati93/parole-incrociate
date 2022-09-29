@@ -54,17 +54,6 @@ const BoardScreen = ({ route, navigation }) => {
     });
   }, []);
 
-  const isGridComplete = (matrix: IPlayMatrix): boolean => {
-    for(let i = 0; i < matrix.length; i++) {
-      for(let j = 0; j < matrix[i].length; j++){
-          if (matrix[i][j] === " ") {
-              return false
-          }
-      }
-    }
-    return true;
-  }
-
 
   const onCellPress = ({ dx, dy }: { dx: number, dy: number }) => {
     if (showAcceptActionContainer)
@@ -106,7 +95,7 @@ const BoardScreen = ({ route, navigation }) => {
 
   const nextTurn = (letter: string) => {
     setIsMyTurn(isMyTurn => !isMyTurn);
-    gameService.updateGame(cellIndexPressed, letter, (opponentLetter, isOpponentGridCompleted) => {
+    gameService.updateGame(route.params.level, cellIndexPressed, letter, (opponentLetter, isOpponentGridCompleted) => {
       if(isOpponentGridCompleted) {
         timerRef.current.stop();
         gameService.gameFinish(matrix, onGameFinish);

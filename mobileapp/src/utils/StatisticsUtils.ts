@@ -73,7 +73,7 @@ async function calcKpis(time: number, level: number) {
         while(stats_ordered.length > 0) {
             let newWinningSeriesIdx = stats_ordered.findIndex(e => e.youWon === false);
             const series = stats_ordered.splice(0, newWinningSeriesIdx === -1 ? stats_ordered.length: newWinningSeriesIdx + 1);
-            maxWinningSeries = Math.max(maxWinningSeries, series.length-1);
+            maxWinningSeries = Math.max(maxWinningSeries, newWinningSeriesIdx === -1 ? series.length : series.length - 1);
         }
         kpis.bestWinningSeries = maxWinningSeries;
     }

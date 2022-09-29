@@ -17,4 +17,8 @@ export default class Utils {
       
         return array;
       }
+
+    static getRandomElem(array: any[]) : any {
+      return array[Math.floor(array.length * Math.random())];
+    }
 }

@@ -7,31 +7,36 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 const ncols = 5
 const nrows = 5
 
+const levels = [
+    {level: 1, wordLength: [2,3,3,3,4]},
+    {level: 2, wordLength: [3,4,4,4,5]},
+    {level: 3, wordLength: [5]}
+]
+
 export class Engine {
     grid: Array<Array<string>>;
-    letter: {value: string, location: {dx: number, dy: number}};
     wordlist: string[];
 
-    constructor(grid, letter = null) {
+    constructor(grid) {
         this.grid = JSON.parse(JSON.stringify(grid));
 
-        if (letter !== null) {
-            this.letter = letter;
-        }
         this.wordlist = this.getWordList("280000_parole_italiane.txt");
     }
 
     showGridText(grid: Matrix) {
-        this.grid.forEach((row) => console.log(row.join(' | ')));
+        if(grid)
+            grid.forEach((row) => console.log(row.join(' | ')));
+        else
+            this.grid.forEach((row) => console.log(row.join(' | ')));
     }
 
-    private fillGridRandomly(grid: Matrix, letter: string) {
+    private fillGridRandomly(grid: Matrix, letter: string | null) {
         let firstCharPlaced = false
         for(let i = 0; i < grid.length; i++){
             for(let j = 0; j < grid[i].length; j++){
                 if (grid[i][j] === " ") {
-                    if(firstCharPlaced) {
-                        grid[i][j] = ALPHABET.charAt(Math.floor(ALPHABET.length * Math.random()));
+                    if(firstCharPlaced || !letter) {
+                        grid[i][j] = Utils.getRandomElem(Array.from(ALPHABET));
                         return;
                     }
                     else {
@@ -54,39 +59,44 @@ export class Engine {
         return true;
     }
 
-    private getDeltaMatrix(originalGrid: Matrix, grid: Matrix, letter: string) {
+    private getDeltaMatrix(originalGrid: Matrix, grid: Matrix, letter: string | null) {
         const deltaChar = {
             value: "",
             location: [],
         }
         const deltaGrid = JSON.parse(JSON.stringify(originalGrid));
         let letterAdded = false;
+        let newLetters = new Array<{value: string, location: number[]}>();
         for(let r = 0; r < grid.length; r++){
             for(let c = 0; c < grid[r].length; c++){  
                 // add opponent letter selected
-                if (deltaGrid[r][c] !== grid[r][c] && grid[r][c] === letter && !letterAdded) {
-                    deltaGrid[r][c] = grid[r][c]
-                    letterAdded = true
+                if (letter && deltaGrid[r][c] !== grid[r][c] && grid[r][c] === letter && !letterAdded) {
+                    deltaGrid[r][c] = grid[r][c];
+                    letterAdded = true;
                 }
                 // add new letter selected
-                if (deltaGrid[r][c] !== grid[r][c] && deltaChar['value'] === '') {
-                    deltaGrid[r][c] = grid[r][c]
-                    deltaChar['value'] = grid[r][c]
-                    const loc = new Array<number>(2);
-                    loc[0] = r;
-                    loc[1] = c;
-                    deltaChar['location'] = loc;
-                }
-
+                if (deltaGrid[r][c] !== grid[r][c] && deltaChar.value === '') {
+                    newLetters.push({
+                        value: grid[r][c],
+                        location: [r, c]
+                    })
+                }  
             }
         }
+        // pick random next letter from word selected
+        if(newLetters.length > 0) {
+            let newLetter = Utils.getRandomElem(newLetters);
+            deltaChar.value = newLetter.value;             
+            deltaChar.location = newLetter.location;
+            deltaGrid[newLetter.location[0]][newLetter.location[1]] = newLetter.value;
+        }
+
         return [deltaGrid, deltaChar]
     }
 
     private getWordList(wordlistFilename: string) {
         const wordlist: string[] = []
         const fs = require('fs');
-        const path = require('path');
 
         const p = __dirname + "/word_storage/" + wordlistFilename;
 
@@ -95,46 +105,45 @@ export class Engine {
         const lines = file.toString().split("\n")
         for (let line of lines) {
             //The word is upper-cased and comments and blank lines are ignored.
-            let word: string = line.trim().toUpperCase();
-            wordlist.push(word)
+            let word: string = line.trim().toUpperCase().replace(' ','').replace("'",'');
+            if( word.length <= 5 && word.length > 1 )
+                wordlist.push(word)
         }
-        const wordlist_filter = wordlist.filter((val) => val.length <= 5 && val.length > 1);       
-        
-        const wordlist_shuffle = Utils.shuffle(wordlist_filter)
-        return wordlist_shuffle.sort((a, b) => {
-            return b.length - a.length;
-        });
+
+        const wordlist_shuffle = Utils.shuffle(wordlist)
+        return wordlist_shuffle.sort((a, b) => b.length - a.length);
     
     };
 
-    private testCandidate(irow: number, icol:number, dx: number, dy: number, word: string) {
-        try {
+    private testCandidate(irow: number, icol:number, dx: number, dy: number, word: string, letter: string | null) {
         /* Tet the candidate location (icol, irow) for word in orientation
         dx, dy). */                
         let grid_word = "";
         let mask_word = word;
+        let charTraversed = 0;
         for (let j=0; j < word.length; j++) {
             if (this.grid[irow][icol] !== " " && this.grid[irow][icol] !== word.charAt(j))
-                return false
+                return [false, charTraversed];
             grid_word = grid_word + this.grid[irow][icol]
-            if (this.grid[irow][icol] === word.charAt(j))
-                mask_word = mask_word.substring(0, j) + '*' + mask_word.substring(j + mask_word.length);
+            if (this.grid[irow][icol] === word.charAt(j)) {
+                charTraversed++;
+                mask_word = mask_word.substring(0, j) + '*' + mask_word.substring(j + 1);
+            }
             irow += dy
             icol += dx
         }
+        // check if the candidate is not the same word in grid
         if (word === grid_word)
-            return false;
+            return [false, charTraversed];
         
-        if (mask_word.indexOf(this.letter.value) < 0)
-            return false;
+        // check if the letter is in the word to place excluding the char already in grid
+        if (letter && mask_word.indexOf(letter) < 0)
+            return [false, charTraversed];
 
-        return true;
-    }catch (e) {
-        console.error(e);
-    }
+        return [true, charTraversed];
     }
 
-    private placeWord(word: string): boolean {
+    private placeWord(word: string, letter: string | null, minCharsTraversed: number): boolean {
         // Left, down
         const dxdy_choices = Utils.shuffle([{dx: 0, dy: 1}, {dx: 1, dy: 0}]);
         for (let {dx, dy} of dxdy_choices) {
@@ -143,10 +152,11 @@ export class Engine {
             let n = word.length;
             let colmax = dx ? ncols - n : ncols - 1;
             let rowmax = dx ? nrows - 1 : nrows - n;
-            for (let irow = 0; irow < rowmax + 1; irow++) {
-                for (let icol = 0; icol < colmax + 1; icol++) {
-                    if (this.testCandidate(irow, icol, dx, dy, word))
-                        candidates.push({irow: irow, icol: icol})
+            for (let irow = 0; irow <= rowmax; irow++) {
+                for (let icol = 0; icol <= colmax; icol++) {
+                    const [isValidCandidate, charsTraversed] = this.testCandidate(irow, icol, dx, dy, word, letter)
+                    if (isValidCandidate && charsTraversed >= minCharsTraversed)
+                        candidates.push({irow: irow, icol: icol, charsTraversed: charsTraversed})
                 }
             }
             // If we don't have any candidates, try the next orientation.
@@ -154,7 +164,7 @@ export class Engine {
                 continue
             // Pick a random candidate location and place the word in this
             // orientation.
-            let {irow, icol} = candidates[Math.floor(candidates.length * Math.random())]
+            let {irow, icol} = candidates.sort((a,b) => b.charsTraversed - a.charsTraversed)[0];
             for (let j = 0; j < n; j++) {
                 this.grid[irow][icol] = word.charAt(j);
                 irow += dy
@@ -168,48 +178,22 @@ export class Engine {
         return false
     }
 
-    private makeWordSearch(nrows: number, ncols: number, wordlist: string[]) {
-        
-        for (let word of wordlist) {
-            word = word.replace(' ','').replace("'",'');
-            if (word.indexOf(this.letter.value) < 0)
-                continue;
-            if (this.placeWord(word))
-                return this.grid;
-        }
-
-        this.fillGridRandomly(this.grid, this.letter.value);
-        return this.grid;
-
-    }
 
     private computePointsByDirection(results: any, search_array: string[], direction: string) {
-        for (let wordIdx = 0; wordIdx < search_array.length; wordIdx++) {
-            let input = search_array[wordIdx];
-            let stop_search = false
-            while (!stop_search) {
-                let count_mask_char = (input.match(/\*/g) || []).length;
-                let filter_wordlist = this.wordlist.filter((val) => val.length <= val.length - count_mask_char);
-                let old_masked_chars = count_mask_char
-                let new_masked_chars = count_mask_char
-                for (let i=0; i < filter_wordlist.length; i++) {
-                    let word_to_search = filter_wordlist[i];
-                    let first_index = input.search(word_to_search)
-                    if (first_index >= 0) {
-                        results['words'].push({
-                            "word": word_to_search,
-                            "direction": direction,
-                            "location": direction == 'dx' ? [wordIdx, first_index] : [first_index, wordIdx]
-                        })
-                        let len_word_to_search = word_to_search.length;
-                        results['points'] = results['points'] + len_word_to_search
-                        new_masked_chars = new_masked_chars + len_word_to_search
-                        input = input.replace(word_to_search, '*'.repeat(len_word_to_search))
-                    }
+        search_array.forEach((input,wordIdx) => {
+            for (let word_to_search of this.wordlist) {
+                let first_index = input.search(word_to_search)
+                if (first_index >= 0) {
+                    results['words'].push({
+                        "word": word_to_search,
+                        "direction": direction,
+                        "location": direction == 'dx' ? [wordIdx, first_index] : [first_index, wordIdx]
+                    })
+                    results['points'] = results['points'] + word_to_search.length;
+                    break;
                 }
-                stop_search = new_masked_chars - old_masked_chars == 0 ? true : false;
             }
-        }
+        });
     }
 
     calculateResults() {
@@ -220,17 +204,13 @@ export class Engine {
         }
 
         // Compute list of word in matrix
-        let words_rows = Array(nrows).fill('');
-        let words_columns = Array(ncols).fill('');
+        let words_rows = Array(nrows).fill('', 0);
+        let words_columns = Array(ncols).fill('', 0);
         for (let irow = 0; irow < this.grid.length; irow++) {
             let row = this.grid[irow];
             for (let icol = 0; icol < row.length; icol++ ) {
                 let col = row[icol];
-                if (!words_rows[irow])
-                    words_rows[irow] = ''
                 words_rows[irow] = words_rows[irow] + col
-                if (!words_columns[icol])
-                    words_columns[icol] = ''
                 words_columns[icol] = words_columns[icol] + col
             }
         }
@@ -242,10 +222,36 @@ export class Engine {
 
     }
 
-    computeNextGrid() {
-        const originalGrid = JSON.parse(JSON.stringify(this.grid));
-        const newGrid = this.makeWordSearch(nrows, ncols, this.wordlist);
-        const [deltaGrid, deltaLetter] = this.getDeltaMatrix(originalGrid,newGrid, this.letter.value)
+    private nextGrid(level: number, letter: string | null) {
+        const wordlist_withletter = letter ? this.wordlist.filter(w => w.indexOf(letter) >= 0) : this.wordlist;
+        const lengthWordByLevel = levels.filter(l => l.level === level)[0];
+        const wordlist_level = wordlist_withletter.filter(w => w.length <= Utils.getRandomElem(lengthWordByLevel.wordLength))
+        
+        let wordPlaced = false;
+        let minCharsTraversed = 4;
+        while(minCharsTraversed >= 0 && !wordPlaced) {
+            for (let word of wordlist_level) {
+                if (this.placeWord(word, letter, minCharsTraversed)) {
+                    wordPlaced = true;
+                    break;
+                }
+            }
+            minCharsTraversed--;
+        }
+        if(!wordPlaced)
+            this.fillGridRandomly(this.grid, letter);
+    }
+
+    computeNextGrid(level: number, letter: string) {
+        let originalGrid = JSON.parse(JSON.stringify(this.grid));
+        this.nextGrid(level, letter);
+        let [deltaGrid, deltaLetter] = this.getDeltaMatrix(originalGrid, this.grid, letter);
+        // generate a new word and letter in case you place only opponent letter
+        if(deltaLetter.value === "") {
+            originalGrid = JSON.parse(JSON.stringify(this.grid));
+            this.nextGrid(level, null);
+            [deltaGrid, deltaLetter] = this.getDeltaMatrix(originalGrid, this.grid, null);
+        }
         const gridCompleted = this.isGridComplete(deltaGrid);
         return [deltaGrid, deltaLetter, gridCompleted]
     }

@@ -13,6 +13,7 @@ router.get("/", function (req, res, next) {
 router.post("/computegrid", (req, res, next) => {
 
   let letter = req.body.letter;
+  let level = req.body.level;
   if (!req.session.opponentGrid) {
     const matrix = new Array(5);
     for (let i = 0; i < matrix.length; i++) {
@@ -21,8 +22,8 @@ router.post("/computegrid", (req, res, next) => {
     req.session.opponentGrid = matrix;
   }
 
-  let eng = new Engine(req.session.opponentGrid, letter)
-  const [next_grid, next_letter, next_grid_completed] = eng.computeNextGrid();
+  let eng = new Engine(req.session.opponentGrid)
+  const [next_grid, next_letter, next_grid_completed] = eng.computeNextGrid(level, letter.value);
   req.session.opponentGrid = next_grid;
 
   const responseData = {

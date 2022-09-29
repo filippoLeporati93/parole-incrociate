@@ -4,6 +4,7 @@ import { IPlayMatrix } from './GameServiceFactory';
 const GameServiceComputer = () => {
   
   const updateGame = (
+    level: number,
     cellIndexPressed: {dx:number,dy:number},
     letter: string,
     onGameUpdate:(opponentLetter:string, isOpponentGridCompleted: boolean) => void) => {
@@ -11,7 +12,8 @@ const GameServiceComputer = () => {
       letter: {
         value: letter, 
         location: cellIndexPressed
-      } 
+      },
+      level: level,
     };
     return FetchWrapper.post("computegrid", body)
       .then(value => {onGameUpdate(value.letter.value, value.isGridCompleted)});

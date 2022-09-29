@@ -25,6 +25,7 @@ const GameServiceOnline = () => {
   }
 
   async function updateGame(
+     level: number,
      cellIndexPressed: {dx:number,dy:number},
      letter: string,
      onGameUpdate:(opponentLetter: string, isGridCompleted: boolean) => void) {

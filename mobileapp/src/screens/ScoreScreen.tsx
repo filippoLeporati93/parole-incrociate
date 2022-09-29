@@ -11,33 +11,32 @@ import { useTheme } from 'react-native-paper';
 const Tab = createMaterialTopTabNavigator();
 
 type wordLine = {
-  idx: number,
   wordResults: wordResults,
   onPressWord: (wordPressed: wordResults) => void,
 }
 
 const WordLine: React.FC<wordLine> = props => {
   return (
-    <View key={props.idx} style={{marginHorizontal: 30,}}>
-          <Pressable
-            onPress={() => props.onPressWord(props.wordResults)}
-            style={{flexDirection: 'row',
-              alignItems: 'center',
-              marginVertical: 8,
-              }}>
-            <View style={{flex: 1,}}>
-            <Text style={{fontSize: 23}}>
-              {props.wordResults.word}
-            </Text>
-            </View>
-            <View style={{flex: 1,}}>
-              <Text style={{color: 'gray', textAlign: 'right'}}>{props.wordResults.word.length} punti</Text>
-            </View>
-            
-            
-          </Pressable>
-          <View style={{borderWidth: StyleSheet.hairlineWidth, borderColor: 'gray'}}/>
-          </View>
+    <View style={{marginHorizontal: 30,}}>
+      <Pressable
+        onPress={() => props.onPressWord(props.wordResults)}
+        style={{flexDirection: 'row',
+          alignItems: 'center',
+          marginVertical: 8,
+          }}>
+        <View style={{flex: 1,}}>
+        <Text style={{fontSize: 23}}>
+          {props.wordResults.word}
+        </Text>
+        </View>
+        <View style={{flex: 1,}}>
+          <Text style={{color: 'gray', textAlign: 'right'}}>{props.wordResults.word.length} punti</Text>
+        </View>
+        
+        
+      </Pressable>
+      <View style={{borderWidth: StyleSheet.hairlineWidth, borderColor: 'gray'}}/>
+    </View>
   )
 }
 
@@ -65,22 +64,22 @@ export const TabScore: React.FC<TabScoreProps> = props => {
     </View>
     <View style={styles.wordContainer}>
     <ScrollView>
-      <Text style={{fontSize: 14, textAlign:'left', color:'gray'}}>Riga</Text>
+      <Text style={{fontSize: 14, textAlign:'left', color:'gray', marginLeft: 10,}}>Riga</Text>
       {
         props.result.words
         .filter(w => w.direction == 'dx')
         .sort((a,b) => a.location[0]-b.location[0])
         .map((e,idx) => 
-          <WordLine onPressWord={props.onPressWord} idx={idx} wordResults={e} />
+          <WordLine onPressWord={props.onPressWord} key={idx} wordResults={e} />
         )
       }
-      <Text style={{fontSize: 14, textAlign:'left', color:'gray', marginTop: 15,}}>Colonna</Text>
+      <Text style={{fontSize: 14, textAlign:'left', color:'gray', marginTop: 15, marginLeft: 10}}>Colonna</Text>
       {
         props.result.words
         .filter(w => w.direction == 'dy')
         .sort((a,b) => a.location[1]-b.location[1])
         .map((e,idx) => 
-          <WordLine onPressWord={props.onPressWord} idx={idx+100} wordResults={e} />
+          <WordLine onPressWord={props.onPressWord} key={idx+100} wordResults={e} />
         )
       }
     </ScrollView>
