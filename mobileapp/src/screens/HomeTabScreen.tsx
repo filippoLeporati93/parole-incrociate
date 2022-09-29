@@ -30,6 +30,13 @@ const HomeScreen = ({navigation}: any) => {
       justifyContent: 'flex-end', 
       paddingBottom: 50,
       }}>
+      <Pressable 
+        style={{padding: 15, marginBottom: 10}}
+        onPress={() => navigation.navigate('HowToPlayScreen')}>
+        <Text style={{color: theme.colors.primaryDark, fontSize: 18}}>
+         Come si gioca?
+        </Text>
+      </Pressable>
       <Pressable style={styles.commandButton} onPress={() => setModalVisible(true)}>
         <Text style={styles.panelButtonTitle}>
           Gioca contro il computer

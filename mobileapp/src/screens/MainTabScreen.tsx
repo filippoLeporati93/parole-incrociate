@@ -11,6 +11,7 @@ import {useTheme} from 'react-native-paper';
 import StatisticsTabScreen from './StatisticsTabScreen';
 import BoardScreen from './BoardScreen';
 import ScoreScreen from './ScoreScreen';
+import HowToPlayScreen from './HowToPlayScreen';
 
 const HomeStack = createStackNavigator();
 const StatisticsStack = createStackNavigator();
@@ -84,6 +85,14 @@ const HomeStackScreen = ({}: any) => {
         options={{
           headerBackTitleVisible: false,
           headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Dettagli</Text>),
+        }}
+      />
+      <HomeStack.Screen
+        name="HowToPlayScreen"
+        component={HowToPlayScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Regole</Text>),
         }}
       />
     </HomeStack.Navigator>
