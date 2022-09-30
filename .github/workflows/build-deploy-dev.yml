@@ -33,7 +33,9 @@ jobs:
         run: |
           # Build and test the project, then
           # deploy to Azure Web App.
+          yarn global add typescript ts-node
           yarn install
+          yarn build
 
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v3
