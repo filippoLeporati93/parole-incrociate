@@ -24,22 +24,22 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
-    - name: yarn install
-      run: |
-        # Build and test the project, then
-        # deploy to Azure Web App.
-        yarn install
+      - name: yarn install
+        run: |
+          # Build and test the project, then
+          # deploy to Azure Web App.
+          yarn install
 
-    - name: Upload artifact for deployment jobs
-      uses: actions/upload-artifact@v3
-      with:
-        name: engine-app
-        path: . 
+      - name: Upload artifact for deployment jobs
+        uses: actions/upload-artifact@v3
+        with:
+          name: engine-app
+          path: . 
 
   deploy:
     permissions:
