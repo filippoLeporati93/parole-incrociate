@@ -4,7 +4,8 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "start": "nodemon"
+    "start": "ts-node ./src/server",
+    "dev": "nodemon"
   },
   "dependencies": {
     "@azure/data-tables": "^13.2.0",

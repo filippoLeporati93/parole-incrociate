@@ -1,16 +1,16 @@
-name: Build and deploy Python engine to Azure Function App
+name: Build and deploy Node.js engine to Azure Function App
 
 env:
-  AZURE_WEBAPP_NAME: parinc-func-engine-dev   # set this to the name of your Azure Web App
-  PYTHON_VERSION: '3.9'                       # set this to the Python version to use
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: './rest/engine'   # set this to the path to your web app project, defaults to the repository root
+  AZURE_WEBAPP_NAME: parinc-engine-dev    # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: './backend'      # set this to the path to your web app project, defaults to the repository root
+  NODE_VERSION: '16.x'                # set this to the node version to use
 
 on:
   push:
     branches:
       - "main"
     paths:
-      - rest/engine/**
+      - backend/**
   workflow_dispatch:
 
 permissions:
@@ -18,39 +18,28 @@ permissions:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
-        uses: actions/setup-python@v3.0.0
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          cache: 'pip'
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
 
-      - name: Create and start virtual environment
-        run: |
-          python -m venv venv
-          source venv/bin/activate
+    - name: yarn install
+      run: |
+        # Build and test the project, then
+        # deploy to Azure Web App.
+        yarn install
 
-      - name: Resolve Project Dependencies Using Pip
-        shell: bash
-        run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
-          popd
-        
-      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
-      
-      - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v3
-        with:
-          name: python-app
-          path: |
-            . 
-            !venv/
+    - name: Upload artifact for deployment jobs
+      uses: actions/upload-artifact@v3
+      with:
+        name: engine-app
+        path: . 
 
   deploy:
     permissions:
@@ -65,13 +54,12 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: python-app
+          name: engine-app
           path: .
           
-      - name: 'Deploy to Azure Function App'
-        id: deploy-to-webapp
-        uses: azure/functions-action@v1
-        with:
-          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_ENGINE_PUBLISH_PROFILE }}
+      - name: 'Deploy to Azure WebApp'
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
