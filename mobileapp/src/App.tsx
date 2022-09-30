@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import NetInfo from '@react-native-community/netinfo';
 import {
   NavigationContainer,
@@ -12,7 +12,10 @@ import {
 } from 'react-native-paper';
 import MainTabScreen from './screens/MainTabScreen';
 import NoInternetModal from './components/modal/NoInternetModal';
-import SocketService   from "./services/SocketService"
+import SocketService   from "./services/SocketService";
+import Config from 'react-native-config';
+
+const BASE_WS_URL = Config.BASE_WS_URL;
 
 const App = () => {
   const CustomDefaultTheme = {
@@ -37,9 +40,9 @@ const App = () => {
 
   const [isOffline, setOfflineStatus] = useState(false);
 
-  const connectSocket = async () => {
-    const socket = await SocketService
-      .connect("http://localhost:9000")
+  const connectSocket = () => {
+    SocketService
+      .connect(BASE_WS_URL)
       .catch((err) => {
         console.error("Error: ", err);
       });

@@ -48,7 +48,7 @@ passport.use(new passportBearerStrategy(
   }
 ));
 
-var indexRouter = require("./routes/index");
+var indexRouter = require("./api/rest_routes/index");
 app.use("/", indexRouter);
 
 // catch 404 and forward to error handler

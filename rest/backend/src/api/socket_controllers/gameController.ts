@@ -6,7 +6,7 @@ import {
   SocketIO,
 } from "socket-controllers";
 import { Server, Socket } from "socket.io";
-import { Engine } from "../../engine/Engine";
+import { Engine } from "../../game_engine/Engine";
 
 @SocketController()
 export class GameController {

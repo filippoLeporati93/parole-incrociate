@@ -5,9 +5,8 @@ import {
 } from 'react-native';
 import Text from '../components/AppText';
 import {useTheme} from '@react-navigation/native';
-import Grid from '../components/Grid';
 import {wordResults, gameResults} from '../models/Types';
-import ScoreScreen, { TabScore } from './ScoreScreen';
+import { TabScore } from './ScoreScreen';
 
 const matrix = [
   ["M", "S", "O", "C", "I"],

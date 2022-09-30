@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { DefaultEventsMap } from "socket.io-client/build/typed-events";
+
+import Config from 'react-native-config';
+
+const API_TOKEN = Config.API_TOKEN;
 
 class SocketService {
   public socket: Socket | null = null;
@@ -9,7 +12,11 @@ class SocketService {
     url: string
   ): Promise<Socket<DefaultEventsMap, DefaultEventsMap>> {
     return new Promise((rs, rj) => {
-      this.socket = io(url);
+      this.socket = io(url, {
+        auth: {
+          token: API_TOKEN
+        }
+      });
 
       if (!this.socket) return rj();
 
@@ -24,5 +31,7 @@ class SocketService {
     });
   }
 }
+
+
 
 export default new SocketService();

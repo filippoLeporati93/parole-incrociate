@@ -1,5 +1,5 @@
 import * as express from "express";
-import { Engine } from "../engine/Engine";
+import { Engine } from "../../game_engine/Engine";
 var passport = require('passport');
 
 const router = express.Router();
