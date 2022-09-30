@@ -16,6 +16,10 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    working-directory: backend
+
 jobs:
   build:
     name: Build
@@ -44,6 +48,7 @@ jobs:
           path: . 
 
   deploy:
+    name: Deploy
     permissions:
       contents: none
     runs-on: ubuntu-latest
