@@ -98,7 +98,7 @@ export class Engine {
         const wordlist: string[] = []
         const fs = require('fs');
 
-        const p = __dirname + "/word_storage/" + wordlistFilename;
+        const p = __dirname + "/assets/word_storage/" + wordlistFilename;
 
         const file = fs.readFileSync(p, {encoding:'utf8', flag:'r'})
         

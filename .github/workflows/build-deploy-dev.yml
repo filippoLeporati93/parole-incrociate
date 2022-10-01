@@ -37,7 +37,7 @@ jobs:
         run: |
           # Build and test the project, then
           # deploy to Azure Web App.
-          yarn global add typescript ts-node
+          yarn global add typescript ts-node copyfiles
           yarn install
           yarn build
 
@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: engine-app
-          path: . 
+          path: ./dist/
 
   deploy:
     name: Deploy
