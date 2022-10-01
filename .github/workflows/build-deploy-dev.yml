@@ -45,7 +45,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: engine-app
-          path: dist/
+          path: backend/dist/
+          if-no-files-found: error
 
   deploy:
     name: Deploy
