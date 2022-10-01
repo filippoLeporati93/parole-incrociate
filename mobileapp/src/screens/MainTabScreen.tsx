@@ -92,7 +92,7 @@ const HomeStackScreen = ({}: any) => {
         component={HowToPlayScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Regole</Text>),
+          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}></Text>),
         }}
       />
     </HomeStack.Navigator>
@@ -119,7 +119,8 @@ const StatisticsStackScreen = ({}: any) => {
         name="StatisticsTabScreen"
         component={StatisticsTabScreen}
         options={{
-          headerTitle: "Statistiche",
+          headerTransparent: true,
+          headerTitle: "",
           headerBackTitleVisible: false,
         }}
       />

@@ -171,7 +171,7 @@ const BoardScreen = ({ route, navigation }) => {
               <Stack opponentLetter={opponentLetter} onStackCellPress={onStackCellPress} />
             </View>
             <View style={styles.textHelpContainer}>
-              <Text style={{color: 'gray', fontSize: 11,}}>{textHelp}</Text>
+              <Text style={{color: 'gray', fontSize: 12,}}>{textHelp}</Text>
             </View>
           </>
         ) : (
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   },
   textHelpContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 15,
   }
 
 });

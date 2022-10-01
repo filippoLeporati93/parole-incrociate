@@ -1,9 +1,12 @@
 import React from 'react';
 import {Text} from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 const AppText = (props: any) => {
   // Put your default font styles here.
-  let style = [{color: 'black', fontFamily: 'AirbnbCereal_W_Md'}];
+  const theme = useTheme();
+
+  let style = [{color: theme.colors.text, fontFamily: 'AirbnbCereal_W_Md'}];
   if (props.style) {
     if (Array.isArray(props.style)) {
       style = style.concat(props.style);

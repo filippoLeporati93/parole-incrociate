@@ -45,7 +45,7 @@ const HowToPlayScreen = ({navigation}: any) => {
 
   return (
     <ScrollView style={styles.container}
-    contentContainerStyle={{ marginHorizontal: 20, }}>
+    contentContainerStyle={{ marginHorizontal: 10, }}>
       <Text style={{fontSize: 32}}>
       Come si gioca
       </Text>
@@ -58,7 +58,7 @@ Ognuno dei due giocatori ha una griglia con cinque file di cinque caselle, che t
   <Text style={{fontSize: 32, marginTop: 30}}>
       Come si contano i punti
       </Text>
-      <Text style={{fontSize: 16, marginTop: 10, textAlign: 'justify'}}>
+      <Text style={{fontSize: 16, marginVertical: 10, textAlign: 'justify'}}>
 Su ogni riga si vede qual è la parola più lunga che si legge da sinistra a destra. Essa vale tanti punti quante sono le lettere che la formano, come nell'esempio in figura: sulla prima riga SOCI vale 4 punti, BARO vale 4, ASOLE vale 5... Lo stesso si fa su ogni colonna, leggendo dall'alto in basso. 
 {"\n\n"}Valgono i verbi coniugati, ma non i nomi propri. Chi fa più punti ha vinto!
       </Text>
