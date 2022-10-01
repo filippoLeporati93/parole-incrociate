@@ -4,8 +4,8 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "start": "ts-node ./src/server",
-    "build": "tsc",
+    "start": "node dist/server.js",
+    "build": "tsc --project .",
     "dev": "nodemon"
   },
   "dependencies": {
