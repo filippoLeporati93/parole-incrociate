@@ -3,7 +3,7 @@ import {Text} from 'react-native';
 
 const AppText = (props: any) => {
   // Put your default font styles here.
-  let style = [{fontFamily: 'AirbnbCereal_W_Md'}];
+  let style = [{color: 'black', fontFamily: 'AirbnbCereal_W_Md'}];
   if (props.style) {
     if (Array.isArray(props.style)) {
       style = style.concat(props.style);

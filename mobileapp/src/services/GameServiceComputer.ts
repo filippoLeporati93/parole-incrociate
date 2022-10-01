@@ -16,13 +16,14 @@ const GameServiceComputer = () => {
       level: level,
     };
     return FetchWrapper.post("computegrid", body)
-      .then(value => {onGameUpdate(value.letter.value, value.isGridCompleted)});
+      .then(value => {onGameUpdate(value.letter.value, value.isGridCompleted)})
+      .catch(err => console.error(err));
   }
 
   const joinGameRoom = (roomId: string) => {}
 
   const onStartGame = (callback: (options: any) => void) => {
-    FetchWrapper.post("resetgame", {}).then(callback);
+    FetchWrapper.post("resetgame", {}).then(callback).catch(err => console.error(err));
   }
 
   const gameFinish = (matrix: IPlayMatrix, onGameFinish: (results: any[]) => void) => {
@@ -32,7 +33,7 @@ const GameServiceComputer = () => {
     const results = [];
     results.push(FetchWrapper.post("results", bodyPlayer));
     results.push(FetchWrapper.post("results?opponent=true", {}));
-    FetchWrapper.allSettled(results).then(onGameFinish);
+    FetchWrapper.allSettled(results).then(onGameFinish).catch(err => console.error(err));
   }
 
   return {

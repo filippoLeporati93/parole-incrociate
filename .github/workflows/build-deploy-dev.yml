@@ -2,7 +2,7 @@ name: Build and deploy Node.js engine to Azure Function App
 
 env:
   AZURE_WEBAPP_NAME: parinc-engine-dev    # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: './backend'      # set this to the path to your web app project, defaults to the repository root
+  AZURE_WEBAPP_PACKAGE_PATH: './backend/dist/'      # set this to the path to your web app project, defaults to the repository root
   NODE_VERSION: '16.x'                # set this to the node version to use
 
 on:
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: yarn install
+      - name: yarn install & build
         run: |
           # Build and test the project, then
           # deploy to Azure Web App.
@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: engine-app
-          path: backend/dist/
+          path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
           if-no-files-found: error
 
   deploy:
