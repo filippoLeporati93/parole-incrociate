@@ -1,6 +1,5 @@
 import Utils from "../utils/Utils";
 
-
 export type Matrix = Array<Array<string>>;
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
@@ -97,8 +96,9 @@ export class Engine {
     private getWordList(wordlistFilename: string) {
         const wordlist: string[] = []
         const fs = require('fs');
+        const path = require('path');
 
-        const p = __dirname + "/assets/word_storage/" + wordlistFilename;
+        const p = path.resolve("./dist/assets/word_storage/" + wordlistFilename);
 
         const file = fs.readFileSync(p, {encoding:'utf8', flag:'r'})
         
