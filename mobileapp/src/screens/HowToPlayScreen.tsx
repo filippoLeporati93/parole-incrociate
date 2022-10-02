@@ -52,7 +52,7 @@ const HowToPlayScreen = ({navigation}: any) => {
 
       <Text style={{fontSize: 16, marginTop: 10, textAlign: 'justify'}}>
 Ognuno dei due giocatori ha una griglia con cinque file di cinque caselle, che tiene nascosta dalla vista degli altri.
-{"\n\n"}A turno i giocatori dicono una lettera, che tutti devono mettere in una casella della griglia a loro scelta.
+{"\n\n"}A turno i giocatori dicono una lettere che tutti devono mettere in una casella della griglia a loro scelta.
 {"\n\n"}Quando sono state dette 25 lettere e la griglia è piena. Ciascun giocatore mostra la griglia e si contano i punti.
 </Text>
   <Text style={{fontSize: 32, marginTop: 30}}>
@@ -60,7 +60,7 @@ Ognuno dei due giocatori ha una griglia con cinque file di cinque caselle, che t
       </Text>
       <Text style={{fontSize: 16, marginVertical: 10, textAlign: 'justify'}}>
 Su ogni riga si vede qual è la parola più lunga che si legge da sinistra a destra. Essa vale tanti punti quante sono le lettere che la formano, come nell'esempio in figura: sulla prima riga SOCI vale 4 punti, BARO vale 4, ASOLE vale 5... Lo stesso si fa su ogni colonna, leggendo dall'alto in basso. 
-{"\n\n"}Valgono i verbi coniugati, ma non i nomi propri. Chi fa più punti ha vinto!
+{"\n\n"}Valgono i verbi coniugati, ma non i nomi propri e solo parole italiane. Chi fa più punti ha vinto!
       </Text>
 
       <TabScore 

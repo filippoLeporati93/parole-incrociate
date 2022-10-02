@@ -64,7 +64,7 @@ export const TabScore: React.FC<TabScoreProps> = props => {
     </View>
     <View style={styles.wordContainer}>
     <ScrollView>
-      <Text style={{fontSize: 15, textAlign:'center', color:'gray',}}>Parole in riga</Text>
+      <Text style={{fontSize: 15, textAlign:'left', color:'gray',marginLeft: 30}}>Parole in riga</Text>
       {
         props.result.words
         .filter(w => w.direction == 'dx')
@@ -73,7 +73,7 @@ export const TabScore: React.FC<TabScoreProps> = props => {
           <WordLine onPressWord={props.onPressWord} key={idx} wordResults={e} />
         )
       }
-      <Text style={{fontSize: 15, textAlign:'center', color:'gray', marginTop: 20}}>Parole in colonna</Text>
+      <Text style={{fontSize: 15, textAlign:'left', color:'gray', marginTop: 20, marginLeft: 30}}>Parole in colonna</Text>
       {
         props.result.words
         .filter(w => w.direction == 'dy')
