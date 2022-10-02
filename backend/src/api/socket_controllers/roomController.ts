@@ -18,27 +18,31 @@ export class RoomController {
   ) {
     console.log("New User joining room: ", message);
 
-    const connectedSockets = io.sockets.adapter.rooms.get(message.roomId);
-    const socketRooms = Array.from(socket.rooms.values()).filter(
-      (r) => r !== socket.id
-    );
+    let roomIdJoined: string = null;
 
-    if (
-      socketRooms.length > 0 ||
-      (connectedSockets && connectedSockets.size === 2)
-    ) {
+    const rooms = io.sockets.adapter.rooms;
+    try {
+      for(const [roomId, sockets] of rooms) {
+        if(roomId !== socket.id && sockets.size < 2) {
+          await socket.join(roomId);
+          socket.emit("room_joined");
+          roomIdJoined = roomId;
+        }
+      }
+    } catch (err) {
+      socket.emit("room_join_error", {
+        error: "Error in joining the room!",
+      });
+    }
+
+    if (!roomIdJoined) {
       socket.emit("room_join_error", {
         error: "Room is full please choose another room to play!",
       });
     } else {
-      await socket.join(message.roomId);
-      socket.emit("room_joined");
-
-      if (io.sockets.adapter.rooms.get(message.roomId).size === 2) {
-        socket.emit("start_game", { start: true, symbol: "x" });
-        socket
-          .to(message.roomId)
-          .emit("start_game", { start: false, symbol: "o" });
+      if (io.sockets.adapter.rooms.get(roomIdJoined).size === 2) {
+        io.in(roomIdJoined)
+          .emit("start_game", { roomId: roomIdJoined, yourTurn: roomIdJoined === socket.id});
       }
     }
   }

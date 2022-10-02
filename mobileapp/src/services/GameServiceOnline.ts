@@ -13,14 +13,16 @@ const GameServiceOnline = () => {
     [" ", " ", " ", " ", " "],
   ];
   
-  async function joinGameRoom(roomId: string) {
+  async function joinGameRoom(roomId?: string): Promise<boolean> {
     const socket = SocketService.socket;
     if(socket) {
       return new Promise((rs, rj) => {
-        socket.emit("join_game", { roomId });
+        socket.emit("join_game", { roomId: roomId ?? socket.id });
         socket.on("room_joined", () => rs(true));
         socket.on("room_join_error", ({ error }) => rj(error));
       });
+    } else {
+      return new Promise((rs,rj) => rj("Error: socket undefined"))
     }
   }
 

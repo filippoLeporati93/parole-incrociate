@@ -32,11 +32,12 @@ export class GameController {
     let level = message.level;
 
     let eng = new Engine(grid)
-    const [next_grid, next_letter] = eng.computeNextGrid(level, letter.value);
-    console.log(next_grid);
+    const [next_grid, next_letter, next_grid_completed] = eng.computeNextGrid(level, letter.value);
+  
     const responseData = {
       letter: next_letter,
       grid: next_grid,
+      isGridCompleted: next_grid_completed,
     }
     const gameRoom = this.getSocketGameRoom(socket);
     socket.to(gameRoom).emit("on_game_update", responseData);

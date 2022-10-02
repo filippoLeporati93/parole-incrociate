@@ -42,7 +42,7 @@ const HomeScreen = ({navigation}: any) => {
           Gioca contro il computer
         </Text>
       </Pressable>
-      <Pressable style={styles.commandButton} onPress={() => navigation.navigate("JoinRoomScreen")}>
+      <Pressable style={styles.commandButton} onPress={() => navigation.navigate("JoinRoomScreen", {isOnlineGame: true, level: -1})}>
         <Text style={styles.panelButtonTitle}>
           Gioca contro altri giocatori
         </Text>

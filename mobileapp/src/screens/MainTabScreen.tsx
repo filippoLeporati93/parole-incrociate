@@ -12,6 +12,7 @@ import StatisticsTabScreen from './StatisticsTabScreen';
 import BoardScreen from './BoardScreen';
 import ScoreScreen from './ScoreScreen';
 import HowToPlayScreen from './HowToPlayScreen';
+import JoinRoomScreen from './JoinRoomScreen';
 
 const HomeStack = createStackNavigator();
 const StatisticsStack = createStackNavigator();
@@ -69,6 +70,14 @@ const HomeStackScreen = ({}: any) => {
         component={HomeScreen}
         options={{
           headerTitle: "",
+        }}
+      />
+      <HomeStack.Screen
+        name="JoinRoomScreen"
+        component={JoinRoomScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
         }}
       />
       <HomeStack.Screen

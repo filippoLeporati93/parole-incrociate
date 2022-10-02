@@ -20,7 +20,7 @@ const GameServiceComputer = () => {
       .catch(err => console.error(err));
   }
 
-  const joinGameRoom = (roomId: string) => {}
+  const joinGameRoom = (roomId?: string): Promise<boolean> => {return new Promise((rs,rj) => rs(true));}
 
   const onStartGame = (callback: (options: any) => void) => {
     FetchWrapper.post("resetgame", {}).then(callback).catch(err => console.error(err));
