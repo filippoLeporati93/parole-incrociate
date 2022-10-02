@@ -32,6 +32,7 @@ const BoardScreen = ({ route, navigation }) => {
   const [textHelp, setTextHelp] = useState("Posiziona una lettera sulla griglia");
   const [opponentLetter, setOpponentLetter] = useState("");
   const [cellIndexPressed, setCellIndexPressed] = useState({ dx: -1, dy: -1 });
+  const [stackLetterPressed, setStackLetterPressed] = useState("");
   const [isMyTurn, setIsMyTurn] = useState(true);
   const [showAcceptActionContainer, setShowActionContainer] = useState(false);
   
@@ -62,6 +63,14 @@ const BoardScreen = ({ route, navigation }) => {
       LayoutAnimation.easeInEaseOut();
       setCellIndexPressed({ dx: dx, dy: dy });
     }
+    if (stackLetterPressed !== "") {
+      setMatrix(matrix => {
+        matrix[dx][dy] = stackLetterPressed;
+        return matrix;
+      });
+      setShowActionContainer(true);
+      setStackLetterPressed("");
+    }
   }
 
   const onStackCellPress = (letter: string) => {
@@ -71,6 +80,8 @@ const BoardScreen = ({ route, navigation }) => {
         matrix[cellIndexPressed.dx][cellIndexPressed.dy] = letter;
         return matrix;
       });
+    } else {
+      setStackLetterPressed(letter);
     }
   }
 
@@ -91,6 +102,8 @@ const BoardScreen = ({ route, navigation }) => {
       matrix[cellIndexPressed.dx][cellIndexPressed.dy] = " ";
       return matrix;
     });
+    setStackLetterPressed("");
+    setCellIndexPressed({dx:-1,dy:-1})
   }
 
   const nextTurn = (letter: string) => {
@@ -168,7 +181,7 @@ const BoardScreen = ({ route, navigation }) => {
                 onCancelPress={() => onCancelPress()} />
             </View>
             <View style={styles.stackContainer}>
-              <Stack opponentLetter={opponentLetter} onStackCellPress={onStackCellPress} />
+              <Stack opponentLetter={opponentLetter} onStackCellPress={onStackCellPress} stackLetterPressed={stackLetterPressed} />
             </View>
             <View style={styles.textHelpContainer}>
               <Text style={{color: 'gray', fontSize: 12,}}>{textHelp}</Text>

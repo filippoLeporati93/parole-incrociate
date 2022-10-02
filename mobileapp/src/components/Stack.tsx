@@ -12,9 +12,10 @@ const stack = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 interface IStack {
   opponentLetter? : string,
   onStackCellPress: (letter: string) => void,
+  stackLetterPressed?: string,
 }
 
-const Stack = ({opponentLetter, onStackCellPress} : IStack) => {
+const Stack = ({opponentLetter, onStackCellPress, stackLetterPressed} : IStack) => {
 
   return (
       <View style={styles.container} >
@@ -24,6 +25,7 @@ const Stack = ({opponentLetter, onStackCellPress} : IStack) => {
               key={item} 
               letter={item} 
               onStackCellPress={onStackCellPress} 
+              pressed={item === stackLetterPressed}
               isDisabled={opponentLetter !== "" && opponentLetter !== item ? true : false}
               />
             )
