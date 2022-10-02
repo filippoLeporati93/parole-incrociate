@@ -36,7 +36,7 @@ jobs:
           # deploy to Azure Web App.
           yarn global add typescript ts-node copyfiles
           yarn install
-          yarn build.
+          yarn build
           
       - name: 'Deploy to Azure WebApp'
         uses: azure/webapps-deploy@v2
