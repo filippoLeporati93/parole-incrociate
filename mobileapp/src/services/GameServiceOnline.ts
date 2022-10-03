@@ -18,7 +18,7 @@ const GameServiceOnline = () => {
     if(socket) {
       return new Promise((rs, rj) => {
         socket.emit("join_game", { roomId: roomId ?? socket.id });
-        socket.on("room_joined", () => rs(true));
+        socket.on("room_joined", ({status}) => rs(status));
         socket.on("room_join_error", ({ error }) => rj(error));
       });
     } else {
@@ -30,10 +30,12 @@ const GameServiceOnline = () => {
      level: number,
      cellIndexPressed: {dx:number,dy:number},
      letter: string,
-     onGameUpdate:(opponentLetter: string, isGridCompleted: boolean) => void) {
+     isGridCompleted: boolean,
+     onGameUpdate:(opponentLetter: string, isGridCompleted: boolean) => void) 
+  {
     const socket = SocketService.socket;
     if(socket) {
-      socket.emit("update_game", { grid: opponentMatrix, letter: {value: letter, location: cellIndexPressed} });
+      socket.emit("update_game", { letter: {value: letter, location: cellIndexPressed}, isGridCompleted: isGridCompleted });
       socket.on("on_game_update", ({ opponentLetter, isOpponentGridCompleted }) => onGameUpdate(opponentLetter, isOpponentGridCompleted));
     }
   }

@@ -16,7 +16,7 @@ export class RoomController {
     @ConnectedSocket() socket: Socket,
     @MessageBody() message: any
   ) {
-    console.log("New User joining room: ", message);
+    console.log("New User try joining room: ", message);
 
     let roomIdJoined: string = null;
 
@@ -25,7 +25,7 @@ export class RoomController {
       for(const [roomId, sockets] of rooms) {
         if(roomId !== socket.id && sockets.size < 2) {
           await socket.join(roomId);
-          socket.emit("room_joined");
+          socket.emit("room_joined", {status: true});
           roomIdJoined = roomId;
         }
       }
@@ -36,9 +36,7 @@ export class RoomController {
     }
 
     if (!roomIdJoined) {
-      socket.emit("room_join_error", {
-        error: "Room is full please choose another room to play!",
-      });
+      socket.emit("room_joined", {status: false});
     } else {
       if (io.sockets.adapter.rooms.get(roomIdJoined).size === 2) {
         io.in(roomIdJoined)

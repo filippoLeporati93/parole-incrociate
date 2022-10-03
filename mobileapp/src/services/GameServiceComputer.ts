@@ -7,7 +7,9 @@ const GameServiceComputer = () => {
     level: number,
     cellIndexPressed: {dx:number,dy:number},
     letter: string,
-    onGameUpdate:(opponentLetter:string, isOpponentGridCompleted: boolean) => void) => {
+    isGridCompleted: boolean,
+    onGameUpdate:(opponentLetter:string, isOpponentGridCompleted: boolean) => void
+    ) => {
     const body = { 
       letter: {
         value: letter, 

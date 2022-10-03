@@ -16,10 +16,10 @@ export class Engine {
     grid: Array<Array<string>>;
     wordlist: string[];
 
-    constructor(grid) {
+    constructor(grid, load_words = true) {
         this.grid = JSON.parse(JSON.stringify(grid));
-
-        this.wordlist = this.getWordList("280000_parole_italiane.txt");
+        if(load_words)
+            this.wordlist = this.getWordList("280000_parole_italiane.txt");
     }
 
     showGridText(grid: Matrix) {
@@ -47,10 +47,11 @@ export class Engine {
         }
     }
 
-    private isGridComplete(grid: Matrix) {
-        for(let i = 0; i < grid.length; i++){
-            for(let j = 0; j < grid[i].length; j++){
-                if (grid[i][j] === " ") {
+    isGridComplete(grid?: Matrix) {
+        const gridToCheck = grid ?? this.grid;
+        for(let i = 0; i < gridToCheck.length; i++){
+            for(let j = 0; j < gridToCheck[i].length; j++){
+                if (gridToCheck[i][j] === " ") {
                     return false
                 }
             }

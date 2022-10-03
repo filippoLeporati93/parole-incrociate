@@ -30,14 +30,13 @@ export class GameController {
     let grid = message.grid;
     let letter = message.letter;
     let level = message.level;
-
-    let eng = new Engine(grid)
-    const [next_grid, next_letter, next_grid_completed] = eng.computeNextGrid(level, letter.value);
   
+    const eng = new Engine(grid);
+
     const responseData = {
-      letter: next_letter,
-      grid: next_grid,
-      isGridCompleted: next_grid_completed,
+      letter,
+      grid,
+      isGridCompleted: eng.isGridComplete(),
     }
     const gameRoom = this.getSocketGameRoom(socket);
     socket.to(gameRoom).emit("on_game_update", responseData);
