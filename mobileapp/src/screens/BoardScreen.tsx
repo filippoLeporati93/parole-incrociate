@@ -24,7 +24,9 @@ import StatisticsUtils from '../utils/StatisticsUtils';
 
 const BoardScreen = ({ route, navigation }) => {
   const theme = useTheme();
-  const [initiated, setInitiated] = useState(false);
+
+  const gameService = gameServiceFactory().build(route.params.isOnlineGame);
+
   const [endGameModalVisible, setEndGameModalVisible] = useState(false);
   const [endGameStatus, setEndGameStatus] = useState(-1);
   const [points, setPoints] = useState(-1);
@@ -33,13 +35,14 @@ const BoardScreen = ({ route, navigation }) => {
   const [opponentLetter, setOpponentLetter] = useState("");
   const [cellIndexPressed, setCellIndexPressed] = useState({ dx: -1, dy: -1 });
   const [stackLetterPressed, setStackLetterPressed] = useState("");
-  const [isMyTurn, setIsMyTurn] = useState(true);
+  
+  const [isMyTurn, setIsMyTurn] = useState(gameService.isMyTurn());
+  
   const [showAcceptActionContainer, setShowActionContainer] = useState(false);
   
   const timerRef = useRef<any>(null);
   const elapsedTimer = useRef<number>(0);
 
-  const gameService = gameServiceFactory().build(route.params.isOnlineGame);
 
   const [matrix, setMatrix] = useState<IPlayMatrix>([
     [" ", " ", " ", " ", " "],
@@ -49,11 +52,6 @@ const BoardScreen = ({ route, navigation }) => {
     [" ", " ", " ", " ", " "],
   ]);
 
-  useEffect(() => {
-    gameService.onStartGame(() => {
-      setInitiated(true);
-    });
-  }, []);
 
   const isGridComplete = (grid: IPlayMatrix) => {
     for(let i = 0; i < grid.length; i++){
@@ -118,22 +116,21 @@ const BoardScreen = ({ route, navigation }) => {
   }
 
   const nextTurn = (letter: string) => {
-    setIsMyTurn(isMyTurn => !isMyTurn);
-    gameService.updateGame(route.params.level, cellIndexPressed, letter, isGridComplete(matrix), (opponentLetter, isOpponentGridCompleted) => {
-      if(isOpponentGridCompleted) {
-        timerRef.current.stop();
-        gameService.gameFinish(matrix, onGameFinish);
-        return;
-      }
+    if(isGridComplete(matrix)) {
+      timerRef.current.stop();
+      gameService.gameFinish(matrix, onGameFinish);
+    }
+    gameService.updateGame(route.params.level, letter, (opponentLetter) => {
       setCellIndexPressed({ dx: -1, dy: -1 });
-      setIsMyTurn(isMyTurn => !isMyTurn);
+      setIsMyTurn(gameService.isMyTurn());
       setTextHelp("Posiziona la lettera " + opponentLetter + ", scelta dall'avversario")
       setOpponentLetter(opponentLetter);
     });
+    setIsMyTurn(gameService.isMyTurn());
   };
 
   const onGameFinish = (results: any[]) => {
-    setIsMyTurn(isMyTurn => !isMyTurn);
+    setIsMyTurn(gameService.isMyTurn());
     const resultsValue = results.map((v) => {
       if (v.status === 'fulfilled') return v.value
     });
@@ -158,19 +155,6 @@ const BoardScreen = ({ route, navigation }) => {
         gameElapsedTime: elapsedTimer.current,
      });
   }
-
-  if (!initiated) {
-    <View style={styles.container}>
-      <View style={{ flex: 1, justifyContent: 'center'}}>
-        <Text style={{ fontSize: 20, textAlign: 'center', marginBottom: 10 }}>
-          La partita sta per cominciare...
-        </Text>
-        <ActivityIndicator
-          color={theme.colors.primaryDark}
-          size="large" />
-      </View>
-    </View>
-  } else {
 
     return (
       <View style={styles.container}>
@@ -226,7 +210,6 @@ const BoardScreen = ({ route, navigation }) => {
 
       </View>
     );
-  }
 }
 
 const styles = StyleSheet.create({

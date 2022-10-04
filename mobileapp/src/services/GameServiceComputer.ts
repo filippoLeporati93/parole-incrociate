@@ -2,33 +2,34 @@ import FetchWrapper from '../api/FetchWrapper';
 import { IPlayMatrix } from './GameServiceFactory';
 
 const GameServiceComputer = () => {
+
+  let myTurn = true;
   
   const updateGame = (
     level: number,
-    cellIndexPressed: {dx:number,dy:number},
     letter: string,
-    isGridCompleted: boolean,
-    onGameUpdate:(opponentLetter:string, isOpponentGridCompleted: boolean) => void
+    onGameUpdate:(opponentLetter:string) => void
     ) => {
+    myTurn = false;
     const body = { 
       letter: {
         value: letter, 
-        location: cellIndexPressed
       },
       level: level,
     };
     return FetchWrapper.post("computegrid", body)
-      .then(value => {onGameUpdate(value.letter.value, value.isGridCompleted)})
+      .then(value => { myTurn = true; onGameUpdate(value.letter.value)})
       .catch(err => console.error(err));
   }
 
   const joinGameRoom = (roomId?: string): Promise<boolean> => {return new Promise((rs,rj) => rs(true));}
 
-  const onStartGame = (callback: (options: any) => void) => {
+  const onStartGame = ( callback: (roomId?: number, nextPlayerSocketId?: string) => void) => {
     FetchWrapper.post("resetgame", {}).then(callback).catch(err => console.error(err));
   }
 
   const gameFinish = (matrix: IPlayMatrix, onGameFinish: (results: any[]) => void) => {
+    myTurn = false;
     const bodyPlayer = {
       grid: matrix
     }
@@ -38,11 +39,16 @@ const GameServiceComputer = () => {
     FetchWrapper.allSettled(results).then(onGameFinish).catch(err => console.error(err));
   }
 
+  const isMyTurn = () => {
+    return myTurn;
+  }
+
   return {
     joinGameRoom,
     updateGame,
     onStartGame,
     gameFinish,
+    isMyTurn
   }
 }
 

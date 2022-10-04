@@ -27,19 +27,30 @@ export class GameController {
     @MessageBody() message: any
   ) {
     console.log(message);
-    let grid = message.grid;
     let letter = message.letter;
     let level = message.level;
   
-    const eng = new Engine(grid);
-
     const responseData = {
-      letter,
-      grid,
-      isGridCompleted: eng.isGridComplete(),
+      opponentLetter: letter,
     }
     const gameRoom = this.getSocketGameRoom(socket);
     socket.to(gameRoom).emit("on_game_update", responseData);
+  }
+
+  @OnMessage("game_finish")
+  public async gameFinish(
+    @SocketIO() io: Server,
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() message: any
+  ) {
+    console.log(message);
+    let matrix = message.matrix;
+  
+    const responseData = {
+      opponentMatrix: matrix,
+    }
+    const gameRoom = this.getSocketGameRoom(socket);
+    socket.to(gameRoom).emit("on_game_finish", responseData);
   }
 
   @OnMessage("game_win")
