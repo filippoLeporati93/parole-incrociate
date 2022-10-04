@@ -44,10 +44,11 @@ router.post("/resetgame", (req, res, next) => {
 router.post("/results", (req, res, next) => {
   let grid = req.body.grid;
   const opponent = req.query.opponent ?? "false";
-  let eng = new Engine(opponent === 'true' ? req.session.opponentGrid: grid);
+  grid = opponent === 'true' && !grid ? req.session.opponentGrid : grid;
+  let eng = new Engine(grid);
   const results = {
     ...eng.calculateResults(),
-    matrix: opponent === 'true' ? req.session.opponentGrid: grid,
+    matrix: grid,
     isOpponent: opponent === 'true' ? true: false
   }
   
