@@ -7,8 +7,8 @@ const ncols = 5
 const nrows = 5
 
 const levels = [
-    {level: 1, wordLength: [2,3,3,3,4]},
-    {level: 2, wordLength: [3,4,4,4,5]},
+    {level: 1, wordLength: [2,3,3,3,3,3,3,3,3,4]},
+    {level: 2, wordLength: [3,4,4,4,4,4,4,4,4,5]},
     {level: 3, wordLength: [5]}
 ]
 
