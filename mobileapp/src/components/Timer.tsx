@@ -44,8 +44,8 @@ const Timer = React.forwardRef<any, TimerProps>((props, ref) => {
 
   return (
     <View style={{ alignItems: 'center' }}>
-      <Text style={styles.text}>Tempo</Text>
-      <Text style={styles.text}>{formatTime(elapsed)}</Text>
+      <Text textType='light' style={styles.text}>Tempo</Text>
+      <Text textType='bold' style={styles.text}>{formatTime(elapsed)}</Text>
     </View>
   );
 
@@ -53,7 +53,7 @@ const Timer = React.forwardRef<any, TimerProps>((props, ref) => {
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 11,
+    fontSize: 13,
     color: 'gray'
   },
 });

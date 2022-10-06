@@ -38,18 +38,18 @@ const EndGameModal: React.FC<Props> = props => {
       />
     </Pressable>
 
-      <Text 
+      <Text textType='light'
       style={styles.contentSubTitle}>
         {props.endGameStatus === 1 
         ? "Complimenti!" 
-        : props.endGameStatus === -1 ? "Peccato!" : "Ottima partita!"}</Text>
+        : props.endGameStatus === -1 ? "Peccato!" : "Ottimo gioco!"}</Text>
       
-      <Text style={styles.contentTitle}>{props.endGameStatus === 1 
+      <Text textType='bold' style={styles.contentTitle}>{props.endGameStatus === 1 
         ? "Hai vinto!" 
         : props.endGameStatus === -1 ? "Hai perso" : "Patta"}</Text>
       
       <Text style={{fontSize: 14, textAlign:'center', marginTop: 40, color:'gray'}}>Punteggio</Text>
-      <Text style={{fontSize: 35, textAlign:'center'}}>{props.points}</Text>
+      <Text textType='bold' style={{fontSize: 30, textAlign:'center'}}>{props.points}</Text>
       <Pressable style={styles.commandButton} onPress={() => props.onGameDetailPress()}>
         <Text style={styles.panelButtonTitle}>
           Dettaglio partita

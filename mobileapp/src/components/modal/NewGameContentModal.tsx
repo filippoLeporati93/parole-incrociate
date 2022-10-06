@@ -5,7 +5,7 @@ import Text from '../AppText';
 
 type Props = {
   isVisible: boolean;
-  onLevelPress: (level: number) => any;
+  onLevelPress: (level: number, levelDesc: string) => any;
   onPress: () => any;
 };
 
@@ -18,11 +18,11 @@ const NewGameContentModal: React.FC<Props> = props => (
     useNativeDriverForBackdrop
     style={styles.view}>
     <View style={styles.content}>
-      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1)}>Facile</Text>
+      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1, 'Facile')}>Facile</Text>
       <View style={styles.line} />
-      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(2)}>Medio</Text>
+      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(2, 'Medio')}>Medio</Text>
       <View style={styles.line} />
-      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(3)} >Difficile</Text>
+      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(3, 'Difficile')} >Difficile</Text>
       <View style={styles.line} />
     </View>
   </Modal>

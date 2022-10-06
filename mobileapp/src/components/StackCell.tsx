@@ -41,7 +41,8 @@ const StackCell = ({isDisabled, letter, onStackCellPress, pressed}: IStackCell) 
       disabled={isDisabled}
       onPress={onPress}
       onHideUnderlay={()=> setIsPressed(false)} 
-      onShowUnderlay={()=> setIsPressed(true)}>
+      onShowUnderlay={()=> setIsPressed(true)}
+      underlayColor={theme.colors.primaryDark}>
         <Text style={[styles.text, (isPressed || pressed) && styles.textPressed]}>{letter}</Text>
       </TouchableHighlight>
     </View>
@@ -53,24 +54,25 @@ const makeStyles = (colors) => StyleSheet.create({
   cell: {
     width: CellStackSize,
     height: CellStackSize *  1.5,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: 'white',
     borderColor: colors.primaryDark,
     borderWidth: BorderWidth,
-    borderRadius: BorderWidth,
+    borderRadius: 10,
+    elevation: 5,
     alignItems: 'center',
     justifyContent: 'center',
     margin: Offset,
   },
   cellPressed:{
     backgroundColor: colors.primaryDark,
-    borderColor: colors.primaryLight
+    borderColor: colors.primary
   },
   cellDisabled:{
     backgroundColor: colors.backgroundGray,
   },
   text: {
     color: colors.text,
-    fontSize: CellStackSize * 2 / 3,
+    fontSize: CellStackSize * 0.8,
   },
   textPressed: {
     color: 'white',

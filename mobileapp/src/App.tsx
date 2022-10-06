@@ -28,7 +28,7 @@ const App = () => {
       text: '#333333',
       textLight: '#444',
       primary: '#bbdefb',
-      primaryLight: '#eeffff',
+      primaryLight: '#bbdefb55',
       primaryDark: '#036595',
       backgroundGray: '#8aacc8'
     },

@@ -18,13 +18,13 @@ interface ICell {
   pressed: boolean
   letter: string,
   onCellPress?: (location: {dx: number, dy: number}) => void
-
+  cellSize: number,
 }
 
-const Cell = ({location, pressed, letter, onCellPress} : ICell) => {
+const Cell = ({location, pressed, letter, onCellPress, cellSize} : ICell) => {
 
     const theme = useTheme();
-    const styles = makeStyles(theme.colors);
+    const styles = makeStyles(theme.colors, cellSize);
 
     let anim = useRef(new Animated.Value(0)).current;
     const AnimatedTouchable = Animated.createAnimatedComponent(Pressable);
@@ -62,10 +62,10 @@ const Cell = ({location, pressed, letter, onCellPress} : ICell) => {
     );
 }
 
-const makeStyles = (colors) => StyleSheet.create({
+const makeStyles = (colors, cellSize) => StyleSheet.create({
   cell: {
-    width: CellSize,
-    height: CellSize,
+    width: cellSize,
+    height: cellSize,
     backgroundColor: colors.primaryLight,
     borderWidth: StyleSheet.hairlineWidth,
     alignItems: 'center',
@@ -77,7 +77,7 @@ const makeStyles = (colors) => StyleSheet.create({
   },
   text: {
     color: colors.text,
-    fontSize: CellSize * 2 / 3,
+    fontSize: cellSize * 2 / 3,
   },
   clickedText: {
     color: 'white'

@@ -1,4 +1,5 @@
 import FetchWrapper from '../api/FetchWrapper';
+import { gameResults } from '../models/Types';
 import { IPlayMatrix } from './GameServiceFactory';
 
 const GameServiceComputer = () => {
@@ -10,7 +11,6 @@ const GameServiceComputer = () => {
     letter: string,
     onGameUpdate:(opponentLetter:string) => void
     ) => {
-    myTurn = false;
     const body = { 
       letter: {
         value: letter, 
@@ -18,29 +18,33 @@ const GameServiceComputer = () => {
       level: level,
     };
     return FetchWrapper.post("computegrid", body)
-      .then(value => { myTurn = true; onGameUpdate(value.letter.value)})
+      .then(value => { 
+        myTurn = true; 
+        onGameUpdate(value.letter.value)
+      })
       .catch(err => console.error(err));
   }
 
   const joinGameRoom = (roomId?: string): Promise<boolean> => {return new Promise((rs,rj) => rs(true));}
 
-  const onStartGame = ( callback: (roomId?: number, nextPlayerSocketId?: string) => void) => {
-    FetchWrapper.post("resetgame", {}).then(callback).catch(err => console.error(err));
+  const onStartGame = (cb: () => void) => {
+    FetchWrapper.post("resetgame", {}).then(cb).catch(err => console.error(err));
   }
 
-  const gameFinish = (matrix: IPlayMatrix, onGameFinish: (results: any[]) => void) => {
-    myTurn = false;
-    const bodyPlayer = {
-      grid: matrix
-    }
-    const results = [];
-    results.push(FetchWrapper.post("results", bodyPlayer));
-    results.push(FetchWrapper.post("results?opponent=true", {}));
-    FetchWrapper.allSettled(results).then(onGameFinish).catch(err => console.error(err));
+  const gameFinish = (matrix: IPlayMatrix, cb: (myResult: gameResults) => void) => {
+    FetchWrapper.post("results?opponent=false", {grid: matrix})
+    .then(cb)
+    .catch(err => console.error(err));
   }
 
   const isMyTurn = () => {
     return myTurn;
+  }
+
+  async function onGameFinish(cb: (opponentResults: gameResults) => void) {
+    FetchWrapper.post("results?opponent=true", {})
+    .then(cb)
+    .catch(e => console.error(e))
   }
 
   return {
@@ -48,7 +52,8 @@ const GameServiceComputer = () => {
     updateGame,
     onStartGame,
     gameFinish,
-    isMyTurn
+    isMyTurn,
+    onGameFinish,
   }
 }
 

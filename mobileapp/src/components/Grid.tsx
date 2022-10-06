@@ -4,25 +4,26 @@ import {
   StyleSheet,
   View} from 'react-native';
 
-import {
-  CellSize,
-} from './GlobalStyle';
 
 import Cell from './Cell';
 import { useTheme } from 'react-native-paper';
 import { wordResults } from '../models/Types';
 import { IPlayMatrix } from '../services/GameServiceFactory';
+import { BoardWidth, CellSize } from './GlobalStyle';
 
 interface IGrid {
   matrix: IPlayMatrix,
   cellIndexPressed?: {dx: number, dy: number},
   wordPressed?: wordResults,
   onCellPress?: (location: {dx: number, dy: number}) => void
+  cellSize?: number;
 }
 
-const Grid = ({matrix, cellIndexPressed, wordPressed, onCellPress} : IGrid) => {
+const Grid = ({matrix, cellIndexPressed, wordPressed, onCellPress, cellSize} : IGrid) => {
     const theme = useTheme();
-    const styles = makeStyles(theme.colors);
+    const cellSizeCustom = cellSize ?? CellSize;
+
+    const styles = makeStyles(theme.colors, cellSizeCustom);
     
     const isPressed = (dx:number, dy: number): boolean => {
       if (cellIndexPressed)
@@ -58,6 +59,7 @@ const Grid = ({matrix, cellIndexPressed, wordPressed, onCellPress} : IGrid) => {
                             pressed={isPressed(i ,j)}
                             letter={item} 
                             onCellPress={onCellPress} 
+                            cellSize={cellSizeCustom}
                         />
                     ))
             }
@@ -70,10 +72,10 @@ const Grid = ({matrix, cellIndexPressed, wordPressed, onCellPress} : IGrid) => {
   
 }
 
-const makeStyles = (color) => StyleSheet.create({
+const makeStyles = (color, cellSizeCustom) => StyleSheet.create({
   container: {
-    width: CellSize * 5 + StyleSheet.hairlineWidth * 2 + 4,
-    height: CellSize * 5 +  StyleSheet.hairlineWidth * 2 + 4,
+    width: cellSizeCustom * 5 + StyleSheet.hairlineWidth * 2 + 4,
+    height: cellSizeCustom * 5 +  StyleSheet.hairlineWidth * 2 + 4,
     flexDirection: 'column',
     borderWidth: 2,
     borderColor: color.primaryDark,

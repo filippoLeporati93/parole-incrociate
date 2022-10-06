@@ -36,28 +36,38 @@ const GameServiceOnline = () => {
   }
 
 
-  async function onStartGame(callback: () => void) {
+  function onStartGame(cb: () => {}) {
     const socket = SocketService.socket;
     if(socket)
       socket.on("start_game", ({roomId, nextPlayerSocketId}) => {
         joinedRoomId = roomId;
         nextPlyrSocketId = nextPlayerSocketId;
-        callback();
+        cb();
       });
   }
 
-  async function gameFinish(matrix: IPlayMatrix, onGameFinish: (results: any[]) => void) {
+  async function gameFinish(matrix: IPlayMatrix, cb: (myResult: gameResults) => void) {
     nextPlyrSocketId = null;
     const socket = SocketService.socket;
     if(socket) {
       socket.emit("game_finish", { matrix });
+      FetchWrapper.post("results?opponent=false", {grid: matrix})
+      .then(cb)
+      .catch(e => console.error(e))
+    }
+  }
+
+  async function onGameFinish(cb: (opponentResult: gameResults) => void) {
+    const socket = SocketService.socket;
+    if(socket) {
       socket.on("on_game_finish", ({ opponentMatrix }) => {
-        const results = [];
-        results.push(FetchWrapper.post("results?opponent=true", {grid: opponentMatrix}));
-        FetchWrapper.allSettled(results).then(onGameFinish).catch(err => console.error(err));
+        FetchWrapper.post("results?opponent=true", {grid: opponentMatrix})
+        .then(cb)
+        .catch(err => console.error(err));
       });
     }
   }
+
 
   function isMyTurn() {
     const socket = SocketService.socket;
@@ -72,7 +82,8 @@ const GameServiceOnline = () => {
      updateGame,
      onStartGame,
      gameFinish,
-     isMyTurn
+     onGameFinish,
+     isMyTurn,
   }
 }
 

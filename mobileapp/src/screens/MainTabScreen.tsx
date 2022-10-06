@@ -30,7 +30,7 @@ const MainTabScreen = () => (
       name="HomeTab"
       component={HomeStackScreen}
       options={{
-        tabBarLabel: <Text>Home</Text>,
+        tabBarLabel: <Text style={{color:'gray'}}>Home</Text>,
         tabBarIcon: ({color}) => <Icon name="home" color={color} size={20} />,
       }}
     />
@@ -38,7 +38,7 @@ const MainTabScreen = () => (
       name="StatisticsTab"
       component={StatisticsStackScreen}
       options={{
-        tabBarLabel: <Text>Statistiche</Text>,
+        tabBarLabel: <Text style={{color:'gray'}}>Statistiche</Text>,
         tabBarIcon: ({color}) => (
           <Icon name="stats-chart" color={color} size={20} />
         ),
@@ -77,7 +77,8 @@ const HomeStackScreen = ({}: any) => {
         component={JoinRoomScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
+          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
+          headerTitleAlign: 'center'
         }}
       />
       <HomeStack.Screen
@@ -85,7 +86,8 @@ const HomeStackScreen = ({}: any) => {
         component={BoardScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
+          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
+          headerTitleAlign: 'center'
         }}
       />
       <HomeStack.Screen
@@ -93,7 +95,8 @@ const HomeStackScreen = ({}: any) => {
         component={ScoreScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}>Dettagli</Text>),
+          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Dettagli</Text>),
+          headerTitleAlign: 'center'
         }}
       />
       <HomeStack.Screen

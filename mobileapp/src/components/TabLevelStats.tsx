@@ -7,7 +7,6 @@ import Text from './AppText'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import StatisticsUtils from '../utils/StatisticsUtils';
 import { statisticsKpi } from '../models/Types';
-import { useFocusEffect } from '@react-navigation/native';
 import { formatTime } from './Timer';
 
 type CardStatsProps = {
@@ -23,7 +22,7 @@ const CardStats: React.FC<CardStatsProps> = props => {
     <View style={{
       padding: 15,
       borderRadius: 10,
-      backgroundColor: theme.colors.primary,
+      backgroundColor: theme.colors.primaryLight,
       marginVertical: 10,
     }}>
       <Icon name={props.icon} size={30} color={theme.colors.primaryDark} />

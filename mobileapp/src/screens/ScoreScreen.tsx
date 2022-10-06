@@ -7,6 +7,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import Text from '../components/AppText';
 import { gameResults, wordResults } from '../models/Types';
 import { useTheme } from 'react-native-paper';
+import { CellSize } from '../components/GlobalStyle';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -30,7 +31,7 @@ const WordLine: React.FC<wordLine> = props => {
         </Text>
         </View>
         <View style={{flex: 1,}}>
-          <Text style={{color: 'gray', textAlign: 'right'}}>{props.wordResults.word.length} punti</Text>
+          <Text textType='light' style={{color: 'gray', textAlign: 'right'}}>{props.wordResults.word.length} punti</Text>
         </View>
         
         
@@ -56,15 +57,16 @@ export const TabScore: React.FC<TabScoreProps> = props => {
         <Grid 
         matrix={props.result.matrix} 
         wordPressed={props.wordPressed}
+        cellSize={CellSize * 0.65}
         />
       </View>
     <View style={styles.pointsContainer}>
       <Text style={{fontSize: 14, textAlign:'center', color:'gray'}}>Punteggio</Text>
-      <Text style={{fontSize: 35, textAlign:'center'}}>{props.result.points}</Text>
+      <Text textType='bold' style={{fontSize: 30, textAlign:'center'}}>{props.result.points}</Text>
     </View>
     <View style={styles.wordContainer}>
     <ScrollView>
-      <Text style={{fontSize: 15, textAlign:'left', color:'gray',marginLeft: 30}}>Parole in riga</Text>
+      <Text style={{fontSize: 15, textAlign:'left', color:'gray',marginLeft: 30, marginTop: 20}}>Parole in riga</Text>
       {
         props.result.words
         .filter(w => w.direction == 'dx')

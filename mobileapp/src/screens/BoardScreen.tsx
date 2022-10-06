@@ -21,6 +21,7 @@ import { useTheme } from 'react-native-paper';
 import Text from '../components/AppText';
 import EndGameModal from '../components/modal/EndGameModal';
 import StatisticsUtils from '../utils/StatisticsUtils';
+import { gameResults } from '../models/Types';
 
 const BoardScreen = ({ route, navigation }) => {
   const theme = useTheme();
@@ -30,7 +31,8 @@ const BoardScreen = ({ route, navigation }) => {
   const [endGameModalVisible, setEndGameModalVisible] = useState(false);
   const [endGameStatus, setEndGameStatus] = useState(-1);
   const [points, setPoints] = useState(-1);
-  const [gameResults, setGameResults] = useState({});
+  const tempGameResults : gameResults[] = [];
+  const [gameResults, setGameResults] = useState<gameResults[]>([]);
   const [textHelp, setTextHelp] = useState("Posiziona una lettera sulla griglia");
   const [opponentLetter, setOpponentLetter] = useState("");
   const [cellIndexPressed, setCellIndexPressed] = useState({ dx: -1, dy: -1 });
@@ -43,7 +45,6 @@ const BoardScreen = ({ route, navigation }) => {
   const timerRef = useRef<any>(null);
   const elapsedTimer = useRef<number>(0);
 
-
   const [matrix, setMatrix] = useState<IPlayMatrix>([
     [" ", " ", " ", " ", " "],
     [" ", " ", " ", " ", " "],
@@ -51,6 +52,17 @@ const BoardScreen = ({ route, navigation }) => {
     [" ", " ", " ", " ", " "],
     [" ", " ", " ", " ", " "],
   ]);
+
+  useEffect(() => {
+    // start game with computer
+    if(route.params.level !== -1)
+      gameService.onStartGame(() => {});
+      
+    // call only for online game
+    if(route.params.level === -1)
+      gameService.onGameFinish(onGameFinish);
+  }, [])
+
 
 
   const isGridComplete = (grid: IPlayMatrix) => {
@@ -116,50 +128,64 @@ const BoardScreen = ({ route, navigation }) => {
   }
 
   const nextTurn = (letter: string) => {
+    setIsMyTurn(false);
     if(isGridComplete(matrix)) {
       timerRef.current.stop();
-      gameService.gameFinish(matrix, onGameFinish);
+      gameService.gameFinish(matrix, (myResult) => tempGameResults.push(myResult));
     }
     gameService.updateGame(route.params.level, letter, (opponentLetter) => {
+      // place the letter of the opponet
       setCellIndexPressed({ dx: -1, dy: -1 });
       setIsMyTurn(gameService.isMyTurn());
       setTextHelp("Posiziona la lettera " + opponentLetter + ", scelta dall'avversario")
       setOpponentLetter(opponentLetter);
+      // if you are playing against computer and opponent has no more letter to put, ask for opponent grid results.
+      if(opponentLetter === "" && route.params.level !== -1)
+        gameService.onGameFinish(onGameFinish);
     });
-    setIsMyTurn(gameService.isMyTurn());
+    
   };
 
-  const onGameFinish = (results: any[]) => {
-    setIsMyTurn(gameService.isMyTurn());
-    const resultsValue = results.map((v) => {
-      if (v.status === 'fulfilled') return v.value
-    });
-    setGameResults(resultsValue);
-    const personalPoints = resultsValue.filter(e => e.isOpponent === false)[0].points
-    setPoints(personalPoints);
-    const opponentPoints = resultsValue.filter(e => e.isOpponent === true)[0].points
-    if (personalPoints > opponentPoints)
-     setEndGameStatus(1);
-    else if (personalPoints === opponentPoints)
-     setEndGameStatus(0);
-    else
-     setEndGameStatus(-1);
-    
-     setEndGameModalVisible(true);
-          
-     StatisticsUtils.addGame({
-        youWon: personalPoints > opponentPoints,
-        score: personalPoints,
-        gameDatetime: new Date(),
-        level: route.params.level,
-        gameElapsedTime: elapsedTimer.current,
-     });
+  // add opponents results since the have no more letter to put
+  const onGameFinish = (opponentResult: gameResults) => {
+    tempGameResults.push(opponentResult);
+    if(tempGameResults.length === 2)
+      showModalResults();
+  }
+
+  const showModalResults = () => {
+      setGameResults(tempGameResults);
+      const personalPoints = tempGameResults.filter(e => e.isOpponent === false)[0].points
+      setPoints(personalPoints);
+      const opponentPoints = tempGameResults.filter(e => e.isOpponent === true)[0].points
+      if (personalPoints > opponentPoints)
+      setEndGameStatus(1);
+      else if (personalPoints === opponentPoints)
+      setEndGameStatus(0);
+      else
+      setEndGameStatus(-1);
+      
+      setEndGameModalVisible(true);
+            
+      StatisticsUtils.addGame({
+          youWon: personalPoints > opponentPoints,
+          score: personalPoints,
+          gameDatetime: new Date(),
+          level: route.params.level,
+          gameElapsedTime: elapsedTimer.current,
+      });
   }
 
     return (
       <View style={styles.container}>
         <View style={styles.infoContainer}>
-          <Timer ref={timerRef} onStop={_seconds => elapsedTimer.current = _seconds} />
+          <View style={{flex: 1, alignItems:'center'}}>
+            <Text textType='light' style={styles.textInfo}>Livello</Text>
+            <Text textType='bold' style={styles.textInfo}>{route.params.levelDesc}</Text>
+          </View>
+        <View style={{flex: 1, alignItems:'center'}}>
+          <Timer  ref={timerRef} onStop={_seconds => elapsedTimer.current = _seconds} />
+          </View>
         </View>
         <View style={styles.boardContainer} >
           <Grid
@@ -230,9 +256,9 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     flex: 1,
-    width: BoardWidth,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    marginHorizontal:20,
   },
   acceptActionContainer: {
     flex: 1,
@@ -241,7 +267,11 @@ const styles = StyleSheet.create({
   textHelpContainer: {
     alignItems: 'center',
     marginBottom: 15,
-  }
+  },
+  textInfo: {
+    fontSize: 13,
+    color: 'gray',
+  },
 
 });
 
