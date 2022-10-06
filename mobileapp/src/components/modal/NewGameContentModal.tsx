@@ -18,11 +18,15 @@ const NewGameContentModal: React.FC<Props> = props => (
     useNativeDriverForBackdrop
     style={styles.view}>
     <View style={styles.content}>
+      <Text textType='bold' style={{fontSize:18, color:'gray',marginBottom:20}}>Difficoltà di gioco</Text>
       <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1, 'Facile')}>Facile</Text>
+      <Text textType='light' style={styles.textHelp}>Avversario genera parole di circa 3 caratteri</Text>
       <View style={styles.line} />
       <Text style={styles.contentTitle} onPress={() => props.onLevelPress(2, 'Medio')}>Medio</Text>
+      <Text textType='light' style={styles.textHelp}>Avversario genera parole di circa 4 caratteri</Text>
       <View style={styles.line} />
       <Text style={styles.contentTitle} onPress={() => props.onLevelPress(3, 'Difficile')} >Difficile</Text>
+      <Text textType='light' style={styles.textHelp}>Avversario genera parole di qualsiasi lunghezza</Text>
       <View style={styles.line} />
     </View>
   </Modal>
@@ -47,7 +51,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 20,
     marginTop: 20,
-    marginBottom: 20,
   },
   line: {
     width: '100%',
@@ -56,7 +59,8 @@ const styles = StyleSheet.create({
     marginEnd: 5,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: 'gray',
-  }
+  }, 
+  textHelp: {fontSize:14, color:'gray', marginBottom:20, textAlign:'center'}
 });
 
 export default NewGameContentModal;

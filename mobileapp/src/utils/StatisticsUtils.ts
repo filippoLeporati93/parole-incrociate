@@ -5,6 +5,7 @@ const StatisticsUtils = {
   getStatistics,
   addGame,
   calcKpis,
+  resetStatistics
 };
 
 const STATISTICS_STORAGE_KEY = '@statistics';
@@ -62,6 +63,7 @@ async function calcKpis(time: number, level: number) {
         kpis.gameWon = stats_by_level.filter(e => e.youWon === true).length;
         kpis.percGameWon = kpis.gamePlayed === 0 ? 0 : kpis.gameWon / kpis.gamePlayed
         kpis.bestTime = stats_by_level.filter(e => e.youWon === true).reduce((a, b) => Math.min(a, b.gameElapsedTime), Infinity);
+        kpis.bestTime = kpis.bestTime === Infinity ? 0 : kpis.bestTime;
         kpis.avgTime = Math.round(stats_by_level.length > 0 ? stats_by_level.reduce((a,b) => a + b.gameElapsedTime, 0) / stats_by_level.length : 0);
         kpis.bestScore = stats_by_level.reduce((a,b) => Math.max(a, b.score), 0);
         kpis.avgScore = Math.round(stats_by_level.length > 0 ? stats_by_level.reduce((a,b) => a + b.score, 0) / stats_by_level.length : 0);
@@ -79,6 +81,16 @@ async function calcKpis(time: number, level: number) {
     }
     
     return kpis;
+}
+
+async function resetStatistics(level: number) {
+  let stats = await getStatistics();
+  let filteredGames = stats.games.filter(e => e.level !== level);
+  stats.games = filteredGames;
+  await AsyncStorage.setItem(
+    STATISTICS_STORAGE_KEY,
+    JSON.stringify(stats),
+);
 }
 
 export default StatisticsUtils;

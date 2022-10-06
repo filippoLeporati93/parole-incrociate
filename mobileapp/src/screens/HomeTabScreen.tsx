@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import Text from '../components/AppText';
 import {useTheme} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 
@@ -33,9 +34,12 @@ const HomeScreen = ({navigation}: any) => {
       <Pressable 
         style={{padding: 15, marginBottom: 10}}
         onPress={() => navigation.navigate('HowToPlayScreen')}>
-        <Text style={{color: theme.colors.primaryDark, fontSize: 18}}>
-         Come si gioca?
-        </Text>
+        <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+          <Icon name="school-outline" color={theme.colors.primaryDark} size={20} />
+          <Text style={{color: theme.colors.primaryDark, fontSize: 18, marginStart: 10,}}>
+          Come si gioca?
+          </Text>
+        </View>
       </Pressable>
       <Pressable style={styles.commandButton} onPress={() => setModalVisible(true)}>
         <Text style={styles.panelButtonTitle}>

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ScrollView } from 'react-native-gesture-handler';
-import { RefreshControl, StyleSheet, View } from 'react-native';
+import { Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import Text from './AppText'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -60,14 +60,19 @@ const TabLevelStats: React.FC<TabLevelStatsProps> = props => {
     setRefreshing(true);
   }, []);
 
+  const onResetStatistics = () => {
+    setRefreshing(true);
+    StatisticsUtils.resetStatistics(props.gameLevel);
+  }
+
   useEffect(() => {
     StatisticsUtils.calcKpis(props.time, props.gameLevel)
       .then(s => { setStats(s); setRefreshing(false)})
   }, [refreshing]);
 
   return (
-    <View style={styles.container}>
       <ScrollView 
+      style={{flex: 1}}
       contentContainerStyle={{ marginHorizontal: 20, }}
       refreshControl={
         <RefreshControl
@@ -93,8 +98,13 @@ const TabLevelStats: React.FC<TabLevelStatsProps> = props => {
         <CardStats value={stats.winningSeries} icon={'chevron-right'} text={'Serie vincente attuale'} />
         <CardStats value={stats.bestWinningSeries} icon={'chevron-double-right'} text={'Miglior serie vincente'} />
 
+        <Pressable style={styles.commandButton} onPress={() => onResetStatistics()}>
+          <Text style={styles.panelButtonTitle}>
+            Cancella statistiche
+          </Text>
+        </Pressable>
+
       </ScrollView>
-    </View>
   );
 
 }
@@ -114,7 +124,18 @@ const makeStyles = (colors) => StyleSheet.create({
   pointsContainer: {
     marginTop: 10,
   },
-
+  commandButton: {
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: colors.primaryDark,
+    alignItems: 'center',
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  panelButtonTitle: {
+    fontSize: 13,
+    color: 'white',
+  },
 
 });
 
