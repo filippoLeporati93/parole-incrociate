@@ -36,7 +36,7 @@ const GameServiceOnline = () => {
   }
 
 
-  function onStartGame(cb: () => {}) {
+  function onStartGame(cb: () => void) {
     const socket = SocketService.socket;
     if(socket)
       socket.on("start_game", ({roomId, nextPlayerSocketId}) => {
