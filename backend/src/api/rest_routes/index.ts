@@ -10,10 +10,18 @@ router.get("/", function (req, res, next) {
   res.sendFile(__dirname + '/index.html');
 });
 
-router.post("/computegrid", (req, res, next) => {
-
+router.post("/nextturn", (req, res, next) => {
   let letter = req.body.letter;
   let level = req.body.level;
+
+  req.session.letter = letter;
+  req.session.level = level;
+
+  res.status(200).json(req.body);
+} );
+
+router.post("/computegrid", (req, res, next) => {
+
   if (!req.session.opponentGrid) {
     const matrix = new Array(5);
     for (let i = 0; i < matrix.length; i++) {
@@ -23,7 +31,7 @@ router.post("/computegrid", (req, res, next) => {
   }
 
   let eng = new Engine(req.session.opponentGrid)
-  const [next_grid, next_letter, next_grid_completed] = eng.computeNextGrid(level, letter.value);
+  const [next_grid, next_letter, next_grid_completed] = eng.computeNextGrid(req.session.level, req.session.letter.value);
   req.session.opponentGrid = next_grid;
 
   const responseData = {

@@ -23,7 +23,7 @@ export class RoomController {
     const rooms = io.sockets.adapter.rooms;
     try {
       for(const [roomId, sockets] of rooms) {
-        if(roomId !== socket.id && sockets.size < 2) {
+        if(roomId.startsWith("room_") && sockets.size < 2) {
           await socket.join(roomId);
           socket.emit("room_joined", {status: true});
           roomIdJoined = roomId;
@@ -36,11 +36,12 @@ export class RoomController {
     }
 
     if (!roomIdJoined) {
-      socket.emit("room_joined", {status: false});
+      await socket.join("room_" + socket.id)
+      socket.emit("room_joined", {status: true});
     } else {
       if (io.sockets.adapter.rooms.get(roomIdJoined).size === 2) {
-        io.in(roomIdJoined)
-          .emit("start_game", { roomId: roomIdJoined, yourTurn: roomIdJoined === socket.id});
+        socket.to(roomIdJoined).emit("start_game", { start: false, roomId: roomIdJoined});
+        socket.emit("start_game", { start: true, roomId: roomIdJoined})
       }
     }
   }

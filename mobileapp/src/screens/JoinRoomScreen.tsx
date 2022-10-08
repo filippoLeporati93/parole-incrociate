@@ -3,7 +3,10 @@ import { ActivityIndicator, View } from "react-native";
 import Text from '../components/AppText';
 import { useTheme } from "react-native-paper";
 import gameServiceFactory from "../services/GameServiceFactory";
+import SocketService from "../services/SocketService";
+import Config from 'react-native-config';
 
+const BASE_WS_URL = Config.BASE_WS_URL;
 
 const JoinRoomScreeen = ({route, navigation}) => {
 
@@ -15,20 +18,37 @@ const JoinRoomScreeen = ({route, navigation}) => {
   const gameService = gameServiceFactory().build(route.params.isOnlineGame);
 
   useEffect(() => {
-    if(remainingSeconds <= 0)
+    if(remainingSeconds <= -100000)
       setNoPlayer(true);
   }, [remainingSeconds]);
  
   useEffect(() => {
-    gameService.onStartGame(() => {
-      navigation.replace('BoardScreen', {...route.params});
+    SocketService
+    .connect(BASE_WS_URL)
+    .then(() => {
+      gameService.onStartGame((start, roomId) => {
+        navigation.replace('BoardScreen', {...route.params, start, roomId});
+      });
+      gameService.joinGameRoom().catch(e => console.error(e))
+    })
+    .catch((err) => {
+      console.error("Error: ", err);
     });
-    gameService.joinGameRoom().catch(e => console.error(e))
+
     const fnSeconds = setInterval(() => {
       setRemainingSeconds(remainingSeconds => remainingSeconds > 0 ? remainingSeconds - 1 : 0);
     }, 1000);
+
     return () => clearInterval(fnSeconds)
+
   }, []);
+
+
+
+  useEffect(() => {
+    
+  }, []);
+
 
 
   return (
@@ -42,7 +62,7 @@ const JoinRoomScreeen = ({route, navigation}) => {
               color={theme.colors.primaryDark}
               size="large" />
             <Text style={{ fontSize: 20, textAlign: 'center', marginBottom: 10, marginTop: 20 }}>
-              Ci serve qualche secondo, stiamo cercando altri giocatore...
+              Ci serve qualche secondo, stiamo cercando altri giocatori...
             </Text>
             <Text style={{ fontSize: 40, textAlign: 'center', }}>{remainingSeconds}</Text>
             

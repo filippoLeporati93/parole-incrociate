@@ -30,7 +30,7 @@ const NoInternetModal: FC<INoInternetModal> = ({show}) => {
               BackHandler.exitApp();
             }}
           >
-            <Text style={styles.textStyle}>Chiudi Spots</Text>
+            <Text style={styles.textStyle}>Esci</Text>
           </TouchableOpacity>
         </View>
       </View>

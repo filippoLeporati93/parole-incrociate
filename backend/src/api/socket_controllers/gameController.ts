@@ -6,16 +6,13 @@ import {
   SocketIO,
 } from "socket-controllers";
 import { Server, Socket } from "socket.io";
-import { Engine } from "../../game_engine/Engine";
 
 @SocketController()
 export class GameController {
 
   private getSocketGameRoom(socket: Socket): string {
-    const socketRooms = Array.from(socket.rooms.values()).filter(
-      (r) => r !== socket.id
-    );
-    const gameRoom: string = socketRooms && socketRooms[0];
+    const socketRooms = Array.from(socket.rooms.values()).filter(r => r.startsWith("room_"));
+    const gameRoom: string = socketRooms && socketRooms.pop();
 
     return gameRoom;
   }
@@ -31,10 +28,10 @@ export class GameController {
     let level = message.level;
   
     const responseData = {
-      opponentLetter: letter,
+      opponentLetter: letter.value,
     }
     const gameRoom = this.getSocketGameRoom(socket);
-    socket.to(gameRoom).emit("on_game_update", responseData);
+    socket.to(gameRoom).emit("on_update_game", responseData);
   }
 
   @OnMessage("game_finish")

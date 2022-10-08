@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import gameServiceFactory, { IPlayMatrix } from '../services/GameServiceFactory';
+import SocketService from "../services/SocketService";
 
 
 import {
@@ -20,6 +21,7 @@ import AcceptAction from '../components/AcceptAction';
 import { useTheme } from 'react-native-paper';
 import Text from '../components/AppText';
 import EndGameModal from '../components/modal/EndGameModal';
+import EndGameDisconnectModal from '../components/modal/EndGameDisconnectModal';
 import StatisticsUtils from '../utils/StatisticsUtils';
 import { gameResults } from '../models/Types';
 
@@ -29,6 +31,8 @@ const BoardScreen = ({ route, navigation }) => {
   const gameService = gameServiceFactory().build(route.params.isOnlineGame);
 
   const [endGameModalVisible, setEndGameModalVisible] = useState(false);
+  const [endGameDisconnectModalVisible, setEndGameDisconnectModalVisible] = useState(false);
+
   const [endGameStatus, setEndGameStatus] = useState(-1);
   const [points, setPoints] = useState(-1);
   const tempGameResults : gameResults[] = [];
@@ -38,7 +42,7 @@ const BoardScreen = ({ route, navigation }) => {
   const [cellIndexPressed, setCellIndexPressed] = useState({ dx: -1, dy: -1 });
   const [stackLetterPressed, setStackLetterPressed] = useState("");
   
-  const [isMyTurn, setIsMyTurn] = useState(gameService.isMyTurn());
+  const [isMyTurn, setIsMyTurn] = useState(true);
   
   const [showAcceptActionContainer, setShowActionContainer] = useState(false);
   
@@ -59,8 +63,16 @@ const BoardScreen = ({ route, navigation }) => {
       gameService.onStartGame(() => {});
       
     // call only for online game
-    if(route.params.level === -1)
-      gameService.onGameFinish(onGameFinish);
+    if(route.params.level === -1) {
+      setIsMyTurn(route.params.start)
+      gameService.onGameFinish(handleOnGameFinish);
+      gameService.onUpdateGame(handleOnUpdateGame);
+      gameService.onPlayerLeaving(handleOnPlayersLeaving)
+    }
+
+    return () => {
+      SocketService.disconnect().catch( e => console.log(e))
+    }
   }, [])
 
 
@@ -133,24 +145,36 @@ const BoardScreen = ({ route, navigation }) => {
       timerRef.current.stop();
       gameService.gameFinish(matrix, (myResult) => tempGameResults.push(myResult));
     }
-    gameService.updateGame(route.params.level, letter, (opponentLetter) => {
-      // place the letter of the opponet
-      setCellIndexPressed({ dx: -1, dy: -1 });
-      setIsMyTurn(gameService.isMyTurn());
-      setTextHelp("Posiziona la lettera " + opponentLetter + ", scelta dall'avversario")
-      setOpponentLetter(opponentLetter);
-      // if you are playing against computer and opponent has no more letter to put, ask for opponent grid results.
-      if(opponentLetter === "" && route.params.level !== -1)
-        gameService.onGameFinish(onGameFinish);
+    gameService.updateGame(route.params.level, letter, () => {
+      if(route.params.level !== -1) {
+        gameService.onUpdateGame(handleOnUpdateGame)
+      }
     });
-    
+
   };
 
+  const handleOnUpdateGame = (opponentLetter: string) => {
+    // place the letter of the opponent
+    setCellIndexPressed({ dx: -1, dy: -1 });
+    setIsMyTurn(true);
+    setTextHelp("Posiziona la lettera " + opponentLetter + ", scelta dall'avversario")
+    setOpponentLetter(opponentLetter);
+    // if you are playing against computer and opponent has no more letter to put, ask for opponent grid results.
+    if(opponentLetter === "" && route.params.level !== -1)
+      gameService.onGameFinish(handleOnGameFinish);
+  }
+
+
   // add opponents results since the have no more letter to put
-  const onGameFinish = (opponentResult: gameResults) => {
+  const handleOnGameFinish = (opponentResult: gameResults) => {
     tempGameResults.push(opponentResult);
     if(tempGameResults.length === 2)
       showModalResults();
+  }
+
+  const handleOnPlayersLeaving = (playersRemaining? : number) => {
+    if(playersRemaining && playersRemaining <= 0)
+      setEndGameDisconnectModalVisible(true);
   }
 
   const showModalResults = () => {
@@ -195,22 +219,22 @@ const BoardScreen = ({ route, navigation }) => {
         </View>
         {isMyTurn ? (
           <>
+          {showAcceptActionContainer ? (
             <View style={styles.acceptActionContainer}>
               <AcceptAction
-                show={showAcceptActionContainer}
                 onAcceptPress={() => onAcceptPress()}
                 onCancelPress={() => onCancelPress()} />
             </View>
+          ) : (  
             <View style={styles.stackContainer}>
+              <Text style={styles.textHelp}>{textHelp}</Text>
               <Stack opponentLetter={opponentLetter} onStackCellPress={onStackCellPress} stackLetterPressed={stackLetterPressed} />
             </View>
-            <View style={styles.textHelpContainer}>
-              <Text style={{color: 'gray', fontSize: 12,}}>{textHelp}</Text>
-            </View>
+          )}
           </>
         ) : (
-          <View style={{ flex: 6, justifyContent: 'center', marginBottom: 40 }}>
-            <Text style={{ fontSize: 20, textAlign: 'center', marginBottom: 10, }}>
+          <View style={{ flex: 5, justifyContent: 'center', marginBottom: 40,}}>
+            <Text style={{ fontSize: 20, textAlign: 'center' }}>
               Attendi il tuo prossimo turno...
             </Text>
             <ActivityIndicator
@@ -232,6 +256,15 @@ const BoardScreen = ({ route, navigation }) => {
           setEndGameModalVisible(false);
           navigation.replace("ScoreScreen", {results: gameResults} );
         }}
+      />
+
+      <EndGameDisconnectModal 
+        isVisible={endGameDisconnectModalVisible} 
+        onBackPress={() => {
+            setEndGameDisconnectModalVisible(false);
+            navigation.popToTop();
+          }
+        }
       />
 
       </View>
@@ -261,12 +294,14 @@ const styles = StyleSheet.create({
     marginHorizontal:20,
   },
   acceptActionContainer: {
-    flex: 1,
+    marginBottom: 10,
+    flex: 5,
     justifyContent: 'center',
   },
-  textHelpContainer: {
-    alignItems: 'center',
-    marginBottom: 15,
+  textHelp: {
+    fontSize: 12,
+    color: 'gray',
+    marginBottom: 10,
   },
   textInfo: {
     fontSize: 13,

@@ -12,10 +12,7 @@ import {
 } from 'react-native-paper';
 import MainTabScreen from './screens/MainTabScreen';
 import NoInternetModal from './components/modal/NoInternetModal';
-import SocketService   from "./services/SocketService";
-import Config from 'react-native-config';
 
-const BASE_WS_URL = Config.BASE_WS_URL;
 
 const App = () => {
   const CustomDefaultTheme = {
@@ -39,19 +36,6 @@ const App = () => {
   const theme = CustomDefaultTheme;
 
   const [isOffline, setOfflineStatus] = useState(false);
-
-  const connectSocket = () => {
-    SocketService
-      .connect(BASE_WS_URL)
-      .catch((err) => {
-        console.error("Error: ", err);
-      });
-  };
-
-  useEffect(() => {
-    connectSocket();
-  }, []);
-
 
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener(state => {

@@ -8,15 +8,22 @@ const API_TOKEN = Config.API_TOKEN;
 class SocketService {
   public socket: Socket | null = null;
 
-  public connect(
-    url: string
-  ): Promise<Socket<DefaultEventsMap, DefaultEventsMap>> {
+  public connect(url: string): Promise<Socket<DefaultEventsMap, DefaultEventsMap>> {
     return new Promise((rs, rj) => {
-      this.socket = io(url, {
-        auth: {
-          token: API_TOKEN
-        }
-      });
+
+      // if disconnected, reopen the connection
+      if(this.socket && this.socket.disconnected) {
+        this.socket.connect();
+      }
+
+      // if socket does not exist create and connect, if exists do not create a new connection
+      if(!this.socket) {
+        this.socket = io(url, {
+          auth: {
+            token: API_TOKEN
+          }
+        });
+      }
 
       if (!this.socket) return rj();
 
@@ -28,6 +35,17 @@ class SocketService {
         console.log("Connection error: ", err);
         rj(err);
       });
+
+    });
+  }
+
+  public disconnect(): Promise<void> {
+    return new Promise((rs, rj) => {
+
+      if (!this.socket) return rj();
+
+      this.socket.disconnect();
+
     });
   }
 }

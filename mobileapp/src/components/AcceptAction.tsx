@@ -13,22 +13,18 @@ import Text from './AppText';
 
 interface IAcceptAction {
 
-  show: boolean,
   onAcceptPress: () => void,
   onCancelPress: () => void,
 
 }
 
-const AcceptAction = ({show, onAcceptPress, onCancelPress} : IAcceptAction) => {
+const AcceptAction = ({onAcceptPress, onCancelPress} : IAcceptAction) => {
 
     const theme = useTheme();
     const styles = makeStyles(theme.colors);
 
     const AnimatedTouchable = Animated.createAnimatedComponent(Pressable);
 
-    if (!show)
-      return null
-    else
       return (
         <View style={styles.container}>
     
@@ -37,9 +33,9 @@ const AcceptAction = ({show, onAcceptPress, onCancelPress} : IAcceptAction) => {
               <View style={{flexDirection:'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 30 }}>
             <Icon 
               name='close-circle-outline' 
-              size={30} 
+              size={40} 
               color='red'/>
-            <Text textType='light' style={{color:'red', fontSize:11}}>Cancella</Text>
+            <Text textType='light' style={{color:'red', fontSize:20}}>Annulla</Text>
             </View>
           </AnimatedTouchable>
 
@@ -48,9 +44,9 @@ const AcceptAction = ({show, onAcceptPress, onCancelPress} : IAcceptAction) => {
          <View style={{flexDirection:'row',justifyContent: 'center', alignItems: 'center', paddingHorizontal: 30 }}>
             <Icon 
               name='checkmark-circle-outline'
-              size={30} 
+              size={40} 
               color='green'/>
-             <Text textType='light' style={{color:'green', fontSize:11,}}>OK</Text>
+             <Text textType='light' style={{color:'green', fontSize:20,}}>Conferma</Text>
              </View>
           </AnimatedTouchable>
         </View>

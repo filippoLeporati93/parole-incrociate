@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, StyleSheet, View} from 'react-native';
+import {Button, Pressable, StyleSheet, View} from 'react-native';
 import Modal from "react-native-modal";
 import Text from '../AppText';
 
@@ -19,14 +19,20 @@ const NewGameContentModal: React.FC<Props> = props => (
     style={styles.view}>
     <View style={styles.content}>
       <Text textType='bold' style={{fontSize:18, color:'gray',marginBottom:20}}>Difficoltà di gioco</Text>
-      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(1, 'Facile')}>Facile</Text>
-      <Text textType='light' style={styles.textHelp}>Avversario genera parole di circa 3 caratteri</Text>
+      <Pressable style={{alignItems:'center'}} onPress={() => props.onLevelPress(1, 'Facile')}>
+        <Text style={styles.contentTitle}>Facile</Text>
+        <Text textType='light' style={styles.textHelp}>Avversario genera parole corte</Text>
+      </Pressable>
       <View style={styles.line} />
-      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(2, 'Medio')}>Medio</Text>
-      <Text textType='light' style={styles.textHelp}>Avversario genera parole di circa 4 caratteri</Text>
+      <Pressable style={{alignItems:'center'}} onPress={() => props.onLevelPress(2, 'Medio')}>
+        <Text style={styles.contentTitle}>Medio</Text>
+        <Text textType='light' style={styles.textHelp}>Avversario genera parole medie</Text>
+      </Pressable>
       <View style={styles.line} />
-      <Text style={styles.contentTitle} onPress={() => props.onLevelPress(3, 'Difficile')} >Difficile</Text>
-      <Text textType='light' style={styles.textHelp}>Avversario genera parole di qualsiasi lunghezza</Text>
+      <Pressable style={{alignItems:'center'}} onPress={() => props.onLevelPress(3, 'Difficile')}>
+        <Text style={styles.contentTitle}>Difficile</Text>
+        <Text textType='light' style={styles.textHelp}>Avversario genera parole lunghe</Text>
+      </Pressable>
       <View style={styles.line} />
     </View>
   </Modal>
