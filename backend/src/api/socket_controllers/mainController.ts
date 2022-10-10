@@ -31,7 +31,7 @@ export class MainController {
     });
 
     socket.on("custom_event", (data: any) => {
-      socket.emit("on_custom_event", data);
+      io.emit("on_custom_event", data);
     });
   }
   
