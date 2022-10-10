@@ -29,6 +29,10 @@ export class MainController {
         io.to(roomId).emit("on_player_leaving", {playersRemaining});
       }
     });
+
+    socket.on("custom_event", (data: any) => {
+      console.log("Data: ", data);
+    });
   }
   
 }

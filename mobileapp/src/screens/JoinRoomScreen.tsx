@@ -44,13 +44,6 @@ const JoinRoomScreeen = ({route, navigation}) => {
   }, []);
 
 
-
-  useEffect(() => {
-    
-  }, []);
-
-
-
   return (
     <View style={{flex:1, width:'100%', justifyContent:'center', alignItems:'center'}}>
       {noPlayer ? (<Text style={{ fontSize: 20, textAlign: 'center' }}>

@@ -39,6 +39,7 @@ app.use(
   })
 );
 
+/*
 passport.use(new passportBearerStrategy(
   function(token, cb) {
     if(token === process.env.API_TOKEN)
@@ -47,6 +48,7 @@ passport.use(new passportBearerStrategy(
       return cb(new Error("Unauthorized"));
   }
 ));
+*/
 
 var indexRouter = require("./api/rest_routes/index");
 app.use("/", indexRouter);
