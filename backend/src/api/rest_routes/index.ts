@@ -4,10 +4,12 @@ var passport = require('passport');
 
 const router = express.Router();
 
+/*
 router.use(passport.authenticate('bearer', { session: false }));
+*/
 
 router.get("/", function (req, res, next) {
-  res.status(200).json({});
+  res.status(200).json({status:true});
 });
 
 router.post("/nextturn", (req, res, next) => {
