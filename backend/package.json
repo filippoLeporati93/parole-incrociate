@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "DEBUG=socket* node dist/server.js",
     "build": "tsc --project . && yarn copy-files",
     "copy-files": "copyfiles -u 1 \"src/assets/**/*\" dist",
     "dev": "nodemon"
