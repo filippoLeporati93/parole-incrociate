@@ -7,7 +7,7 @@ const router = express.Router();
 router.use(passport.authenticate('bearer', { session: false }));
 
 router.get("/", function (req, res, next) {
-  res.sendFile(__dirname + '/index.html');
+  res.status(200).json({});
 });
 
 router.post("/nextturn", (req, res, next) => {
