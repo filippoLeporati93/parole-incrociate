@@ -8,7 +8,7 @@ var passport = require('passport');
 var passportBearerStrategy = require('passport-http-bearer').Strategy;
 const { CosmosDbTableStore } = require('nodejs-cosmosdbtable-session');
 import { TableClient } from "@azure/data-tables";
-import * as cors from "cors";
+import cors = require("cors");
 import "reflect-metadata";
 
 require('dotenv').config();
@@ -24,8 +24,9 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 const tableName = `SessionTable`;
+const cosmosdb_connstring = process.env.COSMOSDBTABLE_CONNECTIONSTRING ?? "UseDevelopmentStorage=true";
 const client = TableClient.fromConnectionString(
-    process.env.COSMOSDBTABLE_CONNECTIONSTRING,
+    cosmosdb_connstring,
     tableName);
 
 app.use(
@@ -39,27 +40,26 @@ app.use(
   })
 );
 
-/*
+
 passport.use(new passportBearerStrategy(
-  function(token, cb) {
+  function(token: any, cb: any) {
     if(token === process.env.API_TOKEN)
   	  return cb(null, {id:-1, name: 'api-token'});
     else 
       return cb(new Error("Unauthorized"));
   }
 ));
-*/
 
 var indexRouter = require("./api/rest_routes/index");
 app.use("/", indexRouter);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use(function (req: any, res: any, next: any) {
   next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
+app.use(function (err: any, req: any, res: any, next: any) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};

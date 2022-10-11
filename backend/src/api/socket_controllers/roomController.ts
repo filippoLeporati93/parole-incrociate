@@ -18,7 +18,7 @@ export class RoomController {
   ) {
     console.log("New User try joining room: ", message);
 
-    let roomIdJoined: string = null;
+    let roomIdJoined: string | null = null;
 
     const rooms = io.sockets.adapter.rooms;
     try {
@@ -39,7 +39,8 @@ export class RoomController {
       await socket.join("room_" + socket.id)
       socket.emit("room_joined", {status: true});
     } else {
-      if (io.sockets.adapter.rooms.get(roomIdJoined).size === 2) {
+      const sockets = io.sockets.adapter.rooms.get(roomIdJoined) ?? new Set();
+      if (sockets.size === 2) {
         socket.to(roomIdJoined).emit("start_game", { start: false, roomId: roomIdJoined});
         socket.emit("start_game", { start: true, roomId: roomIdJoined})
       }

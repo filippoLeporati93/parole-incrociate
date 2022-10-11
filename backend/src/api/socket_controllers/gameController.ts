@@ -12,7 +12,7 @@ export class GameController {
 
   private getSocketGameRoom(socket: Socket): string {
     const socketRooms = Array.from(socket.rooms.values()).filter(r => r.startsWith("room_"));
-    const gameRoom: string = socketRooms && socketRooms.pop();
+    const gameRoom: string = socketRooms && (socketRooms.pop() ?? "");
 
     return gameRoom;
   }

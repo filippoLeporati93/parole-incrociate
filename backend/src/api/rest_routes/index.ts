@@ -4,15 +4,13 @@ var passport = require('passport');
 
 const router = express.Router();
 
-/*
 router.use(passport.authenticate('bearer', { session: false }));
-*/
 
-router.get("/", function (req, res, next) {
+router.get("/", function (req: any, res: any, next: any) {
   res.status(200).json({status:true});
 });
 
-router.post("/nextturn", (req, res, next) => {
+router.post("/nextturn", (req: any, res: any, next:any) => {
   let letter = req.body.letter;
   let level = req.body.level;
 
@@ -22,7 +20,7 @@ router.post("/nextturn", (req, res, next) => {
   res.status(200).json(req.body);
 } );
 
-router.post("/computegrid", (req, res, next) => {
+router.post("/computegrid", (req: any, res: any, next: any) => {
 
   if (!req.session.opponentGrid) {
     const matrix = new Array(5);
@@ -44,14 +42,14 @@ router.post("/computegrid", (req, res, next) => {
   res.status(200).json(responseData);
 });
 
-router.post("/resetgame", (req, res, next) => {
+router.post("/resetgame", (req: any, res: any, next: any) => {
   if(req.session.opponentGrid)
     req.session.opponentGrid = null
   
   res.status(200).json();
 });
 
-router.post("/results", (req, res, next) => {
+router.post("/results", (req: any, res: any, next: any) => {
   let grid = req.body.grid;
   const opponent = req.query.opponent ?? "false";
   grid = opponent === 'true' && !grid ? req.session.opponentGrid : grid;

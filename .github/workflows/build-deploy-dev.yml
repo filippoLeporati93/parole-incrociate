@@ -34,9 +34,9 @@ jobs:
         run: |
           # Build and test the project, then
           # deploy to Azure Web App.
-          yarn global add typescript ts-node copyfiles
+          yarn global add typescript ts-node copyfiles rimraf
           yarn install
-          yarn build
+          yarn compile
           
       - name: 'Deploy to Azure WebApp'
         uses: azure/webapps-deploy@v2

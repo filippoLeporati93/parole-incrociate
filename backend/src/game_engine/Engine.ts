@@ -16,10 +16,12 @@ export class Engine {
     grid: Array<Array<string>>;
     wordlist: string[];
 
-    constructor(grid, load_words = true) {
+    constructor(grid: Matrix, load_words = true) {
         this.grid = JSON.parse(JSON.stringify(grid));
         if(load_words)
             this.wordlist = this.getWordList("280000_parole_italiane.txt");
+        else
+            this.wordlist = [];
     }
 
     showGridText(grid: Matrix) {
@@ -116,7 +118,7 @@ export class Engine {
     
     };
 
-    private testCandidate(irow: number, icol:number, dx: number, dy: number, word: string, letter: string | null) {
+    private testCandidate(irow: number, icol:number, dx: number, dy: number, word: string, letter: string | null): [boolean, number] {
         /* Tet the candidate location (icol, irow) for word in orientation
         dx, dy). */                
         let grid_word = "";

@@ -24,7 +24,8 @@ export class MainController {
       const socketId = id;
       const roomId = room;
       if(roomId.startsWith("room_")) {
-        const playersRemaining = io.sockets.adapter.rooms.get(roomId).size - 1;
+        const sockets = io.sockets.adapter.rooms.get(roomId) ?? new Set();
+        const playersRemaining = sockets.size - 1;
         console.log("playersRemaining:" + playersRemaining);
         io.to(roomId).emit("on_player_leaving", {playersRemaining});
       }
