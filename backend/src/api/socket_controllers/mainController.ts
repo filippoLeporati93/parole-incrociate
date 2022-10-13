@@ -23,6 +23,7 @@ export class MainController {
     socket.on("disconnecting", (reason) => {
       for (const roomId of socket.rooms) {
         if (roomId.startsWith("room_")) {
+            console.log("Users [" + socket.id + "] is disconnecting. Reason: " + reason);
             const sockets = io.sockets.adapter.rooms.get(roomId) ?? new Set();
             const playersRemaining = sockets.size - 1;
             console.log("playersRemaining:" + playersRemaining);
