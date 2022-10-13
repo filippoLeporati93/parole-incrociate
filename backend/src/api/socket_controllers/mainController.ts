@@ -26,7 +26,7 @@ export class MainController {
             const sockets = io.sockets.adapter.rooms.get(roomId) ?? new Set();
             const playersRemaining = sockets.size - 1;
             console.log("playersRemaining:" + playersRemaining);
-            socket.to(roomId).emit("on_player_leaving", {socketId: socket.id, playersRemaining});
+            socket.to(roomId).emit("on_player_leaving", {socketId: socket.id, playersRemaining, reason});
         }
       }
     });
