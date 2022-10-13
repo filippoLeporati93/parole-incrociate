@@ -20,20 +20,17 @@ export class MainController {
       console.log('user disconnected: ' + socket.id);
     });
 
-    io.of("/").adapter.on("leave-room", (room, id) => {
-      const socketId = id;
-      const roomId = room;
-      if(roomId.startsWith("room_")) {
-        const sockets = io.sockets.adapter.rooms.get(roomId) ?? new Set();
-        const playersRemaining = sockets.size - 1;
-        console.log("playersRemaining:" + playersRemaining);
-        io.to(roomId).emit("on_player_leaving", {playersRemaining});
+    socket.on("disconnecting", (reason) => {
+      for (const roomId of socket.rooms) {
+        if (roomId.startsWith("room_")) {
+            const sockets = io.sockets.adapter.rooms.get(roomId) ?? new Set();
+            const playersRemaining = sockets.size - 1;
+            console.log("playersRemaining:" + playersRemaining);
+            socket.to(roomId).emit("on_player_leaving", {socketId: socket.id, playersRemaining});
+        }
       }
     });
 
-    socket.on("custom_event", (data: any) => {
-      io.emit("on_custom_event", data);
-    });
   }
   
 }
