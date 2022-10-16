@@ -30,23 +30,23 @@ const AcceptAction = ({onAcceptPress, onCancelPress} : IAcceptAction) => {
     
           <AnimatedTouchable
           onPress={onCancelPress}>  
-              <View style={{flexDirection:'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 30 }}>
+              <View style={{flexDirection:'column', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 35 }}>
             <Icon 
               name='close-circle-outline' 
-              size={40} 
-              color='red'/>
-            <Text textType='light' style={{color:'red', fontSize:20}}>Annulla</Text>
+              size={30} 
+              color='gray'/>
+            <Text textType='light' style={{color:'gray', fontSize:20}}>Annulla</Text>
             </View>
           </AnimatedTouchable>
 
           <AnimatedTouchable
           onPress={onAcceptPress}>
-         <View style={{flexDirection:'row',justifyContent: 'center', alignItems: 'center', paddingHorizontal: 30 }}>
+         <View style={{flexDirection:'column',justifyContent: 'center', alignItems: 'center', paddingHorizontal: 35 }}>
             <Icon 
               name='checkmark-circle-outline'
-              size={40} 
-              color='green'/>
-             <Text textType='light' style={{color:'green', fontSize:20,}}>Conferma</Text>
+              size={30} 
+              color={theme.colors.primaryDark}/>
+             <Text textType='light' style={{color:theme.colors.primaryDark, fontSize:20,}}>Conferma</Text>
              </View>
           </AnimatedTouchable>
         </View>

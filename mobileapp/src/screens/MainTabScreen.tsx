@@ -69,7 +69,9 @@ const HomeStackScreen = ({}: any) => {
         name="HomeScreen"
         component={HomeScreen}
         options={{
+          headerTransparent: true,
           headerTitle: "",
+          headerBackTitleVisible: false,
         }}
       />
       <HomeStack.Screen

@@ -7,7 +7,7 @@ import {
 
 import StackCell from './StackCell';
 
-const stack = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+export const ALPHABET = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
 interface IStack {
   opponentLetter? : string,
@@ -20,7 +20,7 @@ const Stack = ({opponentLetter, onStackCellPress, stackLetterPressed} : IStack) 
   return (
       <View style={styles.container} >
       {
-        stack.map((item, i) => (
+        ALPHABET.map((item, i) => (
               <StackCell 
               key={item} 
               letter={item} 
@@ -41,7 +41,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    paddingHorizontal: 5,
   },
 });
 

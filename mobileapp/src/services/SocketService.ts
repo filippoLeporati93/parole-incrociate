@@ -11,6 +11,11 @@ class SocketService {
   public connect(url: string): Promise<Socket<DefaultEventsMap, DefaultEventsMap>> {
     return new Promise((rs, rj) => {
 
+      //if connected
+      if(this.socket && this.socket.connected) {
+        return rs(this.socket as Socket);
+      }
+
       // if disconnected, reopen the connection
       if(this.socket && this.socket.disconnected) {
         this.socket.connect();
@@ -42,9 +47,16 @@ class SocketService {
   public disconnect(): Promise<void> {
     return new Promise((rs, rj) => {
 
-      if (!this.socket) return rj();
+      if (this.socket && this.socket.connected) {
+        try {
+          this.socket.disconnect();
+          return rs();
+        } catch (e) {
+          return rj(e);
+        }
+      }
 
-      this.socket.disconnect();
+      return rs();
 
     });
   }

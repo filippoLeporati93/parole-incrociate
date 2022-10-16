@@ -23,7 +23,7 @@ const EndGameDisconnectModal: React.FC<Props> = props => {
     style={styles.view}>
     <View style={styles.content}>
     <View
-        style={[styles.header, {backgroundColor: 'gray'}]}
+        style={[styles.header, {backgroundColor: theme.colors.primaryDark}]}
       />
     <Pressable style={{position: 'absolute', top: 10, left: 10,}}
     onPress={props.onBackPress}>
@@ -35,7 +35,7 @@ const EndGameDisconnectModal: React.FC<Props> = props => {
     </Pressable>
 
       <Text textType='light'
-      style={styles.contentSubTitle}>Partita disconnessa</Text>
+      style={styles.contentSubTitle}>L'avversario si è disconnesso</Text>
       
       <Text textType='bold' style={styles.contentTitle}>Ops!</Text>
       
@@ -75,7 +75,7 @@ const makeStyles = (colors:any) => StyleSheet.create({
   header: {
     position: 'absolute',
     top: 0,
-    height: 120,
+    height: 150,
     width: (width - 40) / 2,
     alignSelf: 'center',
     borderBottomRightRadius: 100,
