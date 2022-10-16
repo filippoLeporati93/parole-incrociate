@@ -1,0 +1,34 @@
+name: Build Android app
+
+on:
+  pull_request:
+    paths:
+      - mobileapp/**
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up JDK environment
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '16'
+          cache: 'gradle'
+        
+      - name: yarn install
+        working-directory: mobileapp
+        run: yarn install  
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
+          build-root-directory: mobileapp/android
+          gradle-version: 7.2
