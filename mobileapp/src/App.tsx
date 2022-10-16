@@ -12,6 +12,7 @@ import {
 } from 'react-native-paper';
 import MainTabScreen from './screens/MainTabScreen';
 import NoInternetModal from './components/modal/NoInternetModal';
+import { StatusBar } from 'react-native';
 
 
 const App = () => {
@@ -24,10 +25,11 @@ const App = () => {
       background: '#ffffff',
       text: '#333333',
       textLight: '#444',
-      primary: '#bbdefb',
-      primaryLight: '#bbdefb55',
+      primary: '#87C0CD',
+      primaryLight: '#BBDEFB55',
       primaryDark: '#036595',
-      backgroundGray: '#8aacc8'
+      backgroundGray: '#8aacc8',
+      backgroundHome: '#87C0CD11',
     },
   };
 
@@ -51,6 +53,10 @@ const App = () => {
 
   return (
     <PaperProvider theme={theme}>
+      <StatusBar
+        backgroundColor={theme.colors.primaryDark}
+        barStyle="light-content"
+      />
         <NavigationContainer
           theme={theme}
           ref={navigationRef}>

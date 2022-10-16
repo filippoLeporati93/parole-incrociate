@@ -21,9 +21,14 @@ const HomeScreen = ({navigation}: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={{flex: 1, fontSize: 50,}}>
-        Parole Incrociate
-      </Text>
+      <View style={{flex: 2, alignContent: 'flex-start', justifyContent: 'center'}}>
+        <Text textType='bold' style={{fontSize: 50, color: theme.colors.primaryDark}}>
+          PAROLE
+        </Text>
+        <Text textType='bold' style={{fontSize: 50, color: theme.colors.primary}}>
+          INCROCIATE
+        </Text>   
+      </View>  
     <View style={{
       flex: 1, 
       width: '100%',
@@ -73,6 +78,7 @@ const makeStyles = colors =>
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
+      backgroundColor: colors.backgroundHome
     },
     commandButton: {
       padding: 15,
