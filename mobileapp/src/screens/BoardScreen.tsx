@@ -368,7 +368,7 @@ const BoardScreen = ({ route, navigation }) => {
             <Text textType='bold' style={{ fontSize: 20, textAlign: 'center' }}>
               Attendi il tuo prossimo turno
             </Text>
-            <Text textType='light' style={{ fontSize: 18, textAlign: 'center', margionBottom: 10 }}>
+            <Text textType='light' style={{ fontSize: 18, textAlign: 'center', marginBottom: 10 }}>
               L'avversario sta giocando...
             </Text>
             <ActivityIndicator

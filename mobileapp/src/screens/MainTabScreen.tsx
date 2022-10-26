@@ -14,12 +14,77 @@ import ScoreScreen from './ScoreScreen';
 import HowToPlayScreen from './HowToPlayScreen';
 import JoinRoomScreen from './JoinRoomScreen';
 
-const HomeStack = createStackNavigator();
+const MainStack = createStackNavigator();
 const StatisticsStack = createStackNavigator();
 
 const Tab = createMaterialBottomTabNavigator();
 
-const MainTabScreen = () => (
+
+const MainTabScreen = ({}: any) => {
+  const {colors} = useTheme();
+  return (
+    <MainStack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: colors.background,
+          shadowColor: colors.background, // iOS
+          elevation: 0, // Android
+        },
+        headerTintColor: colors.text,
+        headerTitleStyle: {
+          fontFamily: 'AirbnbCereal_W_Md',
+        },
+      }}
+    >
+      <MainStack.Screen
+        name="HomeScreen"
+        component={HomeTabScreen}
+        options={{
+          headerTransparent: true,
+          headerTitle: "",
+          headerBackTitleVisible: false,
+        }}
+      />
+      <MainStack.Screen
+        name="JoinRoomScreen"
+        component={JoinRoomScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
+          headerTitleAlign: 'center'
+        }}
+      />
+      <MainStack.Screen
+        name="BoardScreen"
+        component={BoardScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
+          headerTitleAlign: 'center'
+        }}
+      />
+      <MainStack.Screen
+        name="ScoreScreen"
+        component={ScoreScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Dettagli</Text>),
+          headerTitleAlign: 'center'
+        }}
+      />
+      <MainStack.Screen
+        name="HowToPlayScreen"
+        component={HowToPlayScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}></Text>),
+        }}
+      />
+    </MainStack.Navigator>
+  );
+};
+
+const HomeTabScreen = () => (
   <Tab.Navigator
     initialRouteName="HomeTab"
     activeColor="#036595"
@@ -28,7 +93,7 @@ const MainTabScreen = () => (
   >
     <Tab.Screen
       name="HomeTab"
-      component={HomeStackScreen}
+      component={HomeScreen}
       options={{
         tabBarLabel: <Text style={{color:'gray'}}>Home</Text>,
         tabBarIcon: ({color}) => <Icon name="home" color={color} size={20} />,
@@ -46,72 +111,6 @@ const MainTabScreen = () => (
     />
   </Tab.Navigator>
 );
-
-export default MainTabScreen;
-
-const HomeStackScreen = ({}: any) => {
-  const {colors} = useTheme();
-  return (
-    <HomeStack.Navigator
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.background,
-          shadowColor: colors.background, // iOS
-          elevation: 0, // Android
-        },
-        headerTintColor: colors.text,
-        headerTitleStyle: {
-          fontFamily: 'AirbnbCereal_W_Md',
-        },
-      }}
-    >
-      <HomeStack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-        options={{
-          headerTransparent: true,
-          headerTitle: "",
-          headerBackTitleVisible: false,
-        }}
-      />
-      <HomeStack.Screen
-        name="JoinRoomScreen"
-        component={JoinRoomScreen}
-        options={{
-          headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
-          headerTitleAlign: 'center'
-        }}
-      />
-      <HomeStack.Screen
-        name="BoardScreen"
-        component={BoardScreen}
-        options={{
-          headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
-          headerTitleAlign: 'center'
-        }}
-      />
-      <HomeStack.Screen
-        name="ScoreScreen"
-        component={ScoreScreen}
-        options={{
-          headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Dettagli</Text>),
-          headerTitleAlign: 'center'
-        }}
-      />
-      <HomeStack.Screen
-        name="HowToPlayScreen"
-        component={HowToPlayScreen}
-        options={{
-          headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}></Text>),
-        }}
-      />
-    </HomeStack.Navigator>
-  );
-};
 
 const StatisticsStackScreen = ({}: any) => {
   const {colors} = useTheme();
@@ -141,3 +140,5 @@ const StatisticsStackScreen = ({}: any) => {
     </StatisticsStack.Navigator>
   );
 };
+
+export default MainTabScreen;

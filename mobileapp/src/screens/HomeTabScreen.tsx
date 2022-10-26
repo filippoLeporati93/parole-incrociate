@@ -3,10 +3,12 @@ import {
   StyleSheet,
   View,
   Pressable,
+  Image,
 } from 'react-native';
 import Text from '../components/AppText';
 import {useTheme} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -22,10 +24,11 @@ const HomeScreen = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={{flex: 2, alignContent: 'flex-start', justifyContent: 'center'}}>
-        <Text textType='bold' style={{fontSize: 50, color: theme.colors.primaryDark}}>
+      <Image style={{width:100,height:100, alignSelf:'center', marginTop: 10,}} source={require("../assets/img/ic_launcher-web.png")} />
+        <Text textType='bold' style={{textAlign:'center', fontSize: 50, color: theme.colors.primaryDark}}>
           PAROLE
         </Text>
-        <Text textType='bold' style={{fontSize: 50, color: theme.colors.primary}}>
+        <Text textType='bold' style={{textAlign:'center', fontSize: 50, color: theme.colors.primary}}>
           INCROCIATE
         </Text>   
       </View>  
