@@ -24,7 +24,7 @@ const HomeScreen = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={{flex: 2, alignContent: 'flex-start', justifyContent: 'center'}}>
-      <Image style={{width:100,height:100, alignSelf:'center', marginTop: 10,}} source={require("../assets/img/ic_launcher-web.png")} />
+      <Image style={{width:70,height:70, alignSelf:'center', marginTop: 10,}} source={require("../assets/img/ic_launcher-web.png")} />
         <Text textType='bold' style={{textAlign:'center', fontSize: 50, color: theme.colors.primaryDark}}>
           PAROLE
         </Text>
