@@ -1,39 +1,38 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
-import {
-  StyleSheet,
-  View,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 
 import StackCell from './StackCell';
 
 export const ALPHABET = Array.from('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
 interface IStack {
-  opponentLetter? : string,
-  onStackCellPress: (letter: string) => void,
-  stackLetterPressed?: string,
+  opponentLetter?: string;
+  onStackCellPress: (letter: string) => void;
+  stackLetterPressed?: string;
 }
 
-const Stack = ({opponentLetter, onStackCellPress, stackLetterPressed} : IStack) => {
-
+const Stack = ({
+  opponentLetter,
+  onStackCellPress,
+  stackLetterPressed,
+}: IStack) => {
   return (
-      <View style={styles.container} >
-      {
-        ALPHABET.map((item, i) => (
-              <StackCell 
-              key={item} 
-              letter={item} 
-              onStackCellPress={onStackCellPress} 
-              pressed={item === stackLetterPressed}
-              isDisabled={opponentLetter !== "" && opponentLetter !== item ? true : false}
-              />
-            )
-        )
-      }
-      </View>
-    );
-}
+    <View style={styles.container}>
+      {ALPHABET.map((item, i) => (
+        <StackCell
+          key={item}
+          letter={item}
+          onStackCellPress={onStackCellPress}
+          pressed={item === stackLetterPressed}
+          isDisabled={
+            opponentLetter !== '' && opponentLetter !== item ? true : false
+          }
+        />
+      ))}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -43,6 +42,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
 
 export default Stack;

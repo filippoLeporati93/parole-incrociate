@@ -12,18 +12,13 @@ const FetchWrapper = {
 
 const headers = {
   'Content-Type': 'application/json',
-  'Authorization': 'Bearer ' + ApiToken,
+  Authorization: 'Bearer ' + ApiToken,
   'x-ms-continuation': '',
 };
 
 const headersStream = {
   'Content-Type': 'application/octet-stream',
-  'Authorization': 'Bearer ' + ApiToken,
-};
-
-const headersPatch = {
-  'Content-Type': 'application/json-patch+json',
-  'Authorization': 'Bearer ' + ApiToken,
+  Authorization: 'Bearer ' + ApiToken,
 };
 
 function get(url: String, continuationToken?: string) {
@@ -45,7 +40,6 @@ function post(url: String, body: Object) {
   return fetch(BaseApiUrl + url, requestOptions).then(handleResponse);
 }
 
-
 function getStreamAsRequest(url: String) {
   return {
     method: 'GET',
@@ -57,7 +51,7 @@ function getStreamAsRequest(url: String) {
 function handleResponse(response: any) {
   if (!response.ok) {
     const error = new Error(
-      '[' + response.status + ']: ' + response.statusText,
+      '[' + response.status + ']: ' + response.statusText
     );
     return Promise.reject(error);
   }
@@ -70,8 +64,8 @@ function allSettled(promises: any[]) {
     promises.map(promise =>
       promise
         .then((value: any) => ({status: 'fulfilled', value}))
-        .catch((reason: any) => ({status: 'rejected', reason})),
-    ),
+        .catch((reason: any) => ({status: 'rejected', reason}))
+    )
   );
 }
 

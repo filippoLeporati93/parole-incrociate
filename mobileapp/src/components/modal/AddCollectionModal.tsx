@@ -1,5 +1,11 @@
 import React, {FC, useEffect, useState} from 'react';
-import {Modal, Platform, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Modal,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Text from '../AppText';
 import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import {useTheme} from 'react-native-paper';
@@ -29,7 +35,9 @@ const AddCollectionModal: FC<IAddCollectionModal> = ({
 
   useEffect(() => {
     CollectionsUtils.getAllCollections().then(result => {
-      let resultNoFavorites = result.filter(e => e.collectionName !== "Preferiti")
+      let resultNoFavorites = result.filter(
+        e => e.collectionName !== 'Preferiti'
+      );
       setCollections(resultNoFavorites);
     });
   }, [showNewCollectionModal, refreshCollections]);
@@ -41,14 +49,14 @@ const AddCollectionModal: FC<IAddCollectionModal> = ({
         CollectionsUtils.addLocationToCollection(
           locationId,
           collectionName,
-          imageRef,
+          imageRef
         ).then(() => {
           setRefreshCollections(refreshCollections + 1);
         });
       } else {
         CollectionsUtils.deleteLocationToCollection(
           locationId,
-          collectionName,
+          collectionName
         ).then(() => {
           setRefreshCollections(refreshCollections + 1);
         });
@@ -133,7 +141,15 @@ const AddCollectionModal: FC<IAddCollectionModal> = ({
             <View style={styles.divider} />
             <View style={{flexDirection: 'row', marginTop: 15}}>
               <TouchableOpacity
-                style={[styles.button, {flexDirection: 'row', maxWidth:100, paddingVertical: 2,  marginStart: Platform.OS === 'ios' ? 30 : 10}]}
+                style={[
+                  styles.button,
+                  {
+                    flexDirection: 'row',
+                    maxWidth: 100,
+                    paddingVertical: 2,
+                    marginStart: Platform.OS === 'ios' ? 30 : 10,
+                  },
+                ]}
                 onPress={() => {
                   setShowNewCollectionModal(false);
                   onPressClose();

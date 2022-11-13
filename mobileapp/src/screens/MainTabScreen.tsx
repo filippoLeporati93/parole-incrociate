@@ -19,7 +19,6 @@ const StatisticsStack = createStackNavigator();
 
 const Tab = createMaterialBottomTabNavigator();
 
-
 const MainTabScreen = ({}: any) => {
   const {colors} = useTheme();
   return (
@@ -49,8 +48,12 @@ const MainTabScreen = ({}: any) => {
         component={JoinRoomScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
-          headerTitleAlign: 'center'
+          headerTitle: () => (
+            <Text style={{color: colors.text, fontSize: 20}}>
+              Parole Incrociate
+            </Text>
+          ),
+          headerTitleAlign: 'center',
         }}
       />
       <MainStack.Screen
@@ -58,8 +61,12 @@ const MainTabScreen = ({}: any) => {
         component={BoardScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Parole Incrociate</Text>),
-          headerTitleAlign: 'center'
+          headerTitle: () => (
+            <Text style={{color: colors.text, fontSize: 20}}>
+              Parole Incrociate
+            </Text>
+          ),
+          headerTitleAlign: 'center',
         }}
       />
       <MainStack.Screen
@@ -67,8 +74,10 @@ const MainTabScreen = ({}: any) => {
         component={ScoreScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{color: colors.text, fontSize: 20}}>Dettagli</Text>),
-          headerTitleAlign: 'center'
+          headerTitle: () => (
+            <Text style={{color: colors.text, fontSize: 20}}>Dettagli</Text>
+          ),
+          headerTitleAlign: 'center',
         }}
       />
       <MainStack.Screen
@@ -76,7 +85,9 @@ const MainTabScreen = ({}: any) => {
         component={HowToPlayScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (<Text style={{marginStart: 15, color: colors.text, fontSize: 20}}></Text>),
+          headerTitle: () => (
+            <Text style={{marginStart: 15, color: colors.text, fontSize: 20}} />
+          ),
         }}
       />
     </MainStack.Navigator>
@@ -94,7 +105,7 @@ const HomeTabScreen = () => (
       name="HomeTab"
       component={HomeScreen}
       options={{
-        tabBarLabel: <Text style={{color:'gray'}}>Home</Text>,
+        tabBarLabel: <Text style={{color: 'gray'}}>Home</Text>,
         tabBarIcon: ({color}) => <Icon name="home" color={color} size={20} />,
       }}
     />
@@ -102,7 +113,7 @@ const HomeTabScreen = () => (
       name="StatisticsTab"
       component={StatisticsStackScreen}
       options={{
-        tabBarLabel: <Text style={{color:'gray'}}>Statistiche</Text>,
+        tabBarLabel: <Text style={{color: 'gray'}}>Statistiche</Text>,
         tabBarIcon: ({color}) => (
           <Icon name="stats-chart" color={color} size={20} />
         ),
@@ -115,7 +126,7 @@ const StatisticsStackScreen = ({}: any) => {
   const {colors} = useTheme();
   return (
     <StatisticsStack.Navigator
-      initialRouteName='StatisticsTabScreen'
+      initialRouteName="StatisticsTabScreen"
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.background,
@@ -133,7 +144,7 @@ const StatisticsStackScreen = ({}: any) => {
         component={StatisticsTabScreen}
         options={{
           headerShown: true,
-          headerTitle: "Statistiche di gioco",
+          headerTitle: 'Statistiche di gioco',
           headerBackTitleVisible: false,
         }}
       />

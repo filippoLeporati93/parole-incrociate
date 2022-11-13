@@ -12,8 +12,7 @@ import {
 } from 'react-native-paper';
 import MainTabScreen from './screens/MainTabScreen';
 import NoInternetModal from './components/modal/NoInternetModal';
-import { StatusBar } from 'react-native';
-
+import {StatusBar} from 'react-native';
 
 const App = () => {
   const CustomDefaultTheme = {
@@ -41,15 +40,16 @@ const App = () => {
 
   useEffect(() => {
     const removeNetInfoSubscription = NetInfo.addEventListener(state => {
-      const offline = !(state.isConnected && state.isInternetReachable === null ? true : state.isInternetReachable);
+      const offline = !(state.isConnected && state.isInternetReachable === null
+        ? true
+        : state.isInternetReachable);
       setOfflineStatus(offline);
     });
 
     return () => {
       removeNetInfoSubscription();
-    }
+    };
   }, []);
-
 
   return (
     <PaperProvider theme={theme}>
@@ -57,12 +57,10 @@ const App = () => {
         backgroundColor={theme.colors.primaryDark}
         barStyle="default"
       />
-        <NavigationContainer
-          theme={theme}
-          ref={navigationRef}>
-          <MainTabScreen />
-          <NoInternetModal show={isOffline} />
-        </NavigationContainer>
+      <NavigationContainer theme={theme} ref={navigationRef}>
+        <MainTabScreen />
+        <NoInternetModal show={isOffline} />
+      </NavigationContainer>
     </PaperProvider>
   );
 };

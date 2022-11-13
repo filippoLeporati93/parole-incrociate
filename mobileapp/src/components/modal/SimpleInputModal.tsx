@@ -34,7 +34,10 @@ const SimpleInputModal: FC<ISImpleInputModal> = ({
   const inputRef = useRef<null | TextInput>(null);
 
   return (
-    <Modal animationType="slide" transparent={true} visible={show}
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={show}
       onShow={() => {
         if (inputRef.current) {
           inputRef.current.focus();
@@ -111,9 +114,14 @@ const SimpleInputModal: FC<ISImpleInputModal> = ({
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.buttonCancel]}
-              onPress={() => { setText(''); onPressCancel();}}
+              onPress={() => {
+                setText('');
+                onPressCancel();
+              }}
             >
-              <Text style={[styles.textButtonStyle, {color: theme.colors.primary}]}>
+              <Text
+                style={[styles.textButtonStyle, {color: theme.colors.primary}]}
+              >
                 Annulla
               </Text>
             </TouchableOpacity>
