@@ -68,7 +68,6 @@ const GameServiceOnline = () => {
     const socket = SocketService.socket;
     if(socket) {
       socket.on("on_player_leaving", ({reason, playersRemaining}) => {
-        console.log(reason);
         cb(playersRemaining)
       });
     }

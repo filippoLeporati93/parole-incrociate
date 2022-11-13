@@ -55,7 +55,7 @@ const App = () => {
     <PaperProvider theme={theme}>
       <StatusBar
         backgroundColor={theme.colors.primaryDark}
-        barStyle="light-content"
+        barStyle="default"
       />
         <NavigationContainer
           theme={theme}

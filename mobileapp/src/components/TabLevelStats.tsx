@@ -34,7 +34,7 @@ const CardStats: React.FC<CardStatsProps> = props => {
 
 type TabLevelStatsProps = {
   gameLevel: number,
-  time: number,
+  timeFilterCode: string,
 }
 
 const TabLevelStats: React.FC<TabLevelStatsProps> = props => {
@@ -66,9 +66,9 @@ const TabLevelStats: React.FC<TabLevelStatsProps> = props => {
   }
 
   useEffect(() => {
-    StatisticsUtils.calcKpis(props.time, props.gameLevel)
+    StatisticsUtils.calcKpis(props.timeFilterCode, props.gameLevel)
       .then(s => { setStats(s); setRefreshing(false)})
-  }, [refreshing]);
+  }, [refreshing, props.timeFilterCode]);
 
   return (
       <ScrollView 

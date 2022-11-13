@@ -40,8 +40,7 @@ const MainTabScreen = ({}: any) => {
         name="HomeScreen"
         component={HomeTabScreen}
         options={{
-          headerTransparent: true,
-          headerTitle: "",
+          headerShown: false,
           headerBackTitleVisible: false,
         }}
       />
@@ -116,6 +115,7 @@ const StatisticsStackScreen = ({}: any) => {
   const {colors} = useTheme();
   return (
     <StatisticsStack.Navigator
+      initialRouteName='StatisticsTabScreen'
       screenOptions={{
         headerStyle: {
           backgroundColor: colors.background,
@@ -132,8 +132,8 @@ const StatisticsStackScreen = ({}: any) => {
         name="StatisticsTabScreen"
         component={StatisticsTabScreen}
         options={{
-          headerTransparent: true,
-          headerTitle: "",
+          headerShown: true,
+          headerTitle: "Statistiche di gioco",
           headerBackTitleVisible: false,
         }}
       />

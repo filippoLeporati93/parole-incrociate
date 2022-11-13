@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
 import { game, statistics, statisticsKpi } from '../models/Types';
 
 const StatisticsUtils = {
@@ -42,7 +43,7 @@ async function addGame(game: game) {
     );
 }
 
-async function calcKpis(time: number, level: number) {
+async function calcKpis(timeFilterCode: string, level: number) {
     let kpis: statisticsKpi = {
         gamePlayed: 0,
         gameWon: 0,
@@ -56,8 +57,16 @@ async function calcKpis(time: number, level: number) {
     }
     let stats = await getStatistics();
 
-    let stats_by_level = stats.games.filter(e => e.level === level);
-    console.log(stats_by_level);
+    let stats_by_time: game[] = [];
+    if(timeFilterCode === 'ALL') {
+      let currentMoment = moment('1900-01-01');
+      stats_by_time = stats.games.filter(e => moment(e.gameDatetime).isSameOrAfter(currentMoment))
+    }else {
+      let currentMoment = moment();
+      stats_by_time = stats.games.filter(e => moment(e.gameDatetime).isSameOrAfter(currentMoment, timeFilterCode.toLowerCase()))
+    }
+    
+    let stats_by_level = stats_by_time.filter(e => e.level === level);
     if (stats_by_level && stats_by_level.length > 0) {
         kpis.gamePlayed = stats_by_level.length;
         kpis.gameWon = stats_by_level.filter(e => e.youWon === true).length;
