@@ -20,8 +20,8 @@ const StatisticsTabScreen = ({ route, navigation }) => {
     navigation.setOptions({
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity style={{ marginRight: 15 }} onPress={() => setShowTimeFilterModal(true)}>
-            <Icon name="tune-variant" size={20} color={theme.colors.text} />
+          <TouchableOpacity style={{ marginRight: 15}} onPress={() => setShowTimeFilterModal(true)}>
+            <Icon name="tune-variant" size={25} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
       ),

@@ -50,7 +50,7 @@ const StatisticsTimeFilterModal: React.FC<Props> = props => {
         </Pressable>
         <View style={styles.line} />
         <Pressable style={styles.pressable} onPress={() => props.onBackPress()}>
-          <Text style={styles.contentTitleNotSelected}>Annulla</Text>
+          <Text style={[styles.contentTitle,styles.contentTitleNotSelected]}>Annulla</Text>
         </Pressable>
         <View style={styles.line} />
       </View>
@@ -75,17 +75,14 @@ const styles = StyleSheet.create({
   contentTitle: {
     width: '100%',
     textAlign: 'left',
-    fontSize: 20,
+    fontSize: 18,
     paddingStart: 15,
   },
   contentTitleNotSelected: {
-    width: '100%',
-    textAlign: 'left',
-    fontSize: 20,
     paddingStart: 25,
   },
   pressable:
-    { alignItems: 'center', flexDirection: 'row', marginVertical: 10, marginHorizontal: 10 }
+    { alignItems: 'center', flexDirection: 'row', paddingVertical: 15, paddingHorizontal: 10 }
   ,
   line: {
     width: '100%',
