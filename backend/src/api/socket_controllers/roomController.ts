@@ -24,14 +24,14 @@ export class RoomController {
     if ('roomId' in message && message.roomId !== '') {
       const roomId = message.roomId;
       const sockets = io.sockets.adapter.rooms.get(roomId) ?? new Set();
-      if (sockets.size < 2) {
+      if (roomId.startsWith("room_") && sockets.size < 2) {
         await socket.join(roomId);
         socket.emit("room_joined", { status: true });
       }
       // if the room you joined is ready and full, emit the start_game event to the players in the room.
       if (sockets.size === 2) {
-        socket.to(roomId).emit("start_game", { start: false, roomId: roomIdJoined });
-        socket.emit("start_game", { start: true, roomId: roomIdJoined })
+        socket.to(roomId).emit("start_game", { start: false, roomId });
+        socket.emit("start_game", { start: true, roomId })
       }
     } else {
       // no roomId in the message
