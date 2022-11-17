@@ -1,4 +1,4 @@
-import { TableClient } from "@azure/data-tables";
+import { odata, TableClient } from "@azure/data-tables";
 import * as express from "express";
 import { Engine } from "../../game_engine/Engine";
 var passport = require('passport');
@@ -73,7 +73,16 @@ router.get("/lobby", async (req: any, res: any, next: any) => {
   // list entities returns a AsyncIterableIterator
   // this helps consuming paginated responses by
   // automatically handling getting the next pages
-  const entities = clientLobby.listEntities();
+  const excludeUserName = req.query.excludeUserName ?? '';
+
+  let qo = {}
+  if(excludeUserName !== '') {
+    qo = { filter: odata`PartitionKey eq 'Users' and RowKey ne ${excludeUserName}` }
+  }
+
+  const entities = clientLobby.listEntities({
+    queryOptions: qo
+  });
 
   // this loop will get all the entities from all the pages
   // returned by the service
