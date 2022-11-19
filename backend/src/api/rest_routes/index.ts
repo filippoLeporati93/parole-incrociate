@@ -1,4 +1,4 @@
-import { odata, TableClient } from "@azure/data-tables";
+import { odata, RestError, TableClient } from "@azure/data-tables";
 import * as express from "express";
 import { Engine } from "../../game_engine/Engine";
 var passport = require('passport');
@@ -124,8 +124,12 @@ router.delete("/lobby/:userName", async (req: any, res: any, next: any) => {
   try {
     await clientLobby.deleteEntity('Users', userName);
     res.status(200).json({ userName });
-  } catch (e) {
-    res.status(500).json(e);
+  } catch (e: any) {
+    if(e.statusCode === 404) {
+      res.status(200).json({});
+      return
+    }
+    res.status(e.statusCode).json(e.message);
   }
 });
 
