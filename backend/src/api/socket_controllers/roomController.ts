@@ -17,8 +17,8 @@ export class RoomController {
     @MessageBody() message: any,
   ) {
     // ask new user to join the room
-    const requesterUserName = message.receiverUserName;
-    const receiverUserName = message.senderUserName;
+    const requesterUserName = message.requesterUserName;
+    const receiverUserName = message.receiverUserName;
     const roomId = message.roomId;
 
     socket.join(roomId);
