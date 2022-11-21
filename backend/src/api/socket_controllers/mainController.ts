@@ -16,6 +16,10 @@ export class MainController {
   ) {
     console.log("New Socket connected: ", socket.id);
 
+    // join private room 
+    if('username' in socket.data && socket.data.username !== '')
+      socket.join(socket.data.username);
+
     socket.on('disconnect', () => {
       console.log('user disconnected: ' + socket.id);
     });

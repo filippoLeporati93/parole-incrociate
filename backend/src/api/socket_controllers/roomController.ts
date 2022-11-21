@@ -10,60 +10,46 @@ import { Server, Socket } from "socket.io";
 @SocketController()
 export class RoomController {
 
-  @OnMessage("join_game")
-  public async joinGame(
+  @OnMessage("request_join_room")
+  public async requestJoinRoom(
     @SocketIO() io: Server,
     @ConnectedSocket() socket: Socket,
-    @MessageBody() message: any
+    @MessageBody() message: any,
   ) {
-    console.log("New User try joining room: ", message);
+    // ask new user to join the room
+    const requesterUserName = message.receiverUserName;
+    const receiverUserName = message.senderUserName;
+    const roomId = message.roomId;
 
-    let roomIdJoined: string | null = null;
+    socket.join(roomId);
 
-    // if the message as already a join roomId use that
-    if ('roomId' in message && message.roomId !== '') {
-      const roomId = message.roomId;
-      const sockets = io.sockets.adapter.rooms.get(roomId) ?? new Set();
-      if (roomId.startsWith("room_") && sockets.size < 2) {
-        await socket.join(roomId);
-        socket.emit("room_joined", { status: true });
-      }
-      // if the room you joined is ready and full, emit the start_game event to the players in the room.
-      if (sockets.size === 2) {
-        socket.to(roomId).emit("start_game", { start: false, roomId });
-        socket.emit("start_game", { start: true, roomId })
-      }
-    } else {
-      // no roomId in the message
-      // search for an available RANDOM room and join it  
-      const rooms = io.sockets.adapter.rooms;
-      try {
-        for (const [roomId, sockets] of rooms) {
-          if (roomId.startsWith("room_") && sockets.size < 2) {
-            await socket.join(roomId);
-            socket.emit("room_joined", { status: true });
-            roomIdJoined = roomId;
-          }
-        }
-      } catch (err) {
-        socket.emit("room_join_error", {
-          error: "Error in joining the room!",
-        });
-      }
+    socket.to(receiverUserName).emit("request_join_room", { roomId, requesterUserName }); 
 
-      // if no room are available create a new one and join it, then wait for other players
-      if (!roomIdJoined) {
-        await socket.join("room_" + socket.id)
-        socket.emit("room_joined", { status: true });
-      } else {
-        // if the room you joined is ready and full, emit the start_game event to the players in the room.
-        const sockets = io.sockets.adapter.rooms.get(roomIdJoined) ?? new Set();
-        if (sockets.size === 2) {
-          socket.to(roomIdJoined).emit("start_game", { start: false, roomId: roomIdJoined });
-          socket.emit("start_game", { start: true, roomId: roomIdJoined })
-        }
-      }
-    }
   }
 
+  @OnMessage("response_join_room")
+  public async responseJoinRoom(
+    @SocketIO() io: Server,
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() message: any,
+  ) {
+      // send the response to the request to join a room. If accepted join the room, else not.
+      const roomId = message.roomId;
+      const responseUserName = message.responseUserName;
+      const accepted = message.accepted;
+      if(accepted)
+        socket.join(roomId);
+      socket.to(roomId).emit("response_join_room", {accepted, roomId, responseUserName});
+  }
+
+  @OnMessage("start_game")
+  public async startGame(
+    @SocketIO() io: Server,
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() message: any,
+  ) {
+      // message sent by the user who made the 'request_join_room'
+      const roomId = message.roomId;
+      socket.to(roomId).emit("start_game", {firstPlayer: false, roomId});
+  }
 }
