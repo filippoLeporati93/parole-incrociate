@@ -10,7 +10,7 @@ import { Server, Socket } from "socket.io";
 @SocketController()
 export class RoomController {
 
-  @OnMessage("request_join_room")
+  @OnMessage("join_room")
   public async requestJoinRoom(
     @SocketIO() io: Server,
     @ConnectedSocket() socket: Socket,
@@ -23,11 +23,11 @@ export class RoomController {
 
     socket.join(roomId);
 
-    socket.to(receiverUserName).emit("request_join_room", { roomId, requesterUserName }); 
+    socket.to(receiverUserName).emit("join_room", { roomId, requesterUserName }); 
 
   }
 
-  @OnMessage("response_join_room")
+  @OnMessage("room_joined")
   public async responseJoinRoom(
     @SocketIO() io: Server,
     @ConnectedSocket() socket: Socket,
@@ -39,7 +39,7 @@ export class RoomController {
       const accepted = message.accepted;
       if(accepted)
         socket.join(roomId);
-      socket.to(roomId).emit("response_join_room", {accepted, roomId, responseUserName});
+      socket.to(roomId).emit("room_joined", {accepted, roomId, responseUserName});
   }
 
   @OnMessage("start_game")

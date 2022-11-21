@@ -10,13 +10,6 @@ import { Server, Socket } from "socket.io";
 @SocketController()
 export class GameController {
 
-  private getSocketGameRoom(socket: Socket): string {
-    const socketRooms = Array.from(socket.rooms.values()).filter(r => r.startsWith("room_"));
-    const gameRoom: string = socketRooms && (socketRooms.pop() ?? "");
-
-    return gameRoom;
-  }
-
   @OnMessage("update_game")
   public async updateGame(
     @SocketIO() io: Server,
@@ -26,12 +19,12 @@ export class GameController {
     console.log(message);
     let letter = message.letter;
     let level = message.level;
+    const roomId = message.roomId;
   
     const responseData = {
       opponentLetter: letter.value,
     }
-    const gameRoom = this.getSocketGameRoom(socket);
-    socket.to(gameRoom).emit("on_update_game", responseData);
+    socket.to(roomId).emit("on_update_game", responseData);
   }
 
   @OnMessage("game_finish")
@@ -42,12 +35,13 @@ export class GameController {
   ) {
     console.log(message);
     let matrix = message.matrix;
+    const roomId = message.roomId;
   
     const responseData = {
       opponentMatrix: matrix,
     }
-    const gameRoom = this.getSocketGameRoom(socket);
-    socket.to(gameRoom).emit("on_game_finish", responseData);
+
+    socket.to(roomId).emit("on_game_finish", responseData);
   }
 
   @OnMessage("game_win")
@@ -56,7 +50,7 @@ export class GameController {
     @ConnectedSocket() socket: Socket,
     @MessageBody() message: any
   ) {
-    const gameRoom = this.getSocketGameRoom(socket);
-    socket.to(gameRoom).emit("on_game_win", message);
+    const roomId = message.roomId;
+    socket.to(roomId).emit("on_game_win", message);
   }
 }
