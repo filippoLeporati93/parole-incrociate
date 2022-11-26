@@ -9,7 +9,8 @@ const clientAzureTableSession = TableClient.fromConnectionString(
   'SocketSession');
 
 const crypto = require("crypto");
-const randomId = () => crypto.randomBytes(8).toString("hex");
+const randomSessionId = () => crypto.randomBytes(8).toString("hex");
+const randomUserId = () => crypto.randomBytes(2).toString("hex");
 
 const { AzureTableSocketSessionStore } = require("./api/socket_controllers/socketSessionStore");
 const sessionStore = new AzureTableSocketSessionStore(clientAzureTableSession);
@@ -43,8 +44,8 @@ export default (httpServer: any) => {
     if (!username) {
       return next(new Error("invalid username"));
     }
-    socket.data.sessionID = randomId();
-    socket.data.userID = randomId();
+    socket.data.sessionID = randomSessionId();
+    socket.data.userID = '@'+ username + '_' + randomUserId();
     socket.data.username = username;
     next();
   });
@@ -71,22 +72,18 @@ export default (httpServer: any) => {
     const sessions = await sessionStore.findAllSessions();
   
     sessions.forEach((session: SocketSessionEntity) => {
-      users.push({
-        userID: session.userID,
-        username: session.username,
-        connected: session.connected,
-      });
+      if(session.connected) {
+        users.push({
+          userID: session.userID,
+          username: session.username,
+          connected: session.connected,
+          statsInfo: session.statsInfo,
+        });
+      }
     });
 
     socket.emit("users", users);
   
-    // notify existing users
-    socket.broadcast.emit("user_connected", {
-      userID: socket.data.userID,
-      username: socket.data.username,
-      connected: true,
-    });
-    
     // notify users upon disconnection
     socket.on("disconnect", async () => {
       const matchingSockets = await io.in(socket.data.userID).allSockets();

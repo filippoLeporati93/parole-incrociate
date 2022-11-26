@@ -2,6 +2,7 @@ export type SocketSessionEntity = {
   userID: string;
   username: string;
   connected: boolean;
+  statsInfo: string;
 }
 
 /* abstract */ class SocketSessionStore {
@@ -52,11 +53,11 @@ export type SocketSessionEntity = {
   
     saveSession(id: string, session: SocketSessionEntity) {
       return this.azureTableClient
-        .createEntity({
+        .upsertEntity({
           partitionKey:`session:${id}`,
           rowKey: `session:${id}`,
           ...session,
-        });
+        }, 'Merge');
     }
   
     async findAllSessions() {
