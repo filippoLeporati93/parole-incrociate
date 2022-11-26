@@ -10,23 +10,6 @@ import { Server, Socket } from "socket.io";
 @SocketController()
 export class RoomController {
 
-  @OnMessage("user_connected")
-  public async onUserConnected(
-    @SocketIO() io: Server,
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() message: any,
-  ) {
-    const statsInfo = message.statsInfo;
-
-    // notify existing users
-    socket.broadcast.emit("user_connected", {
-      userID: socket.data.userID,
-      username: socket.data.username,
-      connected: true,
-      statsInfo: statsInfo,
-    });
-  }
-
   @OnMessage("join_room")
   public async requestJoinRoom(
     @SocketIO() io: Server,

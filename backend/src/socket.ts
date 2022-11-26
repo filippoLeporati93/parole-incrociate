@@ -83,6 +83,24 @@ export default (httpServer: any) => {
     });
 
     socket.emit("users", users);
+
+    //on user connect
+    socket.on("user_connected", async ({statsInfo}) => {
+      await sessionStore.saveSession(
+        socket.data.sessionID, {
+          userID: socket.data.userID,
+          username: socket.data.username,
+          statsInfo: statsInfo,
+        }
+      );
+      // notify existing users
+      socket.broadcast.emit("user_connected", {
+        userID: socket.data.userID,
+        username: socket.data.username,
+        connected: true,
+        statsInfo: statsInfo,
+      });
+    });
   
     // notify users upon disconnection
     socket.on("disconnect", async () => {
