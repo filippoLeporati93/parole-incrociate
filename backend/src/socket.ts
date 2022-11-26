@@ -78,6 +78,7 @@ export default (httpServer: any) => {
           username: session.username,
           connected: session.connected,
           statsInfo: session.statsInfo,
+          self: socket.data.userID === session.userID
         });
       }
     });
@@ -86,7 +87,7 @@ export default (httpServer: any) => {
 
     //on user connect
     socket.on("user_connected", async ({statsInfo}) => {
-      await sessionStore.saveSession(
+      sessionStore.saveSession(
         socket.data.sessionID, {
           userID: socket.data.userID,
           username: socket.data.username,

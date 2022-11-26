@@ -3,6 +3,7 @@ export type SocketSessionEntity = {
   username: string;
   connected: boolean;
   statsInfo: string;
+  self: boolean;
 }
 
 /* abstract */ class SocketSessionStore {
