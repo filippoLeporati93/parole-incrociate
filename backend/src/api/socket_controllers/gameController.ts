@@ -16,7 +16,6 @@ export class GameController {
     @ConnectedSocket() socket: Socket,
     @MessageBody() message: any
   ) {
-    console.log(message);
     let letter = message.letter;
     let level = message.level;
     const roomId = message.roomId;
@@ -33,7 +32,6 @@ export class GameController {
     @ConnectedSocket() socket: Socket,
     @MessageBody() message: any
   ) {
-    console.log(message);
     let matrix = message.matrix;
     const roomId = message.roomId;
   

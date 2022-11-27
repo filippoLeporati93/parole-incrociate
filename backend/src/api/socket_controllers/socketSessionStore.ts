@@ -12,7 +12,7 @@ export type SocketSessionEntity = {
     findAllSessions() {}
   }
   
-  const SESSION_TTL = 24 * 60 * 60;
+  const SESSION_TTL = 7 * 24 * 60 * 60;
 
   import { GetTableEntityResponse, TableClient, TableEntityResult } from "@azure/data-tables";
   

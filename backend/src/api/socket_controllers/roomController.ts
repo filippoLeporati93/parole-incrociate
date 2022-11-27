@@ -17,13 +17,14 @@ export class RoomController {
     @MessageBody() message: any,
   ) {
     // ask new user to join the room
-    const requesterUserName = message.requesterUserName;
-    const receiverUserName = message.receiverUserName;
+    const requesterUserID = message.requesterUserID;
+    const requesterUsername = message.requesterUsername;
+    const receiverUserID = message.receiverUserID;
     const roomId = message.roomId;
 
     socket.join(roomId);
 
-    socket.to(receiverUserName).emit("join_room", { roomId, requesterUserName }); 
+    socket.to(receiverUserID).emit("join_room", { roomId, requesterUsername, requesterUserID }); 
 
   }
 
@@ -35,11 +36,11 @@ export class RoomController {
   ) {
       // send the response to the request to join a room. If accepted join the room, else not.
       const roomId = message.roomId;
-      const responseUserName = message.responseUserName;
+      const responseUserID = message.responseUserID;
       const accepted = message.accepted;
       if(accepted)
         socket.join(roomId);
-      socket.to(roomId).emit("room_joined", {accepted, roomId, responseUserName});
+      socket.to(roomId).emit("room_joined", {accepted, roomId, responseUserID});
   }
 
   @OnMessage("start_game")
