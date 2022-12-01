@@ -13,6 +13,7 @@ import BoardScreen from './BoardScreen';
 import ScoreScreen from './ScoreScreen';
 import HowToPlayScreen from './HowToPlayScreen';
 import JoinRoomScreen from './JoinRoomScreen';
+import LobbyScreen from './LobbyScreen';
 
 const MainStack = createStackNavigator();
 const StatisticsStack = createStackNavigator();
@@ -48,25 +49,21 @@ const MainTabScreen = ({}: any) => {
         component={JoinRoomScreen}
         options={{
           headerBackTitleVisible: false,
-          headerTitle: () => (
-            <Text style={{color: colors.text, fontSize: 20}}>
-              Parole Incrociate
-            </Text>
-          ),
-          headerTitleAlign: 'center',
+          headerTitle: '',
+        }}
+      />
+      <MainStack.Screen
+        name="LobbyScreen"
+        component={LobbyScreen}
+        options={{
+          headerShown: false,
         }}
       />
       <MainStack.Screen
         name="BoardScreen"
         component={BoardScreen}
         options={{
-          headerBackTitleVisible: false,
-          headerTitle: () => (
-            <Text style={{color: colors.text, fontSize: 20}}>
-              Parole Incrociate
-            </Text>
-          ),
-          headerTitleAlign: 'center',
+          headerShown: false,
         }}
       />
       <MainStack.Screen

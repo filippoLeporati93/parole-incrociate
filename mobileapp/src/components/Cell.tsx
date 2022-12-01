@@ -18,17 +18,15 @@ const Cell = ({location, pressed, letter, onCellPress, cellSize}: ICell) => {
 
   const AnimatedTouchable = Animated.createAnimatedComponent(Pressable);
 
-  const onPress = () => {
-    if (onCellPress) {
-      onCellPress({dx: location.dx, dy: location.dy});
-    }
-  };
-
   return (
     <AnimatedTouchable
       style={[styles.cell, pressed && styles.clickedCell]}
       disabled={pressed}
-      onPress={onPress}
+      onPress={() => {
+        if (onCellPress) {
+          onCellPress({dx: location.dx, dy: location.dy});
+        }
+      }}
     >
       <Text style={[styles.text, pressed && styles.clickedText]}>{letter}</Text>
     </AnimatedTouchable>

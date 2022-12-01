@@ -3,7 +3,12 @@ import {gameResults} from '../models/Types';
 import {IPlayMatrix} from './GameServiceFactory';
 
 const GameServiceComputer = () => {
-  const updateGame = (level: number, letter: string, cb?: () => void) => {
+  const updateGame = (
+    level: number,
+    letter: string,
+    cb?: () => void,
+    roomId?: string
+  ) => {
     const body = {
       letter: {
         value: letter,
@@ -35,7 +40,8 @@ const GameServiceComputer = () => {
 
   const gameFinish = (
     matrix: IPlayMatrix,
-    cb: (myResult: gameResults) => void
+    cb: (myResult: gameResults) => void,
+    roomId?: string
   ) => {
     FetchWrapper.post('results?opponent=false', {grid: matrix})
       .then(cb)

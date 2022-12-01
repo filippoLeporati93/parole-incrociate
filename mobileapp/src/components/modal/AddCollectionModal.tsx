@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import {
   Modal,
   Platform,
@@ -42,27 +42,32 @@ const AddCollectionModal: FC<IAddCollectionModal> = ({
     });
   }, [showNewCollectionModal, refreshCollections]);
 
-  const selectCollection = (collectionName: string) => {
-    let collection = collections.find(e => e.collectionName === collectionName);
-    if (collection !== undefined) {
-      if (collection?.locationIdList.indexOf(locationId) === -1) {
-        CollectionsUtils.addLocationToCollection(
-          locationId,
-          collectionName,
-          imageRef
-        ).then(() => {
-          setRefreshCollections(refreshCollections + 1);
-        });
-      } else {
-        CollectionsUtils.deleteLocationToCollection(
-          locationId,
-          collectionName
-        ).then(() => {
-          setRefreshCollections(refreshCollections + 1);
-        });
+  const selectCollection = useCallback(
+    (collectionName: string) => {
+      let collection = collections.find(
+        e => e.collectionName === collectionName
+      );
+      if (collection !== undefined) {
+        if (collection?.locationIdList.indexOf(locationId) === -1) {
+          CollectionsUtils.addLocationToCollection(
+            locationId,
+            collectionName,
+            imageRef
+          ).then(() => {
+            setRefreshCollections(refreshCollections + 1);
+          });
+        } else {
+          CollectionsUtils.deleteLocationToCollection(
+            locationId,
+            collectionName
+          ).then(() => {
+            setRefreshCollections(refreshCollections + 1);
+          });
+        }
       }
-    }
-  };
+    },
+    [collections, imageRef, locationId, refreshCollections]
+  );
 
   const renderItem = ({item}: {item: ICollection}) => {
     return (

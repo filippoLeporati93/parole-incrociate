@@ -1,4 +1,4 @@
-import React, {useEffect, useImperativeHandle, useState} from 'react';
+import React, {useCallback, useEffect, useImperativeHandle, useState} from 'react';
 
 import {StyleSheet, View} from 'react-native';
 import Text from './AppText';
@@ -33,11 +33,11 @@ const Timer = React.forwardRef<any, TimerProps>((props, ref) => {
     };
   }, []);
 
-  const stop = () => {
+  const stop = useCallback(() => {
     if (props.onStop) {
       props.onStop(elapsed);
     }
-  };
+  }, [elapsed, props]);
 
   return (
     <View style={{alignItems: 'center'}}>

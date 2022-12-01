@@ -36,3 +36,26 @@ export type game = {
   score: number;
   gameElapsedTime: number;
 };
+
+export type gamer = {
+  userID: string;
+  username: string;
+  statsInfo: {
+    gamePlayed: number;
+    gameWon: number;
+    percGameWon: number;
+  };
+};
+
+export type userPrefs = {
+  username: string;
+};
+
+export type socketSession = {
+  sessionID: string;
+  username: string;
+  userID: string;
+  connected: boolean;
+  self?: boolean;
+  statsInfo: any;
+};

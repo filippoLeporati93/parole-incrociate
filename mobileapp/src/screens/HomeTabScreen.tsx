@@ -3,7 +3,6 @@ import {StyleSheet, View, Pressable, Image} from 'react-native';
 import Text from '../components/AppText';
 import {useTheme} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import NewGameContentModal from '../components/modal/NewGameContentModal';
 
@@ -11,7 +10,7 @@ const HomeScreen = ({navigation}: any) => {
   const theme = useTheme();
   const styles = makeStyles(theme.colors);
 
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isNewGameModalVisible, setNewGameModalVisible] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -26,21 +25,21 @@ const HomeScreen = ({navigation}: any) => {
           textType="bold"
           style={{
             textAlign: 'center',
-            fontSize: 50,
+            fontSize: 60,
             color: theme.colors.primaryDark,
           }}
         >
-          PAROLE
+          Parole
         </Text>
         <Text
           textType="bold"
           style={{
             textAlign: 'center',
-            fontSize: 50,
+            fontSize: 60,
             color: theme.colors.primary,
           }}
         >
-          INCROCIATE
+          Incrociate
         </Text>
       </View>
       <View
@@ -81,7 +80,7 @@ const HomeScreen = ({navigation}: any) => {
         </Pressable>
         <Pressable
           style={styles.commandButton}
-          onPress={() => setModalVisible(true)}
+          onPress={() => setNewGameModalVisible(true)}
         >
           <Text style={styles.panelButtonTitle}>Gioca contro il computer</Text>
         </Pressable>
@@ -100,12 +99,11 @@ const HomeScreen = ({navigation}: any) => {
           </Text>
         </Pressable>
       </View>
-
       <NewGameContentModal
-        isVisible={isModalVisible}
-        onPress={() => setModalVisible(false)}
+        isVisible={isNewGameModalVisible}
+        onPress={() => setNewGameModalVisible(false)}
         onLevelPress={(level, levelDesc) => {
-          setModalVisible(false);
+          setNewGameModalVisible(false);
           navigation.navigate('BoardScreen', {
             isOnlineGame: false,
             level: level,

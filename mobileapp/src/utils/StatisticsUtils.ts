@@ -55,17 +55,17 @@ async function calcKpis(timeFilterCode: string, level: number) {
   let stats_by_time: game[] = [];
   if (timeFilterCode === 'ALL') {
     let currentMoment = moment('1900-01-01');
-    stats_by_time = stats.games.filter(e =>
+    stats_by_time = stats.games.filter((e: game) =>
       moment(e.gameDatetime).isSameOrAfter(currentMoment)
     );
   } else {
     let currentMoment = moment();
-    stats_by_time = stats.games.filter(e =>
+    stats_by_time = stats.games.filter((e: game) =>
       moment(e.gameDatetime).isSameOrAfter(
         currentMoment,
         timeFilterCode.toLowerCase()
       )
-
+    );
   }
 
   let stats_by_level = stats_by_time.filter(e => e.level === level);

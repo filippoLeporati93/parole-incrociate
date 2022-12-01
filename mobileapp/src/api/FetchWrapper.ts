@@ -6,6 +6,7 @@ const ApiToken = Config.API_TOKEN;
 const FetchWrapper = {
   get,
   post,
+  del,
   getStreamAsRequest,
   allSettled,
 };
@@ -40,6 +41,14 @@ function post(url: String, body: Object) {
   return fetch(BaseApiUrl + url, requestOptions).then(handleResponse);
 }
 
+function del(url: String) {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: headers,
+  };
+  return fetch(BaseApiUrl + url, requestOptions).then(handleResponse);
+}
+
 function getStreamAsRequest(url: String) {
   return {
     method: 'GET',
@@ -50,9 +59,10 @@ function getStreamAsRequest(url: String) {
 
 function handleResponse(response: any) {
   if (!response.ok) {
-    const error = new Error(
-      '[' + response.status + ']: ' + response.statusText
-    );
+    const error = {
+      status: response.status,
+      message: '[' + response.status + ']: ' + response.statusText,
+    };
     return Promise.reject(error);
   }
   // may error if there is no body, return empty array

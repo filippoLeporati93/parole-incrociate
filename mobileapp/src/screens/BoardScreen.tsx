@@ -1,9 +1,11 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState, useMemo} from 'react';
 
 import {
   ActivityIndicator,
   Alert,
+  BackHandler,
   LayoutAnimation,
+  Pressable,
   StyleSheet,
   View,
 } from 'react-native';
@@ -25,11 +27,17 @@ import StatisticsUtils from '../utils/StatisticsUtils';
 import {gameResults} from '../models/Types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useKeepAwake} from '@sayem314/react-native-keep-awake';
+import {useFocusEffect} from '@react-navigation/native';
 
 const BoardScreen = ({route, navigation}) => {
   const theme = useTheme();
 
-  const gameService = gameServiceFactory().build(route.params.isOnlineGame);
+  const gameService = useMemo(
+    () => gameServiceFactory().build(route.params.isOnlineGame),
+    [route.params.isOnlineGame]
+  );
+
+  const roomId = route.params.roomId;
 
   const [endGameModalVisible, setEndGameModalVisible] = useState(false);
   const [endGameDisconnectModalVisible, setEndGameDisconnectModalVisible] =
@@ -47,13 +55,12 @@ const BoardScreen = ({route, navigation}) => {
   const [stackLetterPressed, setStackLetterPressed] = useState('');
 
   const [isMyTurn, setIsMyTurn] = useState(true);
-  const [moveToNextTurn, setMoveToNextTurn] = useState(false);
 
   const [showAcceptActionContainer, setShowActionContainer] = useState(false);
 
   const timerRef = useRef<any>(null);
   const elapsedTimer = useRef<number>(0);
-  const REMAINING_GAME_TIME = 30;
+  const REMAINING_GAME_TIME = 20;
   const [countdownKey, setCountdownKey] = useState(0);
   const [timeIsUpMessage, setTimeIsUpMessage] = useState('');
 
@@ -67,106 +74,7 @@ const BoardScreen = ({route, navigation}) => {
 
   useKeepAwake();
 
-  useEffect(() => {
-    // start game with computer
-    if (route.params.level !== -1) {
-      gameService.onStartGame(() => {});
-    }
-
-    // call only for online game
-    if (route.params.level === -1) {
-      setIsMyTurn(route.params.start);
-      gameService.onGameFinish(handleOnGameFinish);
-      gameService.onUpdateGame(handleOnUpdateGame);
-      gameService.onPlayerLeaving(handleOnPlayersLeaving);
-    }
-  }, []);
-
-  useEffect(() => {
-    let fnTimeout: any = null;
-    if (moveToNextTurn) {
-      if (timeIsUpMessage !== '') {
-        fnTimeout = setTimeout(() => {
-          setTimeIsUpMessage('');
-          nextTurn();
-        }, 2500);
-      } else {
-        nextTurn();
-      }
-    }
-
-    return () => clearTimeout(fnTimeout);
-  }, [moveToNextTurn]);
-
-  useEffect(
-    () =>
-      navigation.addListener('beforeRemove', (e: any) => {
-        // if game has been disconnected, go back or finished.
-        if (endGameDisconnectModalVisible || endGameModalVisible) {
-          return;
-        }
-
-        // Prevent default behavior of leaving the screen
-        e.preventDefault();
-
-        // Prompt the user before leaving the screen
-        Alert.alert(
-          'Abbandoni la partita?',
-          'Il gioco verrà interrotto e non potrai riprenderlo. Sei sicuro?',
-          [
-            {text: 'Rimani', style: 'cancel', onPress: () => {}},
-            {
-              text: 'Abbandona',
-              style: 'destructive',
-              // If the user confirmed, then we dispatch the action we blocked earlier
-              // This will continue the action that had triggered the removal of the screen
-              onPress: () => {
-                SocketService.disconnect();
-                navigation.dispatch(e.data.action);
-              },
-            },
-          ]
-        );
-      }),
-    [navigation, endGameDisconnectModalVisible, endGameModalVisible]
-  );
-
-  useEffect(() => {
-    if (tempGameResults.length === 2) {
-      showModalResults();
-    }
-  }, [JSON.stringify(tempGameResults)]);
-
-  const onTimeIsUp = () => {
-    setStackLetterPressed('');
-    // if user has already selected something move forward, not changing letter and position
-    if (
-      cellIndexPressed.dx !== -1 &&
-      matrix[cellIndexPressed.dx][cellIndexPressed.dy] !== ' '
-    ) {
-      setMoveToNextTurn(true);
-      setTimeIsUpMessage('Abbiamo confermato la tua scelta');
-      return;
-    }
-    let letter: string = '';
-    const {i, j} = getRandomEmptyPosition(matrix);
-    setCellIndexPressed({dx: i, dy: j});
-    if (opponentLetter !== '') {
-      letter = opponentLetter;
-      setTimeIsUpMessage('La lettera è stata inserita automaticamente');
-    } else {
-      letter = ALPHABET[Math.floor(ALPHABET.length * Math.random())];
-      setTimeIsUpMessage('Abbiamo posizionato una lettera a caso');
-    }
-    setMatrix(matrix => {
-      matrix[i][j] = letter;
-      return matrix;
-    });
-
-    setMoveToNextTurn(true);
-  };
-
-  const isGridComplete = (grid: IPlayMatrix) => {
+  const isGridComplete = useCallback((grid: IPlayMatrix) => {
     for (let i = 0; i < grid.length; i++) {
       for (let j = 0; j < grid[i].length; j++) {
         if (grid[i][j] === ' ') {
@@ -175,10 +83,10 @@ const BoardScreen = ({route, navigation}) => {
       }
     }
     return true;
-  };
+  }, []);
 
-  const getRandomEmptyPosition = (grid: IPlayMatrix) => {
-    const emptyPositions = [];
+  const getRandomEmptyPosition = useCallback((grid: IPlayMatrix) => {
+    const emptyPositions: Array<{i: number; j: number}> = [];
     for (let i = 0; i < grid.length; i++) {
       for (let j = 0; j < grid[i].length; j++) {
         if (grid[i][j] === ' ') {
@@ -191,122 +99,61 @@ const BoardScreen = ({route, navigation}) => {
     } else {
       return {i: -1, j: -1};
     }
-  };
-
-  const onCellPress = ({dx, dy}: {dx: number; dy: number}) => {
-    if (showAcceptActionContainer) {
-      return;
-    }
-    if (matrix[dx][dy] === ' ') {
-      LayoutAnimation.easeInEaseOut();
-      setCellIndexPressed({dx: dx, dy: dy});
-    }
-    if (stackLetterPressed !== '') {
-      setMatrix(matrix => {
-        matrix[dx][dy] = stackLetterPressed;
-        return matrix;
-      });
-      setShowActionContainer(true);
-      setStackLetterPressed('');
-    }
-  };
-
-  const onStackCellPress = (letter: string) => {
-    if (cellIndexPressed.dx !== -1) {
-      setShowActionContainer(true);
-      setMatrix(matrix => {
-        matrix[cellIndexPressed.dx][cellIndexPressed.dy] = letter;
-        return matrix;
-      });
-    } else {
-      setStackLetterPressed(letter);
-    }
-  };
-
-  const onCancelPress = () => {
-    setShowActionContainer(false);
-    setMatrix(matrix => {
-      matrix[cellIndexPressed.dx][cellIndexPressed.dy] = ' ';
-      return matrix;
-    });
-    setStackLetterPressed('');
-    setCellIndexPressed({dx: -1, dy: -1});
-  };
-
-  const nextTurn = () => {
-    setShowActionContainer(false);
-    setMoveToNextTurn(false);
-    const _isGridComplete = isGridComplete(matrix);
-    // opponentLetter has been placed and grid is not complete -> add the next letter
-    if (opponentLetter !== '' && !_isGridComplete) {
-      setOpponentLetter('');
-      setTextHelp('Posiziona la prossima lettera');
-      setCellIndexPressed({dx: -1, dy: -1});
-      setCountdownKey(prevKey => prevKey + 1);
-      return;
-      // opponent letter has been placed and grid is complete --> send game finish and stop
-    } else if (opponentLetter !== '' && _isGridComplete) {
-      setIsMyTurn(false);
-      timerRef.current.stop();
-      gameService.gameFinish(matrix, myResult =>
-        setTempGameResults(prevList => [...prevList, myResult])
-      );
-      // personal letter placed
-    } else if (opponentLetter === '') {
-      const letter = matrix[cellIndexPressed.dx][cellIndexPressed.dy];
-      setIsMyTurn(false);
-      // grid is complete --> send game finish
-      if (_isGridComplete) {
-        timerRef.current.stop();
-        gameService.gameFinish(matrix, myResult =>
-          setTempGameResults(prevList => [...prevList, myResult])
-        );
-      }
-      // send your placed letter
-      gameService.updateGame(route.params.level, letter, () => {
-        if (route.params.level !== -1) {
-          gameService.onUpdateGame(handleOnUpdateGame);
-        }
-      });
-    }
-  };
-
-  const handleOnUpdateGame = (opponentLetter: string) => {
-    // if you are playing against computer and opponent has no more letter to put, ask for opponent grid results.
-    if (opponentLetter === '' && route.params.level !== -1) {
-      gameService.onGameFinish(handleOnGameFinish);
-    }
-    if (!isGridComplete(matrix)) {
-      // place the letter of the opponent
-      setCellIndexPressed({dx: -1, dy: -1});
-      setIsMyTurn(true);
-      setCountdownKey(prevKey => prevKey + 1);
-      setTextHelp(
-        'Posiziona la lettera ' + opponentLetter + ", scelta dall'avversario"
-      );
-      setOpponentLetter(opponentLetter);
-    }
-  };
+  }, []);
 
   // add opponents results since the have no more letter to put
-  const handleOnGameFinish = (opponentResult: gameResults) => {
+  const handleOnGameFinish = useCallback((opponentResult: gameResults) => {
     setTempGameResults(prevList => [...prevList, opponentResult]);
-  };
+  }, []);
 
-  const handleOnPlayersLeaving = (playersRemaining?: number) => {
-    if (playersRemaining && playersRemaining <= 1) {
-      setEndGameDisconnectModalVisible(true);
-    }
-  };
+  const handleOnPlayerLeaving = useCallback(
+    () => setEndGameDisconnectModalVisible(true),
+    []
+  );
 
-  const showModalResults = () => {
+  const handleOnUpdateGame = useCallback(
+    (opLetter: string) => {
+      // if you are playing against computer and opponent has no more letter to put, ask for opponent grid results.
+      if (opLetter === '' && route.params.level !== -1) {
+        gameService.onGameFinish(handleOnGameFinish);
+      }
+      if (!isGridComplete(matrix)) {
+        // place the letter of the opponent
+        setCellIndexPressed({dx: -1, dy: -1});
+        setIsMyTurn(true);
+        setCountdownKey(prevKey => prevKey + 1);
+        setTextHelp(
+          'Posiziona la lettera ' + opLetter + ", scelta dall'avversario"
+        );
+        setOpponentLetter(opLetter);
+      }
+    },
+    [
+      gameService,
+      handleOnGameFinish,
+      isGridComplete,
+      matrix,
+      route.params.level,
+    ]
+  );
+
+  const showModalResults = useCallback(() => {
     setGameResults(tempGameResults);
-    const personalPoints = tempGameResults.filter(
+    const personalResult = tempGameResults.filter(
       e => e.isOpponent === false
-    )[0].points;
+    )[0];
+    if (!personalResult) {
+      return;
+    }
+    const personalPoints = personalResult.points;
     setPoints(personalPoints);
-    const opponentPoints = tempGameResults.filter(e => e.isOpponent === true)[0]
-      .points;
+    const opponentResult = tempGameResults.filter(
+      e => e.isOpponent === true
+    )[0];
+    if (!opponentResult) {
+      return;
+    }
+    const opponentPoints = opponentResult.points;
     if (personalPoints > opponentPoints) {
       setEndGameStatus(1);
     } else if (personalPoints === opponentPoints) {
@@ -324,10 +171,250 @@ const BoardScreen = ({route, navigation}) => {
       level: route.params.level,
       gameElapsedTime: elapsedTimer.current,
     });
-  };
+  }, [route.params.level, tempGameResults]);
+
+  const nextTurn = useCallback(() => {
+    setShowActionContainer(false);
+    const _isGridComplete = isGridComplete(matrix);
+    // opponentLetter has been placed and grid is not complete -> add the next letter
+    if (opponentLetter !== '' && !_isGridComplete) {
+      setOpponentLetter('');
+      setTextHelp('Posiziona la prossima lettera');
+      setCellIndexPressed({dx: -1, dy: -1});
+      setCountdownKey(prevKey => prevKey + 1);
+      return;
+      // opponent letter has been placed and grid is complete --> send game finish and stop
+    } else if (opponentLetter !== '' && _isGridComplete) {
+      setIsMyTurn(false);
+      timerRef.current.stop();
+      gameService.gameFinish(
+        matrix,
+        myResult => setTempGameResults(prevList => [...prevList, myResult]),
+        roomId
+      );
+      // personal letter placed
+    } else if (opponentLetter === '') {
+      const letter = matrix[cellIndexPressed.dx][cellIndexPressed.dy];
+      setIsMyTurn(false);
+      // grid is complete --> send game finish
+      if (_isGridComplete) {
+        timerRef.current.stop();
+        gameService.gameFinish(
+          matrix,
+          myResult => setTempGameResults(prevList => [...prevList, myResult]),
+          roomId
+        );
+      }
+      // send your placed letter
+      gameService.updateGame(
+        route.params.level,
+        letter,
+        () => {
+          if (route.params.level !== -1) {
+            gameService.onUpdateGame(handleOnUpdateGame);
+          }
+        },
+        roomId
+      );
+    }
+  }, [
+    cellIndexPressed.dx,
+    cellIndexPressed.dy,
+    gameService,
+    handleOnUpdateGame,
+    isGridComplete,
+    matrix,
+    opponentLetter,
+    roomId,
+    route.params.level,
+  ]);
+
+  useEffect(() => {
+    // start game with computer
+    if (route.params.level !== -1) {
+      gameService.onStartGame(() => {});
+    }
+
+    // call only for online game
+    if (route.params.level === -1) {
+      let offGameFinish = () => {};
+      let offUpdateGame = () => {};
+      let offPlayerLeaving = () => {};
+      setIsMyTurn(route.params.start);
+      offGameFinish = gameService.onGameFinish(handleOnGameFinish);
+      offUpdateGame = gameService.onUpdateGame(handleOnUpdateGame);
+      offPlayerLeaving = gameService.onPlayerLeaving(handleOnPlayerLeaving);
+
+      return () => {
+        offGameFinish();
+        offUpdateGame();
+        offPlayerLeaving();
+      };
+    }
+  }, [
+    gameService,
+    handleOnGameFinish,
+    handleOnPlayerLeaving,
+    handleOnUpdateGame,
+    route.params.level,
+    route.params.start,
+  ]);
+
+  useEffect(() => {
+    let fnTimeout: any = null;
+    if (timeIsUpMessage !== '') {
+      fnTimeout = setTimeout(() => {
+        setTimeIsUpMessage('');
+        nextTurn();
+      }, 2500);
+    }
+    return () => clearTimeout(fnTimeout);
+  }, [nextTurn, timeIsUpMessage]);
+
+  useEffect(() => {
+    if (tempGameResults.length === 2) {
+      showModalResults();
+    }
+  }, [showModalResults, tempGameResults.length]);
+
+  const showBackAlert = useCallback(
+    () =>
+      // Prompt the user before leaving the screen
+      Alert.alert(
+        'Abbandoni la partita?',
+        'Il gioco verrà interrotto e non potrai riprenderlo. Sei sicuro?',
+        [
+          {text: 'Rimani', style: 'cancel', onPress: () => {}},
+          {
+            text: 'Abbandona',
+            style: 'destructive',
+            // If the user confirmed, then we dispatch the action we blocked earlier
+            // This will continue the action that had triggered the removal of the screen
+            onPress: () => {
+              SocketService.disconnect().then(navigation.goBack());
+            },
+          },
+        ]
+      ),
+    [navigation]
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        // if other player is disconnected or game ended go back
+        // else show alert
+        if (endGameDisconnectModalVisible || endGameModalVisible) {
+          return false;
+        } else {
+          showBackAlert();
+          return true;
+        }
+      };
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress
+      );
+
+      return () => subscription.remove();
+    }, [endGameDisconnectModalVisible, endGameModalVisible, showBackAlert])
+  );
+
+  const onTimeIsUp = useCallback(() => {
+    setStackLetterPressed('');
+    // if user has already selected something move forward, not changing letter and position
+    if (
+      cellIndexPressed.dx !== -1 &&
+      matrix[cellIndexPressed.dx][cellIndexPressed.dy] !== ' '
+    ) {
+      setTimeIsUpMessage('Abbiamo confermato la tua scelta');
+      return;
+    }
+    let letter: string = '';
+    const {i, j} = getRandomEmptyPosition(matrix);
+    setCellIndexPressed({dx: i, dy: j});
+    if (opponentLetter !== '') {
+      letter = opponentLetter;
+      setTimeIsUpMessage('La lettera è stata inserita automaticamente');
+    } else {
+      letter = ALPHABET[Math.floor(ALPHABET.length * Math.random())];
+      setTimeIsUpMessage('Abbiamo posizionato una lettera a caso');
+    }
+    setMatrix(m => {
+      m[i][j] = letter;
+      return m;
+    });
+  }, [
+    cellIndexPressed.dx,
+    cellIndexPressed.dy,
+    getRandomEmptyPosition,
+    matrix,
+    opponentLetter,
+  ]);
+
+  const onCellPress = useCallback(
+    ({dx, dy}: {dx: number; dy: number}) => {
+      if (showAcceptActionContainer || matrix[dx][dy] !== ' ') {
+        return;
+      }
+      if (matrix[dx][dy] === ' ') {
+        LayoutAnimation.easeInEaseOut();
+        setCellIndexPressed({dx: dx, dy: dy});
+      }
+      if (stackLetterPressed !== '') {
+        setMatrix(m => {
+          m[dx][dy] = stackLetterPressed;
+          return m;
+        });
+        setShowActionContainer(true);
+        setStackLetterPressed('');
+      }
+    },
+    [matrix, showAcceptActionContainer, stackLetterPressed]
+  );
+
+  const onStackCellPress = useCallback(
+    (letter: string) => {
+      if (cellIndexPressed.dx !== -1) {
+        setShowActionContainer(true);
+        setMatrix(m => {
+          m[cellIndexPressed.dx][cellIndexPressed.dy] = letter;
+          return m;
+        });
+      } else {
+        setStackLetterPressed(letter);
+      }
+    },
+    [cellIndexPressed.dx, cellIndexPressed.dy]
+  );
+
+  const onCancelPress = useCallback(() => {
+    setShowActionContainer(false);
+    setMatrix(m => {
+      m[cellIndexPressed.dx][cellIndexPressed.dy] = ' ';
+      return m;
+    });
+    setStackLetterPressed('');
+    setCellIndexPressed({dx: -1, dy: -1});
+  }, [cellIndexPressed.dx, cellIndexPressed.dy]);
 
   return (
     <View style={styles.container}>
+      <Pressable
+        onPress={() => {
+          // if other player is disconnected or game ended go back
+          // else show alert
+          if (endGameDisconnectModalVisible || endGameModalVisible) {
+            SocketService.disconnect().then(navigation.goBack());
+          } else {
+            showBackAlert();
+          }
+        }}
+        style={{paddingHorizontal: 15, paddingTop: 15}}
+      >
+        <Icon name={'close'} size={25} color={theme.colors.text} />
+      </Pressable>
       <View style={styles.boardContainer}>
         <View style={styles.infoContainer}>
           <View style={{flex: 1, alignItems: 'center'}}>
@@ -382,7 +469,7 @@ const BoardScreen = ({route, navigation}) => {
           {showAcceptActionContainer ? (
             <View style={styles.acceptActionContainer}>
               <AcceptAction
-                onAcceptPress={() => setMoveToNextTurn(true)}
+                onAcceptPress={() => nextTurn()}
                 onCancelPress={() => onCancelPress()}
               />
             </View>

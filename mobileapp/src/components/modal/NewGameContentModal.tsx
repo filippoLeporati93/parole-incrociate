@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, View} from 'react-native';
 import Modal from 'react-native-modal';
 import Text from '../AppText';
 

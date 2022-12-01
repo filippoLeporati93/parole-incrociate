@@ -12,7 +12,7 @@ const Tab = createMaterialTopTabNavigator();
 const StatisticsTabScreen = ({route, navigation}) => {
   const theme = useTheme();
 
-  const [timeFilterCode, setTimeFilterCode] = useState<string>('DAY');
+  const [timeFilterCode, setTimeFilterCode] = useState<string>('ALL');
   const [showTimeFilterModal, setShowTimeFilterModal] = useState(false);
 
   useEffect(() => {

@@ -79,16 +79,17 @@ export const TabScore: React.FC<TabScoreProps> = props => {
           >
             Parole in riga
           </Text>
-          {props.result.words
-            .filter(w => w.direction == 'dx')
-            .sort((a, b) => a.location[0] - b.location[0])
-            .map((e, idx) => (
-              <WordLine
-                onPressWord={props.onPressWord}
-                key={idx}
-                wordResults={e}
-              />
-            ))}
+          {props.result.words.length > 0 &&
+            props.result.words
+              .filter(w => w.direction === 'dx')
+              .sort((a, b) => a.location[0] - b.location[0])
+              .map((e, idx) => (
+                <WordLine
+                  onPressWord={props.onPressWord}
+                  key={idx}
+                  wordResults={e}
+                />
+              ))}
           <Text
             style={{
               fontSize: 15,
@@ -100,16 +101,17 @@ export const TabScore: React.FC<TabScoreProps> = props => {
           >
             Parole in colonna
           </Text>
-          {props.result.words
-            .filter(w => w.direction == 'dy')
-            .sort((a, b) => a.location[1] - b.location[1])
-            .map((e, idx) => (
-              <WordLine
-                onPressWord={props.onPressWord}
-                key={idx + 100}
-                wordResults={e}
-              />
-            ))}
+          {props.result.words.length > 0 &&
+            props.result.words
+              .filter(w => w.direction === 'dy')
+              .sort((a, b) => a.location[1] - b.location[1])
+              .map((e, idx) => (
+                <WordLine
+                  onPressWord={props.onPressWord}
+                  key={idx + 100}
+                  wordResults={e}
+                />
+              ))}
         </ScrollView>
       </View>
     </View>

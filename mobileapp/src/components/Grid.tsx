@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 
 import {StyleSheet, View} from 'react-native';
 
@@ -28,41 +28,45 @@ const Grid = ({
 
   const styles = makeStyles(theme.colors, cellSizeCustom);
 
-  const isPressed = (dx: number, dy: number): boolean => {
-    if (cellIndexPressed)
-      return dx === cellIndexPressed.dx && dy === cellIndexPressed.dy
-        ? true
-        : false;
-    if (wordPressed) {
-      if (wordPressed.direction === 'dx')
-        return (
-          dx === wordPressed.location[0] &&
-          dy < wordPressed.location[1] + wordPressed.word.length &&
-          dy >= wordPressed.location[1]
-        );
-      else {
-        return (
-          dy === wordPressed.location[1] &&
-          dx < wordPressed.location[0] + wordPressed.word.length &&
-          dx >= wordPressed.location[0]
-        );
+  const isPressed = useCallback(
+    (dx: number, dy: number): boolean => {
+      if (cellIndexPressed) {
+        return dx === cellIndexPressed.dx && dy === cellIndexPressed.dy
+          ? true
+          : false;
+      }
+      if (wordPressed) {
+        if (wordPressed.direction === 'dx') {
+          return (
+            dx === wordPressed.location[0] &&
+            dy < wordPressed.location[1] + wordPressed.word.length &&
+            dy >= wordPressed.location[1]
+          );
+        } else {
+          return (
+            dy === wordPressed.location[1] &&
+            dx < wordPressed.location[0] + wordPressed.word.length &&
+            dx >= wordPressed.location[0]
+          );
+        }
+      }
 
-    }
-
-    return false;
-  };
+      return false;
+    },
+    [cellIndexPressed, wordPressed]
+  );
 
   return (
     <View style={styles.container}>
-      {matrix.map((item: string[], i: number) => {
+      {matrix.map((itemCol: string[], i: number) => {
         return (
           <View key={'grid' + i} style={styles.grid}>
-            {item.map((item: string, j: number) => (
+            {itemCol.map((itemRow: string, j: number) => (
               <Cell
                 key={i + j}
                 location={{dx: i, dy: j}}
                 pressed={isPressed(i, j)}
-                letter={item}
+                letter={itemRow}
                 onCellPress={onCellPress}
                 cellSize={cellSizeCustom}
               />

@@ -25,10 +25,6 @@ const StackCell = ({
   const styles = makeStyles(theme.colors);
   const [isPressed, setIsPressed] = useState(false);
 
-  const onPress = () => {
-    onStackCellPress(letter);
-  };
-
   return (
     <View>
       <TouchableHighlight
@@ -38,7 +34,9 @@ const StackCell = ({
           isDisabled && styles.cellDisabled,
         ]}
         disabled={isDisabled}
-        onPress={onPress}
+        onPress={() => {
+          onStackCellPress(letter);
+        }}
         onHideUnderlay={() => setIsPressed(false)}
         onShowUnderlay={() => setIsPressed(true)}
         underlayColor={theme.colors.primaryDark}
