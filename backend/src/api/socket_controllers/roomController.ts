@@ -76,4 +76,20 @@ export class RoomController {
       const roomUsers = message.roomUsers;
       socket.to(roomId).emit("start_game", {firstPlayer: false, roomId, roomUsers});
   }
+
+  @OnMessage("leave_game_room")
+  public async leaveGameRoom(
+    @SocketIO() io: Server,
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() message: any,
+  ) {
+      // leave all gaming rooms
+      const rooms = io.of('/').adapter.socketRooms(socket.id);
+      if(rooms) {
+        rooms.forEach(roomID => {
+          if (roomID.startsWith("gameID:"))
+            socket.leave(roomID);
+        });
+      }
+  }
 }
