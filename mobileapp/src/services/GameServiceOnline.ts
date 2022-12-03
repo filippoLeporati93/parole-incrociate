@@ -59,7 +59,12 @@ const GameServiceOnline = () => {
   }
 
   function onRoomJoined(
-    cb: (roomId: string, responseUserID: string, accepted: boolean) => void
+    cb: (
+      roomId: string,
+      responseUserID: string,
+      accepted: boolean,
+      reason: string
+    ) => void
   ) {
     const socket = SocketService.socket;
     if (socket) {
@@ -67,11 +72,13 @@ const GameServiceOnline = () => {
         roomId,
         responseUserID,
         accepted,
+        reason,
       }: {
         roomId: string;
         responseUserID: string;
         accepted: boolean;
-      }) => cb(roomId, responseUserID, accepted);
+        reason: string;
+      }) => cb(roomId, responseUserID, accepted, reason);
       socket.on('room_joined', listener);
       return () => socket && socket.off('room_joined', listener);
     }

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import TabLevelStats from '../components/TabLevelStats';
-import {TouchableOpacity, View} from 'react-native';
+import {SafeAreaView, TouchableOpacity, View} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useTheme} from 'react-native-paper';
 import StatisticsTimeFilterModal from '../components/modal/StatisticsTimeFilterModal';
@@ -31,7 +31,7 @@ const StatisticsTabScreen = ({route, navigation}) => {
   }, [navigation]);
 
   return (
-    <>
+    <SafeAreaView>
       <StatisticsTimeFilterModal
         isVisible={showTimeFilterModal}
         timeFilterCodeSelected={timeFilterCode}
@@ -67,7 +67,7 @@ const StatisticsTabScreen = ({route, navigation}) => {
           )}
         />
       </Tab.Navigator>
-    </>
+    </SafeAreaView>
   );
 };
 

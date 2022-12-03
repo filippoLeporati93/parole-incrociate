@@ -9,6 +9,7 @@ import {
   View,
   Alert,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import Text from '../components/AppText';
 import {ActivityIndicator, useTheme} from 'react-native-paper';
@@ -19,7 +20,7 @@ import {gamer} from '../models/Types';
 import uuid from 'react-native-uuid';
 import SocketService from '../services/SocketService';
 
-const myRoomId = uuid.v4();
+const myRoomId = 'gameID:' + uuid.v4();
 
 const LobbyScreen = ({route, navigation}) => {
   const theme = useTheme();
@@ -97,11 +98,11 @@ const LobbyScreen = ({route, navigation}) => {
   );
 
   const showRefuseGameAlert = useCallback(
-    (userID: string) =>
+    (userID: string, reason: string) =>
       // Prompt the user before leaving the screen
       Alert.alert(
         'La tua richiesta di gioco è stata rifiutata!',
-        userID + ' non ha accettato',
+        userID + ' ' + reason,
         [
           {
             text: 'Ok',
@@ -131,7 +132,7 @@ const LobbyScreen = ({route, navigation}) => {
           }
         );
         offRoomJoined = gameService.onRoomJoined(
-          (roomId, responseUserID, accepted) => {
+          (roomId, responseUserID, accepted, reason) => {
             if (roomId === myRoomId) {
               if (accepted) {
                 roomUsers.add(responseUserID);
@@ -143,7 +144,11 @@ const LobbyScreen = ({route, navigation}) => {
                   roomUsers: [...roomUsers],
                 });
               } else {
-                showRefuseGameAlert(responseUserID);
+                if (reason === 'IS_PLAYING') {
+                  showRefuseGameAlert(responseUserID, 'sta giocando');
+                } else {
+                  showRefuseGameAlert(responseUserID, 'non ha accettato');
+                }
               }
               setIsLoading(false);
             }
@@ -275,12 +280,11 @@ const LobbyScreen = ({route, navigation}) => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          paddingTop: Platform.OS === 'ios' ? 30 : 15,
           paddingBottom: 10,
         }}
       >
@@ -353,7 +357,7 @@ const LobbyScreen = ({route, navigation}) => {
           <ActivityIndicator color={theme.colors.primaryDark} size="smalle" />
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

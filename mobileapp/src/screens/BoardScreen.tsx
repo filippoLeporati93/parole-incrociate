@@ -7,6 +7,7 @@ import {
   LayoutAnimation,
   Platform,
   Pressable,
+  SafeAreaView,
   StyleSheet,
   View,
 } from 'react-native';
@@ -297,7 +298,7 @@ const BoardScreen = ({route, navigation}) => {
             // If the user confirmed, then we dispatch the action we blocked earlier
             // This will continue the action that had triggered the removal of the screen
             onPress: () => {
-              SocketService.disconnect().then(navigation.goBack());
+              SocketService.disconnect().then(navigation.popToTop());
             },
           },
         ]
@@ -406,21 +407,18 @@ const BoardScreen = ({route, navigation}) => {
   }, [cellIndexPressed.dx, cellIndexPressed.dy]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Pressable
         onPress={() => {
           // if other player is disconnected or game ended go back
           // else show alert
           if (endGameDisconnectModalVisible || endGameModalVisible) {
-            SocketService.disconnect().then(navigation.goBack());
+            navigation.goBack();
           } else {
             showBackAlert();
           }
         }}
-        style={{
-          paddingHorizontal: 15,
-          paddingTop: Platform.OS === 'ios' ? 30 : 15,
-        }}
+        style={{paddingHorizontal: 15}}
       >
         <Icon name={'close'} size={25} color={theme.colors.text} />
       </Pressable>
@@ -529,7 +527,7 @@ const BoardScreen = ({route, navigation}) => {
           navigation.goBack();
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

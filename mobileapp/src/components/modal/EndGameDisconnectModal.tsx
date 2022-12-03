@@ -74,6 +74,7 @@ const makeStyles = (colors: any) =>
     contentSubTitle: {
       textAlign: 'center',
       fontSize: 25,
+      marginTop: 15,
       color: 'white',
     },
     header: {

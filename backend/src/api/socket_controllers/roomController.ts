@@ -22,6 +22,21 @@ export class RoomController {
     const receiverUserID = message.receiverUserID;
     const roomId = message.roomId;
 
+    const socketRooms = io.of('/').adapter.socketRooms(receiverUserID);
+    
+    if(socketRooms) {
+      const socketRoomsArray = [...socketRooms];
+      if(socketRoomsArray.find(e => e.startsWith("gameID:"))) {
+        socket.emit("room_joined", {
+          accepted: false,
+          roomId,
+          responseUserID: receiverUserID,
+          reason: 'IS_PLAYING',
+          })
+        return;
+      }
+    }
+
     socket.join(roomId);
 
     socket.to(receiverUserID).emit("join_room", { roomId, requesterUsername, requesterUserID }); 
@@ -40,7 +55,12 @@ export class RoomController {
       const accepted = message.accepted;
       if(accepted)
         socket.join(roomId);
-      socket.to(roomId).emit("room_joined", {accepted, roomId, responseUserID});
+      socket.to(roomId).emit("room_joined", {
+        accepted,
+        roomId,
+        responseUserID,
+        reason: 'USER_SELECTION'
+      });
   }
 
   @OnMessage("start_game")
