@@ -58,6 +58,10 @@ const GameServiceComputer = () => {
     cb();
   }
 
+  function leaveGameRoom() {
+    return;
+  }
+
   return {
     joinGameRoom,
     updateGame,
@@ -66,6 +70,7 @@ const GameServiceComputer = () => {
     gameFinish,
     onGameFinish,
     onPlayerLeaving,
+    leaveGameRoom,
   };
 };
 
