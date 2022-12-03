@@ -418,7 +418,7 @@ const BoardScreen = ({route, navigation}) => {
             showBackAlert();
           }
         }}
-        style={{paddingHorizontal: 15}}
+        style={{paddingHorizontal: 15, marginTop: 15}}
       >
         <Icon name={'close'} size={25} color={theme.colors.text} />
       </Pressable>

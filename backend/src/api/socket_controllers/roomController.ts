@@ -22,10 +22,12 @@ export class RoomController {
     const receiverUserID = message.receiverUserID;
     const roomId = message.roomId;
 
-    const socketRooms = io.of('/').adapter.socketRooms(receiverUserID);
-    
-    if(socketRooms) {
-      const socketRoomsArray = [...socketRooms];
+    // get socketid from userID private rooms
+    const receiverSocketId = [...io.of('/').adapter.rooms.get(receiverUserID) ?? new Set()][0]; 
+    if (receiverSocketId) {
+      // get all rooms joined by the receiver
+      const socketRoomsArray = [...io.of('/').adapter.socketRooms(receiverSocketId) ?? new Set()];
+      // if the receiver is still in a gaming room emit a not accepted
       if(socketRoomsArray.find(e => e.startsWith("gameID:"))) {
         socket.emit("room_joined", {
           accepted: false,

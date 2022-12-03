@@ -286,6 +286,7 @@ const LobbyScreen = ({route, navigation}) => {
           flexDirection: 'row',
           alignItems: 'center',
           paddingBottom: 10,
+          marginTop: 15,
         }}
       >
         <Pressable
