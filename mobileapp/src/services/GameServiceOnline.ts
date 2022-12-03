@@ -178,6 +178,13 @@ const GameServiceOnline = () => {
     return () => {};
   }
 
+  function leaveGameRoom() {
+    const socket = SocketService.socket;
+    if (socket) {
+      socket.emit('leave_game_room');
+    }
+  }
+
   return {
     joinGameRoom,
     onJoinGameRoom,
@@ -190,6 +197,7 @@ const GameServiceOnline = () => {
     gameFinish,
     onGameFinish,
     onPlayerLeaving,
+    leaveGameRoom,
   };
 };
 

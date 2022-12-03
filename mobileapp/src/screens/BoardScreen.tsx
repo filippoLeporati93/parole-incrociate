@@ -298,6 +298,7 @@ const BoardScreen = ({route, navigation}) => {
 
   useEffect(() => {
     if (tempGameResults.length === 2) {
+      gameService.leaveGameRoom();
       showModalResults();
     }
   }, [showModalResults, tempGameResults.length]);
