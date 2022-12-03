@@ -39,7 +39,10 @@ export class GameController {
       opponentMatrix: matrix,
     }
 
-    socket.to(roomId).emit("on_game_finish", responseData);
+    await socket.to(roomId).emit("on_game_finish", responseData);
+
+    // leave the game room when game finished
+    await socket.leave(roomId);
   }
 
   @OnMessage("game_win")

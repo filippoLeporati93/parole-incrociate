@@ -5,7 +5,6 @@ import {
   Alert,
   BackHandler,
   LayoutAnimation,
-  Platform,
   Pressable,
   SafeAreaView,
   StyleSheet,
@@ -30,6 +29,8 @@ import {gameResults} from '../models/Types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useKeepAwake} from '@sayem314/react-native-keep-awake';
 import {useFocusEffect} from '@react-navigation/native';
+import NetInfo from '@react-native-community/netinfo';
+import NoInternetModal from '../components/modal/NoInternetModal';
 
 const BoardScreen = ({route, navigation}) => {
   const theme = useTheme();
@@ -76,6 +77,22 @@ const BoardScreen = ({route, navigation}) => {
   ]);
 
   useKeepAwake();
+
+  const [isOffline, setOfflineStatus] = useState(false);
+  useEffect(() => {
+    const removeNetInfoSubscription = NetInfo.addEventListener(state => {
+      const offline = !(state.isConnected && state.isInternetReachable === null
+        ? true
+        : state.isInternetReachable);
+      if (!isOffline && offline) {
+        setOfflineStatus(offline);
+      }
+    });
+
+    return () => {
+      removeNetInfoSubscription();
+    };
+  }, []);
 
   const isGridComplete = useCallback((grid: IPlayMatrix) => {
     for (let i = 0; i < grid.length; i++) {
@@ -145,6 +162,7 @@ const BoardScreen = ({route, navigation}) => {
   );
 
   const showModalResults = useCallback(() => {
+    offPlayerLeaving.current();
     setGameResults(tempGameResults);
     const personalResult = tempGameResults.filter(
       e => e.isOpponent === false
@@ -236,6 +254,7 @@ const BoardScreen = ({route, navigation}) => {
     route.params.level,
   ]);
 
+  const offPlayerLeaving = useRef(() => {});
   useEffect(() => {
     // start game with computer
     if (route.params.level !== -1) {
@@ -246,16 +265,15 @@ const BoardScreen = ({route, navigation}) => {
     if (route.params.level === -1) {
       let offGameFinish = () => {};
       let offUpdateGame = () => {};
-      let offPlayerLeaving = () => {};
       setIsMyTurn(route.params.start);
       offGameFinish = gameService.onGameFinish(handleOnGameFinish);
       offUpdateGame = gameService.onUpdateGame(handleOnUpdateGame);
-      offPlayerLeaving = gameService.onPlayerLeaving(handleOnPlayerLeaving);
+      offPlayerLeaving.current = gameService.onPlayerLeaving(handleOnPlayerLeaving);
 
       return () => {
         offGameFinish();
         offUpdateGame();
-        offPlayerLeaving();
+        offPlayerLeaving.current();
       };
     }
   }, [
@@ -408,6 +426,13 @@ const BoardScreen = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <NoInternetModal
+        show={isOffline}
+        onButtonPress={() => {
+          SocketService.disconnect();
+          navigation.replace('HomeScreen');
+        }}
+      />
       <Pressable
         onPress={() => {
           // if other player is disconnected or game ended go back

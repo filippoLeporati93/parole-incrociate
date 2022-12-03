@@ -80,7 +80,7 @@ const LobbyScreen = ({route, navigation}) => {
             text: 'Rifiuta',
             style: 'cancel',
             onPress: () => {
-              gameService.roomJoined(roomId, userID, false);
+              gameService.roomJoined(roomId, myUserID, false);
             },
           },
           {
@@ -89,12 +89,12 @@ const LobbyScreen = ({route, navigation}) => {
             // If the user confirmed, then we dispatch the action we blocked earlier
             // This will continue the action that had triggered the removal of the screen
             onPress: () => {
-              gameService.roomJoined(roomId, userID, true);
+              gameService.roomJoined(roomId, myUserID, true);
             },
           },
         ]
       ),
-    [gameService]
+    [gameService, myUserID]
   );
 
   const showRefuseGameAlert = useCallback(

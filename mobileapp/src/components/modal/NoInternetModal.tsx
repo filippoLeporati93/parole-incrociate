@@ -1,18 +1,13 @@
 import {useTheme} from '@react-navigation/native';
 import React, {FC} from 'react';
-import {
-  BackHandler,
-  Modal,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Text from '../AppText';
 interface INoInternetModal {
   show: boolean;
+  onButtonPress: () => void;
 }
 
-const NoInternetModal: FC<INoInternetModal> = ({show}) => {
+const NoInternetModal: FC<INoInternetModal> = ({show, onButtonPress}) => {
   const theme = useTheme();
   const styles = makeStyles(theme.colors);
 
@@ -20,17 +15,14 @@ const NoInternetModal: FC<INoInternetModal> = ({show}) => {
     <Modal animationType="slide" transparent={true} visible={show}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>
-            Ops! Sembra che tu non abbia nessuna connessione internet! {'\n\n'}
-            Attivala dalle impostazioni del tuo cellulare!
+          <Text textType="bold" style={styles.modalText}>
+            Ops...{'\n'}Sembra che tu non abbia nessuna connessione dati attiva!
           </Text>
           <TouchableOpacity
-            style={[styles.button]}
-            onPress={() => {
-              BackHandler.exitApp();
-            }}
+            style={styles.button}
+            onPress={() => onButtonPress()}
           >
-            <Text style={styles.textStyle}>Esci</Text>
+            <Text style={styles.textStyle}>Torna alla Home</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -65,7 +57,7 @@ const makeStyles = colors =>
     button: {
       padding: 15,
       borderRadius: 10,
-      backgroundColor: colors.primary,
+      backgroundColor: colors.primaryDark,
       alignItems: 'center',
       marginTop: 10,
     },
@@ -75,6 +67,7 @@ const makeStyles = colors =>
       textAlign: 'center',
     },
     modalText: {
+      fontSize: 17,
       marginBottom: 15,
       textAlign: 'center',
       color: colors.text,

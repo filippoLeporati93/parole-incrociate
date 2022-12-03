@@ -1,3 +1,4 @@
+import {Socket} from 'socket.io-client';
 import FetchWrapper from '../api/FetchWrapper';
 import {gameResults} from '../models/Types';
 import {IPlayMatrix} from './GameServiceFactory';
