@@ -5,6 +5,7 @@ import {
   Alert,
   BackHandler,
   LayoutAnimation,
+  Platform,
   Pressable,
   StyleSheet,
   View,
@@ -38,6 +39,7 @@ const BoardScreen = ({route, navigation}) => {
   );
 
   const roomId = route.params.roomId;
+  const roomUsers: string[] = route.params.roomUsers;
 
   const [endGameModalVisible, setEndGameModalVisible] = useState(false);
   const [endGameDisconnectModalVisible, setEndGameDisconnectModalVisible] =
@@ -107,8 +109,12 @@ const BoardScreen = ({route, navigation}) => {
   }, []);
 
   const handleOnPlayerLeaving = useCallback(
-    () => setEndGameDisconnectModalVisible(true),
-    []
+    (userID: string) => {
+      if (roomUsers.includes(userID)) {
+        setEndGameDisconnectModalVisible(true);
+      }
+    },
+    [roomUsers]
   );
 
   const handleOnUpdateGame = useCallback(
@@ -411,7 +417,10 @@ const BoardScreen = ({route, navigation}) => {
             showBackAlert();
           }
         }}
-        style={{paddingHorizontal: 15, paddingTop: 15}}
+        style={{
+          paddingHorizontal: 15,
+          paddingTop: Platform.OS === 'ios' ? 30 : 15,
+        }}
       >
         <Icon name={'close'} size={25} color={theme.colors.text} />
       </Pressable>
@@ -505,7 +514,7 @@ const BoardScreen = ({route, navigation}) => {
         isVisible={endGameModalVisible}
         onPress={() => {
           setEndGameModalVisible(false);
-          navigation.popToTop();
+          navigation.goBack();
         }}
         onGameDetailPress={() => {
           setEndGameModalVisible(false);
@@ -517,7 +526,7 @@ const BoardScreen = ({route, navigation}) => {
         isVisible={endGameDisconnectModalVisible}
         onBackPress={() => {
           setEndGameDisconnectModalVisible(false);
-          navigation.popToTop();
+          navigation.goBack();
         }}
       />
     </View>

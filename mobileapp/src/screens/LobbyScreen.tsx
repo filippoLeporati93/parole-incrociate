@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState, useMemo} from 'react';
+import React, {useCallback, useEffect, useState, useMemo, useRef} from 'react';
 import {
   BackHandler,
   FlatList,
@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
   Alert,
+  Platform,
 } from 'react-native';
 import Text from '../components/AppText';
 import {ActivityIndicator, useTheme} from 'react-native-paper';
@@ -31,6 +32,8 @@ const LobbyScreen = ({route, navigation}) => {
   const [originalGamers, setOriginalGamers] = useState<gamer[]>([]);
   const [searchText, setSearchText] = useState<string>('');
 
+  const roomUsers = useMemo(() => new Set(), []);
+
   const gameService = useMemo(
     () => gameServiceFactory().build(route.params.isOnlineGame),
     [route.params.isOnlineGame]
@@ -52,7 +55,14 @@ const LobbyScreen = ({route, navigation}) => {
     [searchText]
   );
 
-  const onSessionCallback = useCallback(userID => setMyUserID(userID), []);
+  const onSessionCallback = useCallback(
+    userID => {
+      roomUsers.add(userID);
+      setMyUserID(userID);
+    },
+    [roomUsers]
+  );
+
   const onUsersCallback = useCallback(
     users => onUsersChanges(users),
     [onUsersChanges]
@@ -124,11 +134,13 @@ const LobbyScreen = ({route, navigation}) => {
           (roomId, responseUserID, accepted) => {
             if (roomId === myRoomId) {
               if (accepted) {
-                gameService.startGame(roomId);
-                navigation.replace('BoardScreen', {
+                roomUsers.add(responseUserID);
+                gameService.startGame(roomId, [...roomUsers]);
+                navigation.navigate('BoardScreen', {
                   ...route.params,
                   start: true,
                   roomId,
+                  roomUsers: [...roomUsers],
                 });
               } else {
                 showRefuseGameAlert(responseUserID);
@@ -138,11 +150,12 @@ const LobbyScreen = ({route, navigation}) => {
           }
         );
         offStartGame = gameService.onStartGame(
-          (firstPlayer: boolean, roomId?: string) => {
-            navigation.replace('BoardScreen', {
+          (firstPlayer: boolean, roomId?: string, roomUsers?: string[]) => {
+            navigation.navigate('BoardScreen', {
               ...route.params,
               start: firstPlayer,
               roomId,
+              roomUsers,
             });
           }
         );
@@ -166,6 +179,7 @@ const LobbyScreen = ({route, navigation}) => {
     navigation,
     route.params,
     showRefuseGameAlert,
+    roomUsers,
   ]);
 
   useFocusEffect(
@@ -266,7 +280,7 @@ const LobbyScreen = ({route, navigation}) => {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          paddingTop: 15,
+          paddingTop: Platform.OS === 'ios' ? 30 : 15,
           paddingBottom: 10,
         }}
       >
@@ -298,14 +312,18 @@ const LobbyScreen = ({route, navigation}) => {
           clearButtonMode="always"
         />
       </View>
-      <Text style="light" style={{fontSize: 10, marginTop: 10}}>
+      <Text style={{fontSize: 10, marginTop: 10}}>
         Giocatori online: {gamers && gamers.length}
       </Text>
       {!isLoading ? (
         <>
           <View style={{flex: 1, justifyContent: 'center'}}>
             {gamers && gamers.length > 0 ? (
-              <FlatList data={gamers} renderItem={_renderItem} />
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={gamers}
+                renderItem={_renderItem}
+              />
             ) : (
               <View style={{flex: 1, justifyContent: 'center'}}>
                 <Text

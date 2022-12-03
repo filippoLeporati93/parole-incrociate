@@ -51,6 +51,7 @@ export class RoomController {
   ) {
       // message sent by the user who made the 'request_join_room'
       const roomId = message.roomId;
-      socket.to(roomId).emit("start_game", {firstPlayer: false, roomId});
+      const roomUsers = message.roomUsers;
+      socket.to(roomId).emit("start_game", {firstPlayer: false, roomId, roomUsers});
   }
 }

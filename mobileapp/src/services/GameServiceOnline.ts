@@ -101,24 +101,28 @@ const GameServiceOnline = () => {
     return () => {};
   }
 
-  function startGame(roomId: string) {
+  function startGame(roomId: string, roomUsers: string[]) {
     const socket = SocketService.socket;
     if (socket) {
-      socket.emit('start_game', {roomId});
+      socket.emit('start_game', {roomId, roomUsers});
     }
   }
 
-  function onStartGame(cb: (firstPlayer: boolean, roomId?: string) => void) {
+  function onStartGame(
+    cb: (firstPlayer: boolean, roomId?: string, roomUsers?: string[]) => void
+  ) {
     const socket = SocketService.socket;
     if (socket) {
       const listener = ({
         firstPlayer,
         roomId,
+        roomUsers,
       }: {
         firstPlayer: boolean;
         roomId?: string;
+        roomUsers?: string[];
       }) => {
-        cb(firstPlayer, roomId);
+        cb(firstPlayer, roomId, roomUsers);
       };
       socket.on('start_game', listener);
       return () => socket && socket.off('start_game', listener);
