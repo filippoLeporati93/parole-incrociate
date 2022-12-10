@@ -28,10 +28,10 @@ const StatisticsTabScreen = ({route, navigation}) => {
         </View>
       ),
     });
-  }, [navigation]);
+  }, [navigation, theme.colors.text]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1}}>
       <StatisticsTimeFilterModal
         isVisible={showTimeFilterModal}
         timeFilterCodeSelected={timeFilterCode}
