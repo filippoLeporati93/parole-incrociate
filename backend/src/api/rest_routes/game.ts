@@ -6,10 +6,6 @@ const router = express.Router();
 
 router.use(passport.authenticate('bearer', { session: false }));
 
-router.get("/", function (req: any, res: any, next: any) {
-  res.status(200).json({ status: true });
-});
-
 router.post("/nextturn", (req: any, res: any, next: any) => {
   let letter = req.body.letter;
   let level = req.body.level;

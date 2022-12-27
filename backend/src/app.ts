@@ -29,6 +29,18 @@ const client = TableClient.fromConnectionString(
     cosmosdb_connstring,
     tableName);
 
+passport.use(new passportBearerStrategy(
+  function(token: any, cb: any) {
+    if(token === process.env.API_TOKEN)
+  	  return cb(null, {id:-1, name: 'api-token'});
+    else 
+      return cb(new Error("Unauthorized"));
+  }
+));
+
+var rootRouter = require("./api/rest_routes/root");
+app.use("/", rootRouter);
+
 app.use(
   session({
     store: new CosmosDbTableStore({
@@ -40,18 +52,8 @@ app.use(
   })
 );
 
-
-passport.use(new passportBearerStrategy(
-  function(token: any, cb: any) {
-    if(token === process.env.API_TOKEN)
-  	  return cb(null, {id:-1, name: 'api-token'});
-    else 
-      return cb(new Error("Unauthorized"));
-  }
-));
-
-var indexRouter = require("./api/rest_routes/index");
-app.use("/", indexRouter);
+var gameRouter = require("./api/rest_routes/game");
+app.use("/", gameRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req: any, res: any, next: any) {
