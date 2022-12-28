@@ -28,6 +28,7 @@
     "react-native-config": "^1.4.6",
     "react-native-countdown-circle-timer": "^3.0.9",
     "react-native-gesture-handler": "^2.6.0",
+    "react-native-in-app-review": "^4.2.1",
     "react-native-modal": "^13.0.1",
     "react-native-pager-view": "^6.0.0",
     "react-native-paper": "^4.12.4",

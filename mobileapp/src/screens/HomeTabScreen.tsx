@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Pressable, Image} from 'react-native';
 import Text from '../components/AppText';
 import {useTheme} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import InAppReviewUtils from '../utils/InAppReviewUtils';
 
 import NewGameContentModal from '../components/modal/NewGameContentModal';
 
@@ -11,6 +12,12 @@ const HomeScreen = ({navigation}: any) => {
   const styles = makeStyles(theme.colors);
 
   const [isNewGameModalVisible, setNewGameModalVisible] = useState(false);
+
+  useEffect(() => {
+    InAppReviewUtils.incrementAppOpening().then(appreview => {
+      InAppReviewUtils.showReviewPane(appreview);
+    });
+  }, []);
 
   return (
     <View style={styles.container}>

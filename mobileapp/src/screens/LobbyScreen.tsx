@@ -8,7 +8,6 @@ import {
   TextInput,
   View,
   Alert,
-  Platform,
   SafeAreaView,
 } from 'react-native';
 import Text from '../components/AppText';
