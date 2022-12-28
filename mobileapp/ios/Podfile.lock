@@ -306,6 +306,8 @@ PODS:
     - react-native-config/App (= 1.4.6)
   - react-native-config/App (1.4.6):
     - React-Core
+  - react-native-in-app-review (4.2.1):
+    - React-Core
   - react-native-keep-awake (1.1.0):
     - React-Core
   - react-native-netinfo (9.3.2):
@@ -446,6 +448,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-config (from `../node_modules/react-native-config`)
+  - react-native-in-app-review (from `../node_modules/react-native-in-app-review`)
   - "react-native-keep-awake (from `../node_modules/@sayem314/react-native-keep-awake`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
@@ -531,6 +534,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-config:
     :path: "../node_modules/react-native-config"
+  react-native-in-app-review:
+    :path: "../node_modules/react-native-in-app-review"
   react-native-keep-awake:
     :path: "../node_modules/@sayem314/react-native-keep-awake"
   react-native-netinfo:
@@ -610,6 +615,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 1363be638eccfe1aea1b10dd42e632b0397e5ec8
   React-logger: 7bd569e3857d74ed412ce0a5c51f421ff7d4ca7f
   react-native-config: 7cd105e71d903104e8919261480858940a6b9c0e
+  react-native-in-app-review: a073f67c5f3392af6ea7fb383217cdb1aa2aa726
   react-native-keep-awake: acbee258db16483744910f0da3ace39eb9ab47fd
   react-native-netinfo: 687904c63baa828543bb6e94c265977e0ac70f14
   react-native-pager-view: e76d64a5114a152e942caa09136e4e250709378c
