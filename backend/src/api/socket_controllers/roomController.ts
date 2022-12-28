@@ -28,7 +28,9 @@ export class RoomController {
       // get all rooms joined by the receiver
       const socketRoomsArray = [...io.of('/').adapter.socketRooms(receiverSocketId) ?? new Set()];
       // if the receiver is still in a gaming room emit a not accepted
-      if(socketRoomsArray.find(e => e.startsWith("gameID:"))) {
+      const gameRoomId = socketRoomsArray.find(e => e.startsWith("gameID:")) ?? ''
+      const socketsInGameRoom = io.of('/').adapter.rooms.get(gameRoomId) ?? new Set();
+      if(gameRoomId && socketsInGameRoom.size > 1) {
         socket.emit("room_joined", {
           accepted: false,
           roomId,
