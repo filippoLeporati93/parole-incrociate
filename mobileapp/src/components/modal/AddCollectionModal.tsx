@@ -1,5 +1,6 @@
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {
+  FlatList,
   Modal,
   Platform,
   StyleSheet,
@@ -7,7 +8,6 @@ import {
   View,
 } from 'react-native';
 import Text from '../AppText';
-import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import {useTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CollectionsUtils, {ICollection} from '../../utils/CollectionsUtils';

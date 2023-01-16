@@ -1,10 +1,10 @@
-import {IPlayMatrix} from '../services/GameServiceFactory';
+import {Matrix} from '../services/GameEngine';
 
 export type gameResults = {
   isOpponent: boolean;
   points: number;
   words: wordResults[];
-  matrix: IPlayMatrix;
+  matrix: Matrix;
 };
 
 export type wordResults = {

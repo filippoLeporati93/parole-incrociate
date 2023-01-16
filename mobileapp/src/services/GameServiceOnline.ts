@@ -1,10 +1,10 @@
-import {Socket} from 'socket.io-client';
-import FetchWrapper from '../api/FetchWrapper';
 import {gameResults} from '../models/Types';
-import {IPlayMatrix} from './GameServiceFactory';
+import GameEngine, {Matrix} from './GameEngine';
 import SocketService from './SocketService';
 
-const GameServiceOnline = () => {
+const GameServiceOnline = (wordlist: string[]) => {
+  const ge = GameEngine(wordlist);
+
   function joinGameRoom(
     roomId: string,
     requesterUserID: string,
@@ -86,12 +86,7 @@ const GameServiceOnline = () => {
     return () => {};
   }
 
-  function updateGame(
-    level: number,
-    letter: string,
-    cb?: () => void,
-    roomId?: string
-  ) {
+  function updateGame(letter: string, cb?: () => void, roomId?: string) {
     const socket = SocketService.socket;
     if (socket) {
       socket.emit('update_game', {letter: {value: letter}, roomId});
@@ -139,16 +134,19 @@ const GameServiceOnline = () => {
   }
 
   async function gameFinish(
-    matrix: IPlayMatrix,
+    matrix: Matrix,
     cb: (myResult: gameResults) => void,
     roomId?: string
   ) {
     const socket = SocketService.socket;
     if (socket) {
       socket.emit('game_finish', {matrix, roomId});
-      FetchWrapper.post('results?opponent=false', {grid: matrix})
-        .then(cb)
-        .catch(e => console.error(e));
+      const results = {
+        ...ge.calculateResults(matrix),
+        matrix: matrix,
+        isOpponent: false,
+      };
+      cb(results);
     }
   }
 
@@ -156,9 +154,12 @@ const GameServiceOnline = () => {
     const socket = SocketService.socket;
     if (socket) {
       const listener = ({opponentMatrix}: {opponentMatrix: any}) => {
-        FetchWrapper.post('results?opponent=true', {grid: opponentMatrix})
-          .then(cb)
-          .catch(err => console.error(err));
+        const results = {
+          ...ge.calculateResults(opponentMatrix),
+          matrix: opponentMatrix,
+          isOpponent: true,
+        };
+        cb(results);
       };
       socket.on('on_game_finish', listener);
       return () => socket && socket.off('on_game_finish', listener);

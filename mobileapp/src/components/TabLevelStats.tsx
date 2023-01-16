@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 
-import {ScrollView} from 'react-native-gesture-handler';
-import {Pressable, RefreshControl, StyleSheet, View} from 'react-native';
+import {Pressable, RefreshControl, ScrollView, StyleSheet, View} from 'react-native';
 import {useTheme} from 'react-native-paper';
 import Text from './AppText';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';

@@ -1,57 +1,56 @@
-import FetchWrapper from '../api/FetchWrapper';
 import {gameResults} from '../models/Types';
-import {IPlayMatrix} from './GameServiceFactory';
+import GameEngine, {Matrix} from './GameEngine';
 
-const GameServiceComputer = () => {
-  const updateGame = (
-    level: number,
-    letter: string,
-    cb?: () => void,
-    roomId?: string
-  ) => {
-    const body = {
-      letter: {
-        value: letter,
-      },
-      level: level,
-    };
-    return FetchWrapper.post('nextturn', body)
-      .then(cb)
-      .catch(err => console.error(err));
-  };
+const GameServiceComputer = (level: number, wordlist: string[]) => {
 
-  const onUpdateGame = (cb: (opponentLetter: string) => void) => {
-    return FetchWrapper.post('computegrid', {})
-      .then(value => {
-        cb(value.letter.value);
-      })
-      .catch(err => console.error(err));
-  };
+  let opponentMatrix: Matrix = [];
+  let updateGameLetter: string = '';
+  const ge = GameEngine(wordlist);
 
-  const joinGameRoom = (roomId?: string): Promise<boolean> => {
+  function updateGame(letter: string, cb?: () => void, roomId?: string) {
+    updateGameLetter = letter;
+    cb && cb();
+  }
+
+  function onUpdateGame(cb: (opponentLetter: string) => void) {
+    const [next_grid, next_letter, next_grid_completed] = ge.computeNextGrid(
+      opponentMatrix,
+      level,
+      updateGameLetter,
+    );
+    opponentMatrix = next_grid;
+    cb && cb(next_letter.value);
+  }
+
+  function joinGameRoom(roomId?: string): Promise<boolean> {
     return new Promise((rs, rj) => rs(true));
-  };
+  }
 
-  const onStartGame = (cb: (start: boolean, roomId?: string) => void) => {
-    FetchWrapper.post('resetgame', {})
-      .then(() => cb(true))
-      .catch(err => console.error(err));
-  };
+  function onStartGame(cb: (start: boolean, roomId?: string) => void) {
+    opponentMatrix = ge.generateEmptyMatrix();
+    cb && cb(true);
+  }
 
-  const gameFinish = (
-    matrix: IPlayMatrix,
+  function gameFinish(
+    matrix: Matrix,
     cb: (myResult: gameResults) => void,
     roomId?: string
-  ) => {
-    FetchWrapper.post('results?opponent=false', {grid: matrix})
-      .then(cb)
-      .catch(err => console.error(err));
-  };
+  ) {
+    const results = {
+      ...ge.calculateResults(matrix),
+      matrix: matrix,
+      isOpponent: false,
+    };
+    cb(results);
+  }
 
-  async function onGameFinish(cb: (opponentResults: gameResults) => void) {
-    FetchWrapper.post('results?opponent=true', {})
-      .then(cb)
-      .catch(e => console.error(e));
+  function onGameFinish(cb: (opponentResults: gameResults) => void) {
+    const results = {
+      ...ge.calculateResults(opponentMatrix),
+      matrix: opponentMatrix,
+      isOpponent: true,
+    };
+    cb(results);
   }
 
   function onPlayerLeaving(cb: (playersRemaining?: number) => void) {
@@ -63,7 +62,6 @@ const GameServiceComputer = () => {
   }
 
   return {
-    joinGameRoom,
     updateGame,
     onUpdateGame,
     onStartGame,

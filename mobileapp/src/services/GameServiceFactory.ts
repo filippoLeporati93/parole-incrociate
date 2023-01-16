@@ -1,23 +1,16 @@
-import gameServiceComputer from './GameServiceComputer';
-import gameServiceOnline from './GameServiceOnline';
+import GameServiceComputer from './GameServiceComputer';
+import GameServiceOnline from './GameServiceOnline';
+import parole_italiane from '../assets/word_storage/parole_italiane.js';
 
-export type IPlayMatrix = Array<Array<string>>;
+const GameServiceFactory = (level: number) => {
 
-const gameServiceFactory = () => {
-  const build = (isOnlineGame: boolean) => {
-    switch (isOnlineGame) {
-      case true:
-        return gameServiceOnline();
-      case false:
-        return gameServiceComputer();
-      default:
-        return gameServiceComputer();
-    }
-  };
-
-  return {
-    build,
-  };
+  if (level === -1) {
+    return GameServiceOnline(parole_italiane.wordlist);
+  } else if (level >= 0) {
+    return GameServiceComputer(level, parole_italiane.wordlist);
+  } else {
+    return null;
+  }
 };
 
-export default gameServiceFactory;
+export default GameServiceFactory;

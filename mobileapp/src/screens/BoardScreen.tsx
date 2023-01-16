@@ -10,7 +10,8 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import gameServiceFactory, {IPlayMatrix} from '../services/GameServiceFactory';
+import GameServiceFactory from '../services/GameServiceFactory';
+import {Matrix, isGridComplete, getRandomEmptyPosition} from '../services/GameEngine';
 import SocketService from '../services/SocketService';
 
 import {BoardWidth} from '../components/GlobalStyle';
@@ -29,15 +30,15 @@ import {gameResults} from '../models/Types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useKeepAwake} from '@sayem314/react-native-keep-awake';
 import {useFocusEffect} from '@react-navigation/native';
-import NetInfo from '@react-native-community/netinfo';
 import NoInternetModal from '../components/modal/NoInternetModal';
+import {useNetInfo} from '../hooks';
 
 const BoardScreen = ({route, navigation}) => {
   const theme = useTheme();
 
   const gameService = useMemo(
-    () => gameServiceFactory().build(route.params.isOnlineGame),
-    [route.params.isOnlineGame]
+    () => GameServiceFactory(route.params.level),
+    [route.params.level]
   );
 
   const roomId = route.params.roomId;
@@ -68,7 +69,7 @@ const BoardScreen = ({route, navigation}) => {
   const [countdownKey, setCountdownKey] = useState(0);
   const [timeIsUpMessage, setTimeIsUpMessage] = useState('');
 
-  const [matrix, setMatrix] = useState<IPlayMatrix>([
+  const [matrix, setMatrix] = useState<Matrix>([
     [' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' '],
     [' ', ' ', ' ', ' ', ' '],
@@ -78,48 +79,7 @@ const BoardScreen = ({route, navigation}) => {
 
   useKeepAwake();
 
-  const [isOffline, setOfflineStatus] = useState(false);
-  useEffect(() => {
-    const removeNetInfoSubscription = NetInfo.addEventListener(state => {
-      const offline = !(state.isConnected && state.isInternetReachable === null
-        ? true
-        : state.isInternetReachable);
-      if (!isOffline && offline) {
-        setOfflineStatus(offline);
-      }
-    });
-
-    return () => {
-      removeNetInfoSubscription();
-    };
-  }, []);
-
-  const isGridComplete = useCallback((grid: IPlayMatrix) => {
-    for (let i = 0; i < grid.length; i++) {
-      for (let j = 0; j < grid[i].length; j++) {
-        if (grid[i][j] === ' ') {
-          return false;
-        }
-      }
-    }
-    return true;
-  }, []);
-
-  const getRandomEmptyPosition = useCallback((grid: IPlayMatrix) => {
-    const emptyPositions: Array<{i: number; j: number}> = [];
-    for (let i = 0; i < grid.length; i++) {
-      for (let j = 0; j < grid[i].length; j++) {
-        if (grid[i][j] === ' ') {
-          emptyPositions.push({i, j});
-        }
-      }
-    }
-    if (emptyPositions.length > 0) {
-      return emptyPositions[Math.floor(emptyPositions.length * Math.random())];
-    } else {
-      return {i: -1, j: -1};
-    }
-  }, []);
+  const [isOffline] = useNetInfo();
 
   // add opponents results since the have no more letter to put
   const handleOnGameFinish = useCallback((opponentResult: gameResults) => {
@@ -155,7 +115,6 @@ const BoardScreen = ({route, navigation}) => {
     [
       gameService,
       handleOnGameFinish,
-      isGridComplete,
       matrix,
       route.params.level,
     ]
@@ -232,7 +191,6 @@ const BoardScreen = ({route, navigation}) => {
       }
       // send your placed letter
       gameService.updateGame(
-        route.params.level,
         letter,
         () => {
           if (route.params.level !== -1) {
@@ -247,7 +205,6 @@ const BoardScreen = ({route, navigation}) => {
     cellIndexPressed.dy,
     gameService,
     handleOnUpdateGame,
-    isGridComplete,
     matrix,
     opponentLetter,
     roomId,
@@ -268,7 +225,9 @@ const BoardScreen = ({route, navigation}) => {
       setIsMyTurn(route.params.start);
       offGameFinish = gameService.onGameFinish(handleOnGameFinish);
       offUpdateGame = gameService.onUpdateGame(handleOnUpdateGame);
-      offPlayerLeaving.current = gameService.onPlayerLeaving(handleOnPlayerLeaving);
+      offPlayerLeaving.current = gameService.onPlayerLeaving(
+        handleOnPlayerLeaving
+      );
 
       return () => {
         offGameFinish();
@@ -301,7 +260,7 @@ const BoardScreen = ({route, navigation}) => {
       gameService.leaveGameRoom();
       showModalResults();
     }
-  }, [showModalResults, tempGameResults.length]);
+  }, [gameService, showModalResults, tempGameResults.length]);
 
   const showBackAlert = useCallback(
     () =>
@@ -374,7 +333,6 @@ const BoardScreen = ({route, navigation}) => {
   }, [
     cellIndexPressed.dx,
     cellIndexPressed.dy,
-    getRandomEmptyPosition,
     matrix,
     opponentLetter,
   ]);
@@ -428,7 +386,7 @@ const BoardScreen = ({route, navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <NoInternetModal
-        show={isOffline}
+        show={isOffline && route.params.level === -1}
         onButtonPress={() => {
           SocketService.disconnect();
           navigation.replace('HomeScreen');
@@ -554,7 +512,7 @@ const BoardScreen = ({route, navigation}) => {
         }}
       />
     </SafeAreaView>
-  );
+  )
 };
 
 const styles = StyleSheet.create({

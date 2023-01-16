@@ -19,6 +19,7 @@ const EndGameDisconnectModal: React.FC<Props> = props => {
     <Modal
       isVisible={props.isVisible}
       onBackdropPress={props.onBackPress}
+      useNativeDriver={true}
       useNativeDriverForBackdrop
       style={styles.view}
     >

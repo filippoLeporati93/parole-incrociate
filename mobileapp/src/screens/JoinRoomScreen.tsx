@@ -1,11 +1,12 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import Text from '../components/AppText';
-import {TextInput, useTheme} from 'react-native-paper';
-import {ScrollView} from 'react-native-gesture-handler';
+import {HelperText, TextInput, useTheme} from 'react-native-paper';
 import UserPreferencesUtils from '../utils/UserPreferencesUtils';
 import SocketService from '../services/SocketService';
 import SocketSessionUtils from '../utils/SocketSessionUtils';
+import NoInternetModal from '../components/modal/NoInternetModal';
+import {useNetInfo} from '../hooks';
 
 const JoinRoomScreeen = ({route, navigation}) => {
   const theme = useTheme();
@@ -15,6 +16,7 @@ const JoinRoomScreeen = ({route, navigation}) => {
   const [username, setUsername] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const originalUsername = useRef('');
+  const [isOffline] = useNetInfo();
 
   const onJoinLobbyPress = useCallback(async () => {
     if (!username || username.length < 5) {
@@ -42,6 +44,13 @@ const JoinRoomScreeen = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
+      <NoInternetModal
+        show={isOffline}
+        onButtonPress={() => {
+          SocketService.disconnect();
+          navigation.replace('HomeScreen');
+        }}
+      />
       <ScrollView
         ref={scrollbarRef}
         keyboardShouldPersistTaps="handled"
@@ -73,16 +82,9 @@ const JoinRoomScreeen = ({route, navigation}) => {
             setUsername(text.trim());
           }}
         />
-        <Text
-          style={{
-            color: theme.colors.error,
-            marginBottom: 40,
-            fontSize: 12,
-            textAlign: 'center',
-          }}
-        >
-          {errorMessage}
-        </Text>
+        <HelperText type={'error'} visible={errorMessage !== ''}>
+          <Text>{errorMessage}</Text>
+        </HelperText>
         <Pressable
           style={styles.commandButton}
           onPress={() => onJoinLobbyPress()}

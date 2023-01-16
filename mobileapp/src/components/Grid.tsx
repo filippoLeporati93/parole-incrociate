@@ -5,11 +5,11 @@ import {StyleSheet, View} from 'react-native';
 import Cell from './Cell';
 import {useTheme} from 'react-native-paper';
 import {wordResults} from '../models/Types';
-import {IPlayMatrix} from '../services/GameServiceFactory';
+import {Matrix} from '../services/GameEngine';
 import {BoardWidth, CellSize} from './GlobalStyle';
 
 interface IGrid {
-  matrix: IPlayMatrix;
+  matrix: Matrix;
   cellIndexPressed?: {dx: number; dy: number};
   wordPressed?: wordResults;
   onCellPress?: (location: {dx: number; dy: number}) => void;

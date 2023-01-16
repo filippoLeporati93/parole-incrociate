@@ -21,6 +21,7 @@ const StatisticsTimeFilterModal: React.FC<Props> = props => {
       onBackdropPress={props.onBackPress}
       onSwipeComplete={props.onBackPress}
       swipeDirection={['down']}
+      useNativeDriver={true}
       useNativeDriverForBackdrop
       style={styles.view}
     >

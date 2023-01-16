@@ -15,6 +15,7 @@ const NewGameContentModal: React.FC<Props> = props => (
     onBackdropPress={props.onPress}
     onSwipeComplete={props.onPress}
     swipeDirection={['down']}
+    useNativeDriver={true}
     useNativeDriverForBackdrop
     style={styles.view}
   >

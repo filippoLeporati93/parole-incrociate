@@ -2,6 +2,7 @@ import {useTheme} from '@react-navigation/native';
 import React, {FC} from 'react';
 import {Modal, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Text from '../AppText';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 interface INoInternetModal {
   show: boolean;
   onButtonPress: () => void;
@@ -15,8 +16,9 @@ const NoInternetModal: FC<INoInternetModal> = ({show, onButtonPress}) => {
     <Modal animationType="slide" transparent={true} visible={show}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text textType="bold" style={styles.modalText}>
-            Ops...{'\n'}Sembra che tu non abbia nessuna connessione dati attiva!
+          <Icon name="wifi-off" size={35} color={theme.colors.text} />
+          <Text textType='light' style={styles.modalText}>
+            Sembra che tu non abbia nessuna connessione dati attiva!
           </Text>
           <TouchableOpacity
             style={styles.button}
@@ -67,8 +69,9 @@ const makeStyles = colors =>
       textAlign: 'center',
     },
     modalText: {
+      textType: 'bold',
       fontSize: 17,
-      marginBottom: 15,
+      marginVertical: 15,
       textAlign: 'center',
       color: colors.text,
     },

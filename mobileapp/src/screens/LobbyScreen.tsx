@@ -12,12 +12,12 @@ import {
 } from 'react-native';
 import Text from '../components/AppText';
 import {ActivityIndicator, useTheme} from 'react-native-paper';
-import gameServiceFactory from '../services/GameServiceFactory';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useFocusEffect} from '@react-navigation/native';
 import {gamer} from '../models/Types';
 import uuid from 'react-native-uuid';
 import SocketService from '../services/SocketService';
+import GameServiceFactory from '../services/GameServiceFactory';
 
 const myRoomId = 'gameID:' + uuid.v4();
 
@@ -35,8 +35,8 @@ const LobbyScreen = ({route, navigation}) => {
   const roomUsers = useMemo(() => new Set(), []);
 
   const gameService = useMemo(
-    () => gameServiceFactory().build(route.params.isOnlineGame),
-    [route.params.isOnlineGame]
+    () => GameServiceFactory(route.params.level),
+    [route.params.level]
   );
 
   const onUsersChanges = useCallback(

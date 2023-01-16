@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {ScrollView} from 'react-native-gesture-handler';
 import Grid from '../components/Grid';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
 import Text from '../components/AppText';
 import {gameResults, wordResults} from '../models/Types';
 import {useTheme} from 'react-native-paper';

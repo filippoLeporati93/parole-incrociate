@@ -1,7 +1,6 @@
 import React, {Component, useState} from 'react';
 
-import {StyleSheet, View, Text} from 'react-native';
-import {TouchableHighlight} from 'react-native-gesture-handler';
+import {StyleSheet, View, Text, TouchableHighlight} from 'react-native';
 import {useTheme} from 'react-native-paper';
 
 import {BoardWidth, BorderWidth, CellStackSize} from './GlobalStyle';
