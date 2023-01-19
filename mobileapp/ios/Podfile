@@ -21,10 +21,15 @@ target 'paroleincrociate' do
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable the next line.
-    :flipper_configuration => FlipperConfiguration.enabled,
+    # Flipper dislabled becaure of is incopatible with React Native Firebase
+    # :flipper_configuration => FlipperConfiguration.enabled,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  # Enables Firebase
+  #
+  use_frameworks! :linkage => :static
 
   target 'paroleincrociateTests' do
     inherit! :complete

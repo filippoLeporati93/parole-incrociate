@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Pressable, Image} from 'react-native';
+import {StyleSheet, View, Pressable, Image, SafeAreaView, Platform} from 'react-native';
 import Text from '../components/AppText';
 import {useTheme} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -20,9 +20,12 @@ const HomeScreen = ({navigation}: any) => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Pressable
-        style={{position: 'absolute', right: 15, top: 15}}
+        style={{
+          alignSelf: 'flex-end',
+          marginRight: 20,
+        }}
         onPress={() => navigation.navigate('SettingsScreen')}
       >
         <Icon size={25} name={'cog-outline'} color={theme.colors.primaryDark} />
@@ -126,7 +129,7 @@ const HomeScreen = ({navigation}: any) => {
           });
         }}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
