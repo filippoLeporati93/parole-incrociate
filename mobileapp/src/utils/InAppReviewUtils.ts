@@ -83,15 +83,17 @@ async function setReviewFlowFinished(): Promise<IInAppReview> {
   return await getInAppReview();
 }
 
-function showReviewPane(appreview: IInAppReview) {
-  let deltaDate =
-    new Date().getTime() - new Date(appreview.lastFlowReviewDate).getTime();
-  // Show the review pane if delta is greater than 5 days and opened home at least log2 times
-  if (
-    !Number.isInteger(Math.log2(appreview.numAppOpening)) ||
-    !(deltaDate / (1000 * 3600 * 24) >= 5)
-  ) {
-    return;
+function showReviewPane(appreview: IInAppReview | null) {
+  if (appreview !== null) {
+    let deltaDate =
+      new Date().getTime() - new Date(appreview.lastFlowReviewDate).getTime();
+    // Show the review pane if delta is greater than 5 days and opened home at least log2 times
+    if (
+      !Number.isInteger(Math.log2(appreview.numAppOpening)) ||
+      !(deltaDate / (1000 * 3600 * 24) >= 5)
+    ) {
+      return;
+    }
   }
   // This package is only available on android version >= 21 and iOS >= 10.3
 

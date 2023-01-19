@@ -7,13 +7,17 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Text from '../components/AppText';
 import HomeScreen from './HomeTabScreen';
 
-import {useTheme} from 'react-native-paper';
+import {ActivityIndicator, useTheme} from 'react-native-paper';
 import StatisticsTabScreen from './StatisticsTabScreen';
 import BoardScreen from './BoardScreen';
 import ScoreScreen from './ScoreScreen';
 import HowToPlayScreen from './HowToPlayScreen';
 import JoinRoomScreen from './JoinRoomScreen';
 import LobbyScreen from './LobbyScreen';
+import PrivacyPreferencesScreen from './PrivacyPreferencesScreen';
+import {useUserPref} from '../hooks';
+import {SafeAreaView} from 'react-native';
+import SettingsScreen from './SettingsScreen';
 
 const MainStack = createStackNavigator();
 const StatisticsStack = createStackNavigator();
@@ -22,6 +26,9 @@ const Tab = createMaterialBottomTabNavigator();
 
 const MainTabScreen = ({}: any) => {
   const {colors} = useTheme();
+
+  const [retrievedFromStorage, userPref] = useUserPref();
+
   return (
     <MainStack.Navigator
       screenOptions={{
@@ -36,12 +43,44 @@ const MainTabScreen = ({}: any) => {
         },
       }}
     >
+      {!retrievedFromStorage ? (
+        <MainStack.Screen name="LoadingScreen" options={{headerShown: false}}>
+          {props => (
+            <SafeAreaView
+              {...props}
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginHorizontal: 15,
+              }}
+            >
+              <ActivityIndicator size={'large'} color={colors.primaryDark} />
+            </SafeAreaView>
+          )}
+        </MainStack.Screen>
+      ) : null}
+      {userPref.isFirstOpen ? (
+        <MainStack.Screen
+          name="PrivacyPreferencesScreen"
+          component={PrivacyPreferencesScreen}
+          options={{headerShown: false}}
+        />
+      ) : null}
       <MainStack.Screen
         name="HomeScreen"
         component={HomeTabScreen}
         options={{
           headerShown: false,
           headerBackTitleVisible: false,
+        }}
+      />
+      <MainStack.Screen
+        name="SettingsScreen"
+        component={SettingsScreen}
+        options={{
+          headerBackTitleVisible: false,
+          headerTitle: 'Opzioni',
         }}
       />
       <MainStack.Screen

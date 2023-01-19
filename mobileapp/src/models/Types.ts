@@ -48,7 +48,10 @@ export type gamer = {
 };
 
 export type userPrefs = {
-  username: string;
+  username?: string;
+  isFirstOpen?: boolean;
+  isAnalyticsEnabled?: boolean;
+  isNotificationEnabled?: boolean;
 };
 
 export type socketSession = {

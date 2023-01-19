@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {useState} from 'react';
 
 import {StyleSheet, View, Text, TouchableHighlight} from 'react-native';
 import {useTheme} from 'react-native-paper';
@@ -69,7 +69,7 @@ const makeStyles = colors =>
       borderColor: colors.primary,
     },
     cellDisabled: {
-      backgroundColor: colors.backgroundGray,
+      backgroundColor: colors.backgroundPrimary,
     },
     text: {
       color: colors.text,

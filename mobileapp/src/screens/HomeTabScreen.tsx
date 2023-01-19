@@ -21,6 +21,13 @@ const HomeScreen = ({navigation}: any) => {
 
   return (
     <View style={styles.container}>
+      <Pressable
+        style={{position: 'absolute', right: 15, top: 15}}
+        onPress={() => navigation.navigate('SettingsScreen')}
+      >
+        <Icon size={25} name={'cog-outline'} color={theme.colors.primaryDark} />
+      </Pressable>
+
       <View
         style={{flex: 2, alignContent: 'flex-start', justifyContent: 'center'}}
       >

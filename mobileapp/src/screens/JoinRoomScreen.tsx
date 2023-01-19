@@ -6,16 +6,17 @@ import UserPreferencesUtils from '../utils/UserPreferencesUtils';
 import SocketService from '../services/SocketService';
 import SocketSessionUtils from '../utils/SocketSessionUtils';
 import NoInternetModal from '../components/modal/NoInternetModal';
-import {useNetInfo} from '../hooks';
+import {useNetInfo, useUserPref} from '../hooks';
 
 const JoinRoomScreeen = ({route, navigation}) => {
   const theme = useTheme();
   const styles = makeStyles(theme.colors);
 
   const scrollbarRef = useRef();
-  const [username, setUsername] = useState('');
+  const [, userPref, setUserPrefs] = useUserPref();
+  const [username, setUsername] = useState(userPref.username);
   const [errorMessage, setErrorMessage] = useState('');
-  const originalUsername = useRef('');
+  const originalUsername = useRef<string | undefined>('');
   const [isOffline] = useNetInfo();
 
   const onJoinLobbyPress = useCallback(async () => {
@@ -26,7 +27,7 @@ const JoinRoomScreeen = ({route, navigation}) => {
     if (originalUsername.current !== username) {
       await SocketSessionUtils.setSocketSessionID('');
       await SocketSessionUtils.setSocketSessionUserID('');
-      await UserPreferencesUtils.setUsername(username);
+      await UserPreferencesUtils.setUserPrefs({username});
     }
     navigation.navigate('LobbyScreen', {
       ...route.params,
@@ -36,9 +37,9 @@ const JoinRoomScreeen = ({route, navigation}) => {
 
   useEffect(() => {
     SocketService.disconnect();
-    UserPreferencesUtils.getUsername().then(name => {
-      setUsername(name);
-      originalUsername.current = name;
+    UserPreferencesUtils.getUserPrefs().then(p => {
+      setUsername(p.username);
+      originalUsername.current = p.username;
     });
   }, []);
 

@@ -11,6 +11,8 @@ import {
 } from 'react-native-paper';
 import MainTabScreen from './screens/MainTabScreen';
 import {StatusBar} from 'react-native';
+import analytics from '@react-native-firebase/analytics';
+import {useMessaging} from './hooks';
 
 const App = () => {
   const CustomDefaultTheme = {
@@ -25,14 +27,18 @@ const App = () => {
       primary: '#87C0CD',
       primaryLight: '#BBDEFB55',
       primaryDark: '#036595',
-      backgroundGray: '#8aacc8',
+      backgroundPrimary: '#8aacc8',
+      backgroundGray: '#f5f5f5',
       backgroundHome: '#87C0CD11',
     },
   };
 
   const navigationRef = useNavigationContainerRef();
+  const routeNameRef = React.useRef();
 
   const theme = CustomDefaultTheme;
+
+  useMessaging();
 
   return (
     <PaperProvider theme={theme}>
@@ -40,7 +46,25 @@ const App = () => {
         backgroundColor={theme.colors.primaryDark}
         barStyle="default"
       />
-      <NavigationContainer theme={theme} ref={navigationRef}>
+      <NavigationContainer
+        theme={theme}
+        ref={navigationRef}
+        onReady={() => {
+          routeNameRef.current = navigationRef.current.getCurrentRoute().name;
+        }}
+        onStateChange={async () => {
+          const previousRouteName = routeNameRef.current;
+          const currentRouteName = navigationRef.current.getCurrentRoute().name;
+
+          if (previousRouteName !== currentRouteName) {
+            await analytics().logScreenView({
+              screen_name: currentRouteName,
+              screen_class: currentRouteName,
+            });
+          }
+          routeNameRef.current = currentRouteName;
+        }}
+      >
         <MainTabScreen />
       </NavigationContainer>
     </PaperProvider>
