@@ -43,28 +43,32 @@ const StatisticsTabScreen = ({route, navigation}) => {
       />
       <Tab.Navigator>
         <Tab.Screen
-          name="Facile"
+          name="StatisticsTabLevel1"
           children={() => (
             <TabLevelStats gameLevel={1} timeFilterCode={timeFilterCode} />
           )}
+          options={{title: 'Facile'}}
         />
         <Tab.Screen
-          name="Medio"
+          name="StatisticsTabLevel2"
           children={() => (
             <TabLevelStats gameLevel={2} timeFilterCode={timeFilterCode} />
           )}
+          options={{title: 'Medio'}}
         />
         <Tab.Screen
-          name="Difficile"
+          name="StatisticsTabLevel3"
           children={() => (
             <TabLevelStats gameLevel={3} timeFilterCode={timeFilterCode} />
           )}
+          options={{title: 'Difficile'}}
         />
         <Tab.Screen
-          name="Online"
+          name="StatisticsTabLevelOnline"
           children={() => (
             <TabLevelStats gameLevel={-1} timeFilterCode={timeFilterCode} />
           )}
+          options={{title: 'Online'}}
         />
       </Tab.Navigator>
     </SafeAreaView>

@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState, useMemo} from 'react';
+import analytics from '@react-native-firebase/analytics';
 
 import {
   ActivityIndicator,
@@ -11,7 +12,11 @@ import {
   View,
 } from 'react-native';
 import GameServiceFactory from '../services/GameServiceFactory';
-import {Matrix, isGridComplete, getRandomEmptyPosition} from '../services/GameEngine';
+import {
+  Matrix,
+  isGridComplete,
+  getRandomEmptyPosition,
+} from '../services/GameEngine';
 import SocketService from '../services/SocketService';
 
 import {BoardWidth} from '../components/GlobalStyle';
@@ -112,12 +117,7 @@ const BoardScreen = ({route, navigation}) => {
         setOpponentLetter(opLetter);
       }
     },
-    [
-      gameService,
-      handleOnGameFinish,
-      matrix,
-      route.params.level,
-    ]
+    [gameService, handleOnGameFinish, matrix, route.params.level]
   );
 
   const showModalResults = useCallback(() => {
@@ -147,6 +147,12 @@ const BoardScreen = ({route, navigation}) => {
     }
 
     setEndGameModalVisible(true);
+
+    // log end game
+    analytics().logLevelEnd({
+      level: route.params.level,
+      success: (personalPoints > opponentPoints).toString(),
+    });
 
     StatisticsUtils.addGame({
       youWon: personalPoints > opponentPoints,
@@ -212,7 +218,13 @@ const BoardScreen = ({route, navigation}) => {
   ]);
 
   const offPlayerLeaving = useRef(() => {});
+
   useEffect(() => {
+    // log start game
+    analytics().logLevelStart({
+      level: route.params.level,
+    });
+
     // start game with computer
     if (route.params.level !== -1) {
       gameService.onStartGame(() => {});
@@ -330,12 +342,7 @@ const BoardScreen = ({route, navigation}) => {
       m[i][j] = letter;
       return m;
     });
-  }, [
-    cellIndexPressed.dx,
-    cellIndexPressed.dy,
-    matrix,
-    opponentLetter,
-  ]);
+  }, [cellIndexPressed.dx, cellIndexPressed.dy, matrix, opponentLetter]);
 
   const onCellPress = useCallback(
     ({dx, dy}: {dx: number; dy: number}) => {
@@ -512,7 +519,7 @@ const BoardScreen = ({route, navigation}) => {
         }}
       />
     </SafeAreaView>
-  )
+  );
 };
 
 const styles = StyleSheet.create({

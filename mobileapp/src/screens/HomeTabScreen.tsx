@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Pressable, Image, SafeAreaView, Platform} from 'react-native';
+import {StyleSheet, View, Pressable, Image, SafeAreaView} from 'react-native';
 import Text from '../components/AppText';
 import {useTheme} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -25,6 +25,7 @@ const HomeScreen = ({navigation}: any) => {
         style={{
           alignSelf: 'flex-end',
           marginRight: 20,
+          marginTop: 15,
         }}
         onPress={() => navigation.navigate('SettingsScreen')}
       >
@@ -35,7 +36,7 @@ const HomeScreen = ({navigation}: any) => {
         style={{flex: 2, alignContent: 'flex-start', justifyContent: 'center'}}
       >
         <Image
-          style={{width: 70, height: 70, alignSelf: 'center', marginTop: 10}}
+          style={{width: 70, height: 70, alignSelf: 'center'}}
           source={require('../assets/img/ic_launcher-web.png')}
         />
         <Text

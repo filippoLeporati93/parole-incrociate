@@ -64,3 +64,5 @@ buck-out/
 /vendor/bundle/
 
 .env
+google-services.json
+GoogleService-Info.plist
