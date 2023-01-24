@@ -19,7 +19,8 @@ async function getUserPrefs(): Promise<userPrefs> {
   const uPref = await AsyncStorage.getItem(USER_PREF_STORAGE_KEY);
   let pref: userPrefs = defaultUserPref;
   if (uPref !== null) {
-    pref = JSON.parse(uPref);
+    // spread operator to have all the fields in the object, in case of new fields in preferences
+    pref = {...pref, ...JSON.parse(uPref)};
   }
   return pref;
 }
